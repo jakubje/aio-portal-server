@@ -45,3 +45,48 @@ func (server *Server) createTransaction(ctx *gin.Context) {
 	}
 	ctx.JSON(http.StatusOK, transaction)
 }
+
+type getTransactionRequest struct {
+	ID int64 `uri:"id" binding:"required,min=1"`
+}
+
+func (server *Server) getTransaction(ctx *gin.Context) {
+	var req getTransactionRequest
+	if err := ctx.ShouldBindUri(&req); err != nil {
+		ctx.JSON(http.StatusBadRequest, errorResponse(err))
+		return
+	}
+
+	transaction, err := server.store.GetTransaction(ctx, req.ID)
+	if err != nil {
+		ctx.JSON(http.StatusInternalServerError, errorResponse(err))
+		return
+	}
+	ctx.JSON(http.StatusOK, transaction)
+}
+
+type listTransactionsByAccountRequest struct {
+	ID     int64 `form:"id" binding:"required,min=1"`
+	Limit  int32 `form:"limit,default=100" binding:"max=100"`
+	Offset int32 `form:"offset,default=0"`
+}
+
+func (server *Server) listTransactions(ctx *gin.Context) {
+	var req listTransactionsByAccountRequest
+	if err := ctx.ShouldBindQuery(&req); err != nil {
+		ctx.JSON(http.StatusBadRequest, errorResponse(err))
+		return
+	}
+
+	arg := db.ListTransactionsByAccountParams{
+		Limit:  req.Limit,
+		Offset: req.Offset,
+	}
+	
+	transactions, err := server.store.ListTransactionsByAccount(ctx, req.ID)
+	if err != nil {
+		ctx.JSON(http.StatusInternalServerError, errorResponse(err))
+		return
+	}
+	ctx.JSON(http.StatusOK, transactions)
+}

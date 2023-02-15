@@ -78,7 +78,7 @@ func (server *Server) listUsers(ctx *gin.Context) {
 		Offset: (req.PageID - 1) * req.PageSize,
 	}
 
-	users, err := server.store.ListUsers(ctx,arg )
+	users, err := server.store.ListUsers(ctx,arg)
 	if err != nil {
 		ctx.JSON(http.StatusInternalServerError, errorResponse(err))
 		return

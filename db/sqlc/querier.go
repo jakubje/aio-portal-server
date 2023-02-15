@@ -18,6 +18,14 @@ type Querier interface {
 	CreateWatchlistCoins(ctx context.Context, arg CreateWatchlistCoinsParams) (WatchlistCoin, error)
 	DeleteCoin(ctx context.Context, id int64) error
 	DeletePortfolio(ctx context.Context, id int64) error
+	// -- name: ListTransactionsByAccountByCoin :many
+	// SELECT * FROM transactions
+	// WHERE account_id = $1 AND coin_id = $2;
+	// -- name: ListTransactionsByAccountByCoin :many
+	// SELECT * FROM transactions
+	// ORDER BY id
+	// LIMIT $3
+	// WHERE account_id = $1 AND coin_id = $2;
 	DeleteTransaction(ctx context.Context, id int64) error
 	DeleteUser(ctx context.Context, id int64) error
 	DeleteWatchlist(ctx context.Context, id int64) error
@@ -32,7 +40,6 @@ type Querier interface {
 	ListCoins(ctx context.Context, portfolioID int64) ([]Coin, error)
 	ListPortforlios(ctx context.Context, accountID int64) ([]Portfolio, error)
 	ListTransactionsByAccount(ctx context.Context, accountID int64) ([]Transaction, error)
-	ListTransactionsByAccountByCoin(ctx context.Context, arg ListTransactionsByAccountByCoinParams) ([]Transaction, error)
 	ListUsers(ctx context.Context, arg ListUsersParams) ([]User, error)
 	ListWatchlists(ctx context.Context, accountID int64) ([]Watchlist, error)
 	ListWatchlistsCoins(ctx context.Context, watchlistID int64) ([]WatchlistCoin, error)
