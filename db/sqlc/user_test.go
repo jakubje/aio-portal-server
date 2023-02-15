@@ -3,10 +3,11 @@ package db
 import (
 	"context"
 	"database/sql"
-	"github.com/stretchr/testify/require"
 	"server/internal/utils"
 	"testing"
 	"time"
+
+	"github.com/stretchr/testify/require"
 )
 
 func createRandomUser(t *testing.T) User {

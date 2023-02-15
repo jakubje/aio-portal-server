@@ -2,12 +2,13 @@ package routes
 
 import (
 	"encoding/json"
+	"net/http"
+	"server/internal/database"
+
 	"github.com/go-chi/chi/v5"
 	"github.com/go-chi/chi/v5/middleware"
 	"github.com/go-chi/cors"
 	"github.com/ifreddyrondon/bastion/render"
-	"net/http"
-	"server/internal/database"
 )
 
 type UsersResource struct{}

@@ -9,7 +9,7 @@ import (
 )
 
 type Querier interface {
-	CreateCoin(ctx context.Context, arg CreateCoinParams) (Coin, error)
+	AddCoin(ctx context.Context, arg AddCoinParams) (Coin, error)
 	CreateFootball(ctx context.Context, arg CreateFootballParams) (Football, error)
 	CreatePortfolio(ctx context.Context, arg CreatePortfolioParams) (Portfolio, error)
 	CreateTransaction(ctx context.Context, arg CreateTransactionParams) (Transaction, error)
@@ -39,6 +39,15 @@ type Querier interface {
 	UpdateCoin(ctx context.Context, arg UpdateCoinParams) (Coin, error)
 	UpdateFootball(ctx context.Context, arg UpdateFootballParams) (Football, error)
 	UpdatePortfolio(ctx context.Context, arg UpdatePortfolioParams) (Portfolio, error)
+	// -- name: UpdateUser :one
+	// UPDATE users
+	// set
+	//     email = CASE WHEN $2 IS NOT NULL THEN $2 ELSE email END,
+	//     name = CASE WHEN $3 IS NOT NULL THEN $3 ELSE name END,
+	//     last_name = CASE WHEN $4 IS NOT NULL THEN $4 ELSE last_name END,
+	//     password = CASE WHEN $5 IS NOT NULL THEN $5 ELSE password END
+	// WHERE id = $1
+	// RETURNING *;
 	UpdateUser(ctx context.Context, arg UpdateUserParams) (User, error)
 	UpdateWatchlist(ctx context.Context, arg UpdateWatchlistParams) (Watchlist, error)
 }

@@ -3,16 +3,17 @@ package db
 import (
 	"context"
 	"database/sql"
-	"github.com/stretchr/testify/require"
 	"server/internal/utils"
 	"strconv"
 	"testing"
 	"time"
+
+	"github.com/stretchr/testify/require"
 )
 
 func createRandomPortfolioCoin(t *testing.T) Coin {
 	portfolio := createRandomPortfolio(t)
-	arg := CreateCoinParams{
+	arg := AddCoinParams{
 		PortfolioID: portfolio.ID,
 		CoinName:    utils.RandomString(5),
 		CoinSymbol:  utils.RandomString(3),
@@ -20,7 +21,7 @@ func createRandomPortfolioCoin(t *testing.T) Coin {
 		NoOfCoins:   strconv.Itoa(int(utils.RandomInt())),
 	}
 
-	coin, err := testQueries.CreateCoin(context.Background(), arg)
+	coin, err := testQueries.AddCoin(context.Background(), arg)
 	require.NoError(t, err)
 	require.NotEmpty(t, coin)
 
@@ -85,7 +86,7 @@ func TestDeleteCoin(t *testing.T) {
 }
 
 func createCoinByPortfolioId(t *testing.T, portfolio *Portfolio) Coin {
-	arg := CreateCoinParams{
+	arg := AddCoinParams{
 		PortfolioID: portfolio.ID,
 		CoinName:    utils.RandomString(5),
 		CoinSymbol:  utils.RandomString(3),
@@ -93,7 +94,7 @@ func createCoinByPortfolioId(t *testing.T, portfolio *Portfolio) Coin {
 		NoOfCoins:   strconv.Itoa(int(utils.RandomInt())),
 	}
 
-	coin, err := testQueries.CreateCoin(context.Background(), arg)
+	coin, err := testQueries.AddCoin(context.Background(), arg)
 	require.NoError(t, err)
 	require.NotEmpty(t, coin)
 

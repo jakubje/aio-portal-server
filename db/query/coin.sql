@@ -1,4 +1,4 @@
--- name: CreateCoin :one
+-- name: AddCoin :one
 INSERT INTO coins (
     portfolio_id, coin_name, coin_symbol, amount, no_of_coins
 ) VALUES (

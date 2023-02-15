@@ -1,14 +1,19 @@
 package database
 
 import (
+	"database/sql"
 	"fmt"
+	"io"
+	"log"
+	"os"
+	"server/internal/models"
+	"server/internal/utils"
+
 	"github.com/dgrijalva/jwt-go"
 	"github.com/go-chi/jwtauth/v5"
 	"github.com/go-pg/pg/v10"
 	"github.com/go-pg/pg/v10/orm"
-	"io"
-	"server/internal/models"
-	"server/internal/utils"
+	"github.com/joho/godotenv"
 )
 
 const dbName = "aio-portal"
@@ -17,40 +22,28 @@ const collectionUsers = "users"
 
 var secretKey string
 
+
+
 func init() {
 
 	//// Load env file
-	//err := godotenv.Load("../.env")
-	//if err != nil {
-	//	log.Fatal("Error loading .env file")
-	//}
-	//
+	err := godotenv.Load("../../.env")
+	if err != nil {
+		log.Fatal("Error loading .env file")
+	}
+	
 	//connectionString := os.Getenv("MONGODB_URI")
 	//secretKey = os.Getenv("SECRET_KEY")
+	dbDriver :=  os.Getenv("DB_DRIVER")
+	dbSource := os.Getenv("DB_SOURCE")
 
-	db := pg.Connect(&pg.Options{
-		User:     "jakub",
-		Database: "portfolioportal",
-	})
-	defer db.Close()
-
-	err := createSchema(db)
+	_, err = sql.Open(dbDriver, dbSource)
 	if err != nil {
-		panic(err)
+		log.Fatal("cannot connect to db: ", err)
 	}
-	fmt.Println("Created Database")
 
-	user1 := &models.User{
-		Email:    "jakub@j.com",
-		Name:     "Jakub",
-		LastName: "J",
-		Password: "Password",
-	}
-	resp, err := db.Model(user1).Insert()
-	if err != nil {
-		panic(err)
-	}
-	fmt.Println(resp)
+	// store := db.newStore(conn)
+
 }
 
 // createSchema creates database schema for User and Story models.

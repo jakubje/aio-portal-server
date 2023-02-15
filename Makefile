@@ -7,15 +7,19 @@ dropdb:
 	docker exec -it portal dropdb aio_portal
 
 migrateup:
-	migrate -path ./pkg/db/migrations -database "postgresql://root:root@localhost:5432/aio_portal?sslmode=disable" -verbose up
+	migrate -path ./db/migrations -database "postgresql://root:root@localhost:5432/aio_portal?sslmode=disable" -verbose up
 
 migratedown:
-	migrate -path ./pkg/db/migrations -database "postgresql://root:root@localhost:5432/aio_portal?sslmode=disable" -verbose down
+	migrate -path ./db/migrations -database "postgresql://root:root@localhost:5432/aio_portal?sslmode=disable" -verbose down
 
 sqlc:
 	sqlc generate
 
 test:
 	go test -v -cover ./...
-.PHONY: postgres createdb dropdb migrateup migratedown sqlc
 
+server:
+	go run main.go
+
+.PHONY: postgres createdb dropdb migrateup migratedown sqlc test server
+ 
