@@ -12,20 +12,17 @@ WHERE id = $1 LIMIT 1;
 
 -- name: ListTransactionsByAccount :many
 SELECT * FROM transactions
-WHERE account_id = $1;
+WHERE account_id = $1
+ORDER BY id
+LIMIT $2
+OFFSET $3;
 
--- -- name: ListTransactionsByAccountByCoin :many
--- SELECT * FROM transactions
--- WHERE account_id = $1 AND coin_id = $2;
-
-
-
--- -- name: ListTransactionsByAccountByCoin :many
--- SELECT * FROM transactions
--- ORDER BY id
--- LIMIT $3
--- WHERE account_id = $1 AND coin_id = $2;
-
+-- name: ListTransactionsByAccountByCoin :many
+SELECT * FROM transactions
+WHERE account_id = $1 AND coin_id = $2
+ORDER BY id
+LIMIT $3
+OFFSET $4;
 
 -- name: DeleteTransaction :exec
 DELETE FROM transactions

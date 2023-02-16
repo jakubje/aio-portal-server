@@ -20,16 +20,6 @@ OFFSET $2;
 DELETE FROM users
 WHERE id = $1;
 
--- -- name: UpdateUser :one
--- UPDATE users
--- set 
---     email = CASE WHEN $2 IS NOT NULL THEN $2 ELSE email END,
---     name = CASE WHEN $3 IS NOT NULL THEN $3 ELSE name END,
---     last_name = CASE WHEN $4 IS NOT NULL THEN $4 ELSE last_name END,
---     password = CASE WHEN $5 IS NOT NULL THEN $5 ELSE password END
--- WHERE id = $1
--- RETURNING *;
-
 -- name: UpdateUser :one
 UPDATE users
 set 

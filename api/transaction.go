@@ -1,6 +1,7 @@
 package api
 
 import (
+	"database/sql"
 	"net/http"
 	db "server/db/sqlc"
 	"time"
@@ -79,14 +80,69 @@ func (server *Server) listTransactions(ctx *gin.Context) {
 	}
 
 	arg := db.ListTransactionsByAccountParams{
+		AccountID:     req.ID,
 		Limit:  req.Limit,
 		Offset: req.Offset,
 	}
-	
-	transactions, err := server.store.ListTransactionsByAccount(ctx, req.ID)
+
+	transactions, err := server.store.ListTransactionsByAccount(ctx, arg)
 	if err != nil {
 		ctx.JSON(http.StatusInternalServerError, errorResponse(err))
 		return
 	}
 	ctx.JSON(http.StatusOK, transactions)
 }
+
+type listTransactionsByAccountByCoinRequest struct {
+	AccountID int64 `json:"account_id" binding:"required,min=1"`
+	CoinID    int64 `json:"coin" binding:"required"`
+	Limit     int32  `json:"limit,default=10" binding:"max=100"`
+	Offset    int32  `json:"offset,default=0"`
+}
+
+
+func (server *Server) listTransactionsByAccountByCoin(ctx *gin.Context) {
+	var request listTransactionsByAccountByCoinRequest
+	if err := ctx.ShouldBindJSON(&request); err != nil {
+		ctx.JSON(http.StatusBadRequest, errorResponse(err))
+		return
+	}
+
+	arg := db.ListTransactionsByAccountByCoinParams{
+		AccountID: request.AccountID,
+		CoinID:      request.CoinID,
+		Limit:     request.Limit,
+		Offset:    request.Offset,
+	}
+
+	transactions, err := server.store.ListTransactionsByAccountByCoin(ctx, arg)
+	if err != nil {
+		ctx.JSON(http.StatusInternalServerError, errorResponse(err))
+		return
+	}
+	ctx.JSON(http.StatusOK, transactions)
+}
+
+type deleteTransactionReqiest struct {
+	ID int64 `uri:"id" binding:"required,min=1"`
+}
+
+func (server *Server) deleteTransaction(ctx *gin.Context) {
+	var req deleteTransactionReqiest
+	if err := ctx.ShouldBindUri(&req); err != nil {
+		ctx.JSON(http.StatusBadRequest, errorResponse(err))
+		return
+	}
+
+	err := server.store.DeleteTransaction(ctx, req.ID)
+	if err != nil {
+		if err == sql.ErrNoRows {
+			ctx.JSON(http.StatusNotFound, errorResponse(err))
+			return
+		}
+		ctx.JSON(http.StatusInternalServerError, errorResponse(err))
+		return
+	}
+	ctx.JSON(http.StatusOK, gin.H{"message": "transaction deleted"})
+}
+

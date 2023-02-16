@@ -18,14 +18,6 @@ type Querier interface {
 	CreateWatchlistCoins(ctx context.Context, arg CreateWatchlistCoinsParams) (WatchlistCoin, error)
 	DeleteCoin(ctx context.Context, id int64) error
 	DeletePortfolio(ctx context.Context, id int64) error
-	// -- name: ListTransactionsByAccountByCoin :many
-	// SELECT * FROM transactions
-	// WHERE account_id = $1 AND coin_id = $2;
-	// -- name: ListTransactionsByAccountByCoin :many
-	// SELECT * FROM transactions
-	// ORDER BY id
-	// LIMIT $3
-	// WHERE account_id = $1 AND coin_id = $2;
 	DeleteTransaction(ctx context.Context, id int64) error
 	DeleteUser(ctx context.Context, id int64) error
 	DeleteWatchlist(ctx context.Context, id int64) error
@@ -39,22 +31,14 @@ type Querier interface {
 	GetWatchlistCoin(ctx context.Context, id int64) (WatchlistCoin, error)
 	ListCoins(ctx context.Context, portfolioID int64) ([]Coin, error)
 	ListPortforlios(ctx context.Context, accountID int64) ([]Portfolio, error)
-	ListTransactionsByAccount(ctx context.Context, accountID int64) ([]Transaction, error)
+	ListTransactionsByAccount(ctx context.Context, arg ListTransactionsByAccountParams) ([]Transaction, error)
+	ListTransactionsByAccountByCoin(ctx context.Context, arg ListTransactionsByAccountByCoinParams) ([]Transaction, error)
 	ListUsers(ctx context.Context, arg ListUsersParams) ([]User, error)
 	ListWatchlists(ctx context.Context, accountID int64) ([]Watchlist, error)
 	ListWatchlistsCoins(ctx context.Context, watchlistID int64) ([]WatchlistCoin, error)
 	UpdateCoin(ctx context.Context, arg UpdateCoinParams) (Coin, error)
 	UpdateFootball(ctx context.Context, arg UpdateFootballParams) (Football, error)
 	UpdatePortfolio(ctx context.Context, arg UpdatePortfolioParams) (Portfolio, error)
-	// -- name: UpdateUser :one
-	// UPDATE users
-	// set
-	//     email = CASE WHEN $2 IS NOT NULL THEN $2 ELSE email END,
-	//     name = CASE WHEN $3 IS NOT NULL THEN $3 ELSE name END,
-	//     last_name = CASE WHEN $4 IS NOT NULL THEN $4 ELSE last_name END,
-	//     password = CASE WHEN $5 IS NOT NULL THEN $5 ELSE password END
-	// WHERE id = $1
-	// RETURNING *;
 	UpdateUser(ctx context.Context, arg UpdateUserParams) (User, error)
 	UpdateWatchlist(ctx context.Context, arg UpdateWatchlistParams) (Watchlist, error)
 }

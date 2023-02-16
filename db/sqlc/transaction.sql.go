@@ -61,23 +61,10 @@ func (q *Queries) CreateTransaction(ctx context.Context, arg CreateTransactionPa
 }
 
 const deleteTransaction = `-- name: DeleteTransaction :exec
-
-
-
-
-
 DELETE FROM transactions
 WHERE id = $1
 `
 
-// -- name: ListTransactionsByAccountByCoin :many
-// SELECT * FROM transactions
-// WHERE account_id = $1 AND coin_id = $2;
-// -- name: ListTransactionsByAccountByCoin :many
-// SELECT * FROM transactions
-// ORDER BY id
-// LIMIT $3
-// WHERE account_id = $1 AND coin_id = $2;
 func (q *Queries) DeleteTransaction(ctx context.Context, id int64) error {
 	_, err := q.db.ExecContext(ctx, deleteTransaction, id)
 	return err
@@ -110,10 +97,74 @@ func (q *Queries) GetTransaction(ctx context.Context, id int64) (Transaction, er
 const listTransactionsByAccount = `-- name: ListTransactionsByAccount :many
 SELECT id, account_id, coin_id, coin_name, symbol, type, amount, time_transacted, time_created, price_purchased_at, no_of_coins FROM transactions
 WHERE account_id = $1
+ORDER BY id
+LIMIT $2
+OFFSET $3
 `
 
-func (q *Queries) ListTransactionsByAccount(ctx context.Context, accountID int64) ([]Transaction, error) {
-	rows, err := q.db.QueryContext(ctx, listTransactionsByAccount, accountID)
+type ListTransactionsByAccountParams struct {
+	AccountID int64 `json:"account_id"`
+	Limit     int32 `json:"limit"`
+	Offset    int32 `json:"offset"`
+}
+
+func (q *Queries) ListTransactionsByAccount(ctx context.Context, arg ListTransactionsByAccountParams) ([]Transaction, error) {
+	rows, err := q.db.QueryContext(ctx, listTransactionsByAccount, arg.AccountID, arg.Limit, arg.Offset)
+	if err != nil {
+		return nil, err
+	}
+	defer rows.Close()
+	items := []Transaction{}
+	for rows.Next() {
+		var i Transaction
+		if err := rows.Scan(
+			&i.ID,
+			&i.AccountID,
+			&i.CoinID,
+			&i.CoinName,
+			&i.Symbol,
+			&i.Type,
+			&i.Amount,
+			&i.TimeTransacted,
+			&i.TimeCreated,
+			&i.PricePurchasedAt,
+			&i.NoOfCoins,
+		); err != nil {
+			return nil, err
+		}
+		items = append(items, i)
+	}
+	if err := rows.Close(); err != nil {
+		return nil, err
+	}
+	if err := rows.Err(); err != nil {
+		return nil, err
+	}
+	return items, nil
+}
+
+const listTransactionsByAccountByCoin = `-- name: ListTransactionsByAccountByCoin :many
+SELECT id, account_id, coin_id, coin_name, symbol, type, amount, time_transacted, time_created, price_purchased_at, no_of_coins FROM transactions
+WHERE account_id = $1 AND coin_id = $2
+ORDER BY id
+LIMIT $3
+OFFSET $4
+`
+
+type ListTransactionsByAccountByCoinParams struct {
+	AccountID int64 `json:"account_id"`
+	CoinID    int64 `json:"coin_id"`
+	Limit     int32 `json:"limit"`
+	Offset    int32 `json:"offset"`
+}
+
+func (q *Queries) ListTransactionsByAccountByCoin(ctx context.Context, arg ListTransactionsByAccountByCoinParams) ([]Transaction, error) {
+	rows, err := q.db.QueryContext(ctx, listTransactionsByAccountByCoin,
+		arg.AccountID,
+		arg.CoinID,
+		arg.Limit,
+		arg.Offset,
+	)
 	if err != nil {
 		return nil, err
 	}

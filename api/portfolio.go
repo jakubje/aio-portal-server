@@ -1,6 +1,7 @@
 package api
 
 import (
+	"database/sql"
 	"net/http"
 	db "server/db/sqlc"
 
@@ -106,12 +107,15 @@ func (server *Server) deletePortfolio(ctx *gin.Context) {
 
 	err := server.store.DeletePortfolio(ctx, req.ID)
 	if err != nil {
+		if err == sql.ErrNoRows {
+			ctx.JSON(http.StatusNotFound, errorResponse(err))
+			return
+		}
 		ctx.JSON(http.StatusInternalServerError, errorResponse(err))
 		return
 	}
-	ctx.JSON(http.StatusOK, nil)
+	ctx.JSON(http.StatusOK, gin.H{"message": "portfolio deleted"})
 }
-
 
 
 

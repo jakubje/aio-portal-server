@@ -3,19 +3,17 @@ package db
 import (
 	"context"
 	"database/sql"
-	"fmt"
-	"github.com/stretchr/testify/require"
 	"server/internal/utils"
 	"strconv"
 	"testing"
 	"time"
+
+	"github.com/stretchr/testify/require"
 )
 
 func createRandomTransaction(t *testing.T) Transaction {
 	user := createRandomUser(t)
 	coin := createRandomPortfolioCoin(t)
-	fmt.Println(coin.ID)
-
 	arg := CreateTransactionParams{
 		AccountID:        user.ID,
 		CoinID:           coin.ID,
@@ -117,7 +115,12 @@ func TestListTransactionsByAccount(t *testing.T) {
 		createTransactionsForAccount(t, &user)
 	}
 
-	userTransactions, err := testQueries.ListTransactionsByAccount(context.Background(), user.ID)
+	arg := ListTransactionsByAccountParams {
+		AccountID: user.ID,
+		Limit: 10,
+		Offset: 0,
+	}
+	userTransactions, err := testQueries.ListTransactionsByAccount(context.Background(), arg)
 	require.NoError(t, err)
 	require.Len(t, userTransactions, 10)
 
@@ -165,6 +168,8 @@ func TestListTransactionsByAccountByCoin(t *testing.T) {
 	arg := ListTransactionsByAccountByCoinParams{
 		AccountID: user.ID,
 		CoinID:    coin.ID,
+		Limit:     10,
+		Offset:    0,
 	}
 
 	for i := 0; i < 10; i++ {
