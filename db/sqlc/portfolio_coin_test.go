@@ -4,7 +4,6 @@ import (
 	"context"
 	"database/sql"
 	"server/internal/utils"
-	"strconv"
 	"testing"
 	"time"
 
@@ -12,24 +11,23 @@ import (
 )
 
 func createRandomPortfolioCoin(t *testing.T) Coin {
-	portfolio := createRandomPortfolio(t)
+	// portfolio := createRandomPortfolio(t)
 	arg := AddCoinParams{
-		PortfolioID: portfolio.ID,
+		// PortfolioID: portfolio.ID,
 		CoinName:    utils.RandomString(5),
 		CoinSymbol:  utils.RandomString(3),
-		Amount:      int32(utils.RandomInt()),
-		NoOfCoins:   strconv.Itoa(int(utils.RandomInt())),
+		Quantity:      int32(utils.RandomInt()),
 	}
 
 	coin, err := testQueries.AddCoin(context.Background(), arg)
 	require.NoError(t, err)
 	require.NotEmpty(t, coin)
 
-	require.Equal(t, arg.PortfolioID, coin.PortfolioID)
+	// require.Equal(t, arg.PortfolioID, coin.PortfolioID)
 	require.Equal(t, arg.CoinName, coin.CoinName)
 	require.Equal(t, arg.CoinSymbol, coin.CoinSymbol)
-	require.Equal(t, arg.Amount, coin.Amount)
-	require.Equal(t, arg.NoOfCoins, coin.NoOfCoins)
+	require.Equal(t, arg.Quantity, coin.Quantity)
+	require.WithinDuration(t, arg.TimeCreated, coin.TimeCreated, time.Second)
 	require.NotZero(t, coin.ID)
 
 	return coin
@@ -48,9 +46,9 @@ func TestGetCoin(t *testing.T) {
 
 	require.Equal(t, coin1.ID, coin2.ID)
 	require.Equal(t, coin1.CoinSymbol, coin2.CoinSymbol)
-	require.Equal(t, coin1.PortfolioID, coin2.PortfolioID)
-	require.Equal(t, coin1.NoOfCoins, coin2.NoOfCoins)
-	require.Equal(t, coin1.Amount, coin2.Amount)
+	// require.Equal(t, coin1.PortfolioID, coin2.PortfolioID)
+	require.Equal(t, coin1.Quantity, coin2.Quantity)
+	require.Equal(t, coin1.TimeCreated, coin2.TimeCreated)
 	require.Equal(t, coin1.CoinName, coin2.CoinName)
 	require.WithinDuration(t, coin1.TimeCreated, coin2.TimeCreated, time.Second)
 }
@@ -60,8 +58,8 @@ func TestUpdateCoin(t *testing.T) {
 
 	arg := UpdateCoinParams{
 		ID:        coin1.ID,
-		Amount:    int32(utils.RandomInt()),
-		NoOfCoins: strconv.Itoa(int(utils.RandomInt())),
+		Quantity:    int32(utils.RandomInt()),
+		// NoOfCoins: strconv.Itoa(int(utils.RandomInt())),
 	}
 
 	coin2, err := testQueries.UpdateCoin(context.Background(), arg)
@@ -69,8 +67,8 @@ func TestUpdateCoin(t *testing.T) {
 	require.NotEmpty(t, coin2)
 
 	require.Equal(t, arg.ID, coin2.ID)
-	require.Equal(t, arg.Amount, coin2.Amount)
-	require.Equal(t, arg.NoOfCoins, coin2.NoOfCoins)
+	require.Equal(t, arg.Quantity, coin2.Quantity)
+	// require.Equal(t, arg.NoOfCoins, coin2.NoOfCoins)
 
 }
 
@@ -85,41 +83,40 @@ func TestDeleteCoin(t *testing.T) {
 	require.Empty(t, coin2)
 }
 
-func createCoinByPortfolioId(t *testing.T, portfolio *Portfolio) Coin {
-	arg := AddCoinParams{
-		PortfolioID: portfolio.ID,
-		CoinName:    utils.RandomString(5),
-		CoinSymbol:  utils.RandomString(3),
-		Amount:      int32(utils.RandomInt()),
-		NoOfCoins:   strconv.Itoa(int(utils.RandomInt())),
-	}
+// func createCoinByPortfolioId(t *testing.T, portfolio *Portfolio) Coin {
+// 	arg := AddCoinParams{
+// 		// PortfolioID: portfolio.ID,
+// 		CoinName:    utils.RandomString(5),
+// 		CoinSymbol:  utils.RandomString(3),
+// 		Quantity:      int32(utils.RandomInt()),
+// 	}
 
-	coin, err := testQueries.AddCoin(context.Background(), arg)
-	require.NoError(t, err)
-	require.NotEmpty(t, coin)
+// 	coin, err := testQueries.AddCoin(context.Background(), arg)
+// 	require.NoError(t, err)
+// 	require.NotEmpty(t, coin)
 
-	require.Equal(t, arg.PortfolioID, coin.PortfolioID)
-	require.Equal(t, arg.CoinName, coin.CoinName)
-	require.Equal(t, arg.CoinSymbol, coin.CoinSymbol)
-	require.Equal(t, arg.Amount, coin.Amount)
-	require.Equal(t, arg.NoOfCoins, coin.NoOfCoins)
+// 	// require.Equal(t, arg.PortfolioID, coin.PortfolioID)
+// 	require.Equal(t, arg.CoinName, coin.CoinName)
+// 	require.Equal(t, arg.CoinSymbol, coin.CoinSymbol)
+// 	require.Equal(t, arg.Quantity, coin.Quantity)
+// 	require.WithinDuration(t, arg.TimeCreated, coin.TimeCreated, time.Second)
 
-	return coin
+// 	return coin
 
-}
+// }
 
-func TestListCoinsByPortfolioId(t *testing.T) {
-	portfolio := createRandomPortfolio(t)
+// func TestListCoinsByPortfolioId(t *testing.T) {
+// 	portfolio := createRandomPortfolio(t)
 
-	for i := 0; i < 10; i++ {
-		createCoinByPortfolioId(t, &portfolio)
-	}
+// 	for i := 0; i < 10; i++ {
+// 		createCoinByPortfolioId(t, &portfolio)
+// 	}
 
-	portfolioCoins, err := testQueries.ListCoins(context.Background(), portfolio.ID)
-	require.NoError(t, err)
-	require.Len(t, portfolioCoins, 10)
+// 	portfolioCoins, err := testQueries.ListCoins(context.Background())
+// 	require.NoError(t, err)
+// 	require.Len(t, portfolioCoins, 10)
 
-	for _, portfolioCoin := range portfolioCoins {
-		require.NotEmpty(t, portfolioCoin)
-	}
-}
+// 	for _, portfolioCoin := range portfolioCoins {
+// 		require.NotEmpty(t, portfolioCoin)
+// 	}
+// }

@@ -3,9 +3,10 @@ package db
 import (
 	"context"
 	"database/sql"
-	"github.com/stretchr/testify/require"
 	"server/internal/utils"
 	"testing"
+
+	"github.com/stretchr/testify/require"
 )
 
 func createRandomPortfolio(t *testing.T) Portfolio {
@@ -28,6 +29,28 @@ func createRandomPortfolio(t *testing.T) Portfolio {
 
 func TestCreatePortfolio(t *testing.T) {
 	createRandomPortfolio(t)
+}
+
+func createUserAndPortfolio(t *testing.T) (User, Portfolio) {
+	user := createRandomUser(t)
+	arg := CreatePortfolioParams{
+		Name:      utils.RandomString(5),
+		AccountID: user.ID,
+	}
+	portfolio, err := testQueries.CreatePortfolio(context.Background(), arg)
+	require.NoError(t, err)
+	require.NotEmpty(t, portfolio)
+
+	require.Equal(t, arg.Name, portfolio.Name)
+	require.Equal(t, arg.AccountID, portfolio.AccountID)
+
+	require.NotZero(t, portfolio.ID)
+
+	return user, portfolio
+}
+
+func TestCreateUserAndPortfolio(t *testing.T) {
+	createUserAndPortfolio(t)
 }
 
 func TestGetPortfolio(t *testing.T) {

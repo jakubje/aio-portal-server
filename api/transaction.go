@@ -2,23 +2,24 @@ package api
 
 import (
 	"database/sql"
+	"log"
 	"net/http"
 	db "server/db/sqlc"
 	"time"
 
 	"github.com/gin-gonic/gin"
+	"github.com/google/uuid"
 )
 
 type createTransactionRequest struct {
-	AccountID        int64     `json:"account_id"`
-	CoinID           int64     `json:"coin_id"`
-	CoinName         string    `json:"coin_name"`
-	Symbol           string    `json:"symbol"`
-	Type             int32     `json:"type"`
-	Amount           int32     `json:"amount"`
-	TimeTransacted   time.Time `json:"time_transacted"`
-	PricePurchasedAt string    `json:"price_purchased_at"`
-	NoOfCoins        string    `json:"no_of_coins"`
+	AccountID    int64   `json:"account_id"`
+	PortfolioID  int64   `json:"portfolio_id"`
+	CoinID       int64   `json:"coin_id"`
+	CoinName     string  `json:"coin_name"`
+	Symbol       string  `json:"symbol"`
+	Type         int32   `json:"type"`
+	Quantity     float64 `json:"quantity"`
+	PricePerCoin float64 `json:"price_per_coin"`
 }
 
 func (server *Server) createTransaction(ctx *gin.Context) {
@@ -29,15 +30,15 @@ func (server *Server) createTransaction(ctx *gin.Context) {
 	}
 
 	arg := db.CreateTransactionParams{
-		AccountID:        req.AccountID,
-		CoinID:           req.CoinID,
-		CoinName:         req.CoinName,
-		Symbol:           req.Symbol,
-		Type:             req.Type,
-		Amount:           req.Amount,
-		TimeTransacted:   req.TimeTransacted,
-		PricePurchasedAt: req.PricePurchasedAt,
-		NoOfCoins:        req.NoOfCoins,
+		AccountID:      req.AccountID,
+		PortfolioID:    req.PortfolioID,
+		CoinID:         req.CoinID,
+		Symbol:         req.Symbol,
+		Type:           req.Type,
+		Quantity:       req.Quantity,
+		PricePerCoin:   req.PricePerCoin,
+		TimeTransacted: time.Now(),
+		TimeCreated:    time.Now(),
 	}
 	transaction, err := server.store.CreateTransaction(ctx, arg)
 	if err != nil {
@@ -48,17 +49,18 @@ func (server *Server) createTransaction(ctx *gin.Context) {
 }
 
 type getTransactionRequest struct {
-	ID int64 `uri:"id" binding:"required,min=1"`
+	ID string `uri:"id" binding:"required,min=1"`
 }
 
 func (server *Server) getTransaction(ctx *gin.Context) {
 	var req getTransactionRequest
+	log.Printf("getTransactionRequest: %v", req)
 	if err := ctx.ShouldBindUri(&req); err != nil {
 		ctx.JSON(http.StatusBadRequest, errorResponse(err))
 		return
 	}
-
-	transaction, err := server.store.GetTransaction(ctx, req.ID)
+	parsedId, _ := uuid.Parse(req.ID)
+	transaction, err := server.store.GetTransaction(ctx, parsedId)
 	if err != nil {
 		ctx.JSON(http.StatusInternalServerError, errorResponse(err))
 		return
@@ -80,9 +82,9 @@ func (server *Server) listTransactions(ctx *gin.Context) {
 	}
 
 	arg := db.ListTransactionsByAccountParams{
-		AccountID:     req.ID,
-		Limit:  req.Limit,
-		Offset: req.Offset,
+		AccountID: req.ID,
+		Limit:     req.Limit,
+		Offset:    req.Offset,
 	}
 
 	transactions, err := server.store.ListTransactionsByAccount(ctx, arg)
@@ -95,11 +97,10 @@ func (server *Server) listTransactions(ctx *gin.Context) {
 
 type listTransactionsByAccountByCoinRequest struct {
 	AccountID int64 `json:"account_id" binding:"required,min=1"`
-	CoinID    int64 `json:"coin" binding:"required"`
-	Limit     int32  `json:"limit,default=10" binding:"max=100"`
-	Offset    int32  `json:"offset,default=0"`
+	CoinID    int64 `json:"coin_id" binding:"required"`
+	Limit     int32 `json:"limit,default=10" binding:"max=100"`
+	Offset    int32 `json:"offset,default=0"`
 }
-
 
 func (server *Server) listTransactionsByAccountByCoin(ctx *gin.Context) {
 	var request listTransactionsByAccountByCoinRequest
@@ -110,7 +111,7 @@ func (server *Server) listTransactionsByAccountByCoin(ctx *gin.Context) {
 
 	arg := db.ListTransactionsByAccountByCoinParams{
 		AccountID: request.AccountID,
-		CoinID:      request.CoinID,
+		CoinID:    request.CoinID,
 		Limit:     request.Limit,
 		Offset:    request.Offset,
 	}
@@ -124,7 +125,7 @@ func (server *Server) listTransactionsByAccountByCoin(ctx *gin.Context) {
 }
 
 type deleteTransactionReqiest struct {
-	ID int64 `uri:"id" binding:"required,min=1"`
+	ID string `uri:"id" binding:"required,min=1"`
 }
 
 func (server *Server) deleteTransaction(ctx *gin.Context) {
@@ -133,8 +134,8 @@ func (server *Server) deleteTransaction(ctx *gin.Context) {
 		ctx.JSON(http.StatusBadRequest, errorResponse(err))
 		return
 	}
-
-	err := server.store.DeleteTransaction(ctx, req.ID)
+	parsedId, _ := uuid.Parse(req.ID)
+	err := server.store.DeleteTransaction(ctx, parsedId)
 	if err != nil {
 		if err == sql.ErrNoRows {
 			ctx.JSON(http.StatusNotFound, errorResponse(err))
@@ -145,4 +146,3 @@ func (server *Server) deleteTransaction(ctx *gin.Context) {
 	}
 	ctx.JSON(http.StatusOK, gin.H{"message": "transaction deleted"})
 }
-

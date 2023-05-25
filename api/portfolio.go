@@ -9,8 +9,8 @@ import (
 )
 
 type createPortfolioRequest struct {
-	Name string `json:"name"`
-	AccountID int64 `json:"account_id"`
+	Name      string `json:"name"`
+	AccountID int64  `json:"account_id"`
 }
 
 func (server *Server) createPortfolio(ctx *gin.Context) {
@@ -21,7 +21,7 @@ func (server *Server) createPortfolio(ctx *gin.Context) {
 	}
 
 	arg := db.CreatePortfolioParams{
-		Name: req.Name,
+		Name:      req.Name,
 		AccountID: req.AccountID,
 	}
 	portfolio, err := server.store.CreatePortfolio(ctx, arg)
@@ -71,19 +71,19 @@ func (server *Server) listPortfolios(ctx *gin.Context) {
 }
 
 type updatePortfolioRequest struct {
-	ID int64 `uri:"id" binding:"required,min=1"`
+	ID   int64  `json:"id"`
 	Name string `json:"name"`
 }
 
 func (server *Server) updatePortfolio(ctx *gin.Context) {
 	var req updatePortfolioRequest
-	if err := ctx.ShouldBindUri(&req); err != nil {
+	if err := ctx.ShouldBindJSON(&req); err != nil {
 		ctx.JSON(http.StatusBadRequest, errorResponse(err))
 		return
 	}
 
 	arg := db.UpdatePortfolioParams{
-		ID: req.ID,
+		ID:   req.ID,
 		Name: req.Name,
 	}
 	portfolio, err := server.store.UpdatePortfolio(ctx, arg)
@@ -117,6 +117,21 @@ func (server *Server) deletePortfolio(ctx *gin.Context) {
 	ctx.JSON(http.StatusOK, gin.H{"message": "portfolio deleted"})
 }
 
+type getRollUpByCoinByPortfolioRequest struct {
+	PortfolioID int64 `uri:"portfolio_id" binding:"required,min=1"`
+}
 
+func (server *Server) getRollUpByCoinByPortfolio(ctx *gin.Context) {
+	var req getRollUpByCoinByPortfolioRequest
+	if err := ctx.ShouldBindUri(&req); err != nil {
+		ctx.JSON(http.StatusBadRequest, errorResponse(err))
+		return
+	}
 
-
+	rollup, err := server.store.GetRollUpByCoinByPortfolio(ctx, req.PortfolioID)
+	if err != nil {
+		ctx.JSON(http.StatusInternalServerError, errorResponse(err))
+		return
+	}
+	ctx.JSON(http.StatusOK, rollup)
+}

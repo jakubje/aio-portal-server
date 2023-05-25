@@ -8,7 +8,6 @@ import (
 	"github.com/gin-gonic/gin"
 )
 
-
 type createWatchlistRequest struct {
 	Name      string `json:"name"`
 	AccountID int64  `json:"account_id"`
@@ -55,7 +54,6 @@ func (server *Server) deleteWatchlist(ctx *gin.Context) {
 	ctx.JSON(http.StatusOK, gin.H{"message": "watchlist deleted"})
 }
 
-
 type getWatchlistRequest struct {
 	ID int64 `uri:"id" binding:"required,min=1"`
 }
@@ -94,22 +92,21 @@ func (server *Server) listWatchlists(ctx *gin.Context) {
 	ctx.JSON(http.StatusOK, watchlists)
 }
 
-
 type updateWatchlistRequest struct {
-	ID        int64  `uri:"id" binding:"required,min=1"`
-	Name      string `json:"name"`
+	ID   int64  `json:"id" binding:"required"`
+	Name string `json:"name"`
 }
 
 func (server *Server) updateWatchlist(ctx *gin.Context) {
 	var req updateWatchlistRequest
-	if err := ctx.ShouldBindUri(&req); err != nil {
+	if err := ctx.ShouldBindJSON(&req); err != nil {
 		ctx.JSON(http.StatusBadRequest, errorResponse(err))
 		return
 	}
 
 	arg := db.UpdateWatchlistParams{
-		ID:        req.ID,
-		Name:      req.Name,
+		ID:   req.ID,
+		Name: req.Name,
 	}
 	watchlist, err := server.store.UpdateWatchlist(ctx, arg)
 	if err != nil {
@@ -122,4 +119,3 @@ func (server *Server) updateWatchlist(ctx *gin.Context) {
 	}
 	ctx.JSON(http.StatusOK, watchlist)
 }
-

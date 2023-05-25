@@ -2,19 +2,19 @@ package db
 
 import (
 	"context"
-	"database/sql"
-	"github.com/stretchr/testify/require"
 	"server/internal/utils"
 	"testing"
+
+	"github.com/stretchr/testify/require"
 )
 
 func createRandomFootball(t *testing.T) (Football, User) {
 	user := createRandomUser(t)
 	arg := CreateFootballParams{
 		AccountID: user.ID,
-		Team:      sql.NullString{},
-		League:    sql.NullString{},
-		Country:   sql.NullString{},
+		Team:      utils.RandomString(5),
+		League:    utils.RandomString(5),
+		Country:   utils.RandomString(5),
 	}
 
 	football, err := testQueries.CreateFootball(context.Background(), arg)
@@ -53,9 +53,9 @@ func TestUpdateFootball(t *testing.T) {
 
 	arg := UpdateFootballParams{
 		AccountID: user.ID,
-		Team:      sql.NullString{String: utils.RandomString(5), Valid: true},
-		League:    sql.NullString{String: utils.RandomString(5), Valid: true},
-		Country:   sql.NullString{String: utils.RandomString(5), Valid: true},
+		Team:      utils.RandomString(5),
+		League:    utils.RandomString(5),
+		Country:   utils.RandomString(5),
 	}
 
 	football2, err := testQueries.UpdateFootball(context.Background(), arg)
