@@ -2,8 +2,8 @@ package routes
 
 import (
 	"encoding/json"
+	"github.com/jakub/aioportal/server/internal/database"
 	"net/http"
-	"server/internal/database"
 
 	"github.com/go-chi/chi/v5"
 	"github.com/go-chi/chi/v5/middleware"

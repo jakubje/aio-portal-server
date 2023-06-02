@@ -2,8 +2,8 @@ package api
 
 import (
 	"database/sql"
+	db "github.com/jakub/aioportal/server/db/sqlc"
 	"net/http"
-	db "server/db/sqlc"
 
 	"github.com/gin-gonic/gin"
 )
@@ -14,7 +14,6 @@ type createUserRequest struct {
 	LastName string `json:"last_name" binding:"required"`
 	Password string `json:"password" binding:"required"`
 }
-
 
 func (server *Server) createUser(ctx *gin.Context) {
 	var req createUserRequest
@@ -53,7 +52,7 @@ func (server *Server) getUser(ctx *gin.Context) {
 		if err == sql.ErrNoRows {
 			ctx.JSON(http.StatusNotFound, errorResponse(err))
 			return
-		} 
+		}
 
 		ctx.JSON(http.StatusInternalServerError, errorResponse(err))
 		return
@@ -62,9 +61,8 @@ func (server *Server) getUser(ctx *gin.Context) {
 }
 
 type listUserRequest struct {
-	PageID int32 `form:"page_id" binding:"required,min=1"`
+	PageID   int32 `form:"page_id" binding:"required,min=1"`
 	PageSize int32 `form:"page_size" binding:"required,min=5,max=20"`
-
 }
 
 func (server *Server) listUsers(ctx *gin.Context) {
@@ -74,11 +72,11 @@ func (server *Server) listUsers(ctx *gin.Context) {
 		return
 	}
 	arg := db.ListUsersParams{
-		Limit: req.PageSize,
+		Limit:  req.PageSize,
 		Offset: (req.PageID - 1) * req.PageSize,
 	}
 
-	users, err := server.store.ListUsers(ctx,arg)
+	users, err := server.store.ListUsers(ctx, arg)
 	if err != nil {
 		ctx.JSON(http.StatusInternalServerError, errorResponse(err))
 		return
@@ -110,15 +108,14 @@ func (server *Server) deleteUser(ctx *gin.Context) {
 }
 
 type updateUserRequest struct {
-	ID int64 `json:"id" binding:"required,min=1"`
-	Email string `json:"email" binding:"required"`
-	Name string `json:"name" binding:"required"`
+	ID       int64  `json:"id" binding:"required,min=1"`
+	Email    string `json:"email" binding:"required"`
+	Name     string `json:"name" binding:"required"`
 	LastName string `json:"last_name" binding:"required"`
 	Password string `json:"password" binding:"required"`
 }
 
-
-func  (server *Server) updateUser(ctx *gin.Context) {
+func (server *Server) updateUser(ctx *gin.Context) {
 	var req updateUserRequest
 
 	if err := ctx.ShouldBindJSON(&req); err != nil {
@@ -127,9 +124,9 @@ func  (server *Server) updateUser(ctx *gin.Context) {
 	}
 
 	arg := db.UpdateUserParams{
-		ID: req.ID,
-		Email: req.Email,
-		Name: req.Name,
+		ID:       req.ID,
+		Email:    req.Email,
+		Name:     req.Name,
 		LastName: req.LastName,
 		Password: req.Password,
 	}

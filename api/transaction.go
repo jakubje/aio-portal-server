@@ -2,9 +2,9 @@ package api
 
 import (
 	"database/sql"
+	db "github.com/jakub/aioportal/server/db/sqlc"
 	"log"
 	"net/http"
-	db "server/db/sqlc"
 	"time"
 
 	"github.com/gin-gonic/gin"
@@ -14,7 +14,6 @@ import (
 type createTransactionRequest struct {
 	AccountID    int64   `json:"account_id"`
 	PortfolioID  int64   `json:"portfolio_id"`
-	CoinID       int64   `json:"coin_id"`
 	CoinName     string  `json:"coin_name"`
 	Symbol       string  `json:"symbol"`
 	Type         int32   `json:"type"`
@@ -32,11 +31,10 @@ func (server *Server) createTransaction(ctx *gin.Context) {
 	arg := db.CreateTransactionParams{
 		AccountID:      req.AccountID,
 		PortfolioID:    req.PortfolioID,
-		CoinID:         req.CoinID,
 		Symbol:         req.Symbol,
 		Type:           req.Type,
-		Quantity:       req.Quantity,
 		PricePerCoin:   req.PricePerCoin,
+		Quantity:       req.Quantity,
 		TimeTransacted: time.Now(),
 		TimeCreated:    time.Now(),
 	}
@@ -96,10 +94,10 @@ func (server *Server) listTransactions(ctx *gin.Context) {
 }
 
 type listTransactionsByAccountByCoinRequest struct {
-	AccountID int64 `json:"account_id" binding:"required,min=1"`
-	CoinID    int64 `json:"coin_id" binding:"required"`
-	Limit     int32 `json:"limit,default=10" binding:"max=100"`
-	Offset    int32 `json:"offset,default=0"`
+	AccountID int64  `json:"account_id" binding:"required,min=1"`
+	Symbol    string `json:"symbol" binding:"required"`
+	Limit     int32  `json:"limit,default=10" binding:"max=100"`
+	Offset    int32  `json:"offset,default=0"`
 }
 
 func (server *Server) listTransactionsByAccountByCoin(ctx *gin.Context) {
@@ -111,7 +109,7 @@ func (server *Server) listTransactionsByAccountByCoin(ctx *gin.Context) {
 
 	arg := db.ListTransactionsByAccountByCoinParams{
 		AccountID: request.AccountID,
-		CoinID:    request.CoinID,
+		Symbol:    request.Symbol,
 		Limit:     request.Limit,
 		Offset:    request.Offset,
 	}

@@ -3,7 +3,7 @@ package db
 import (
 	"context"
 	"database/sql"
-	"server/internal/utils"
+	"github.com/jakub/aioportal/server/internal/utils"
 	"testing"
 	"time"
 
@@ -12,12 +12,11 @@ import (
 
 func createRandomTransaction(t *testing.T) Transaction {
 	user, portfolio := createUserAndPortfolio(t)
-	coin := createRandomPortfolioCoin(t)
+	coin := utils.RandomString(3)
 	arg := CreateTransactionParams{
 		AccountID:      user.ID,
 		PortfolioID:    portfolio.ID,
-		CoinID:         coin.ID,
-		Symbol:         coin.CoinSymbol,
+		Symbol:         coin,
 		Type:           0,
 		Quantity:       float64(utils.RandomInt()),
 		PricePerCoin:   float64(utils.RandomInt()),
@@ -30,7 +29,6 @@ func createRandomTransaction(t *testing.T) Transaction {
 
 	require.Equal(t, arg.AccountID, transaction.AccountID)
 	require.Equal(t, arg.PortfolioID, transaction.PortfolioID)
-	require.Equal(t, arg.CoinID, transaction.CoinID)
 	require.Equal(t, arg.Symbol, transaction.Symbol)
 	require.Equal(t, arg.Type, transaction.Type)
 	require.Equal(t, arg.Quantity, transaction.Quantity)
@@ -52,7 +50,6 @@ func TestGetTransaction(t *testing.T) {
 
 	require.Equal(t, transaction1.AccountID, transaction2.AccountID)
 	require.Equal(t, transaction1.PortfolioID, transaction2.PortfolioID)
-	require.Equal(t, transaction1.CoinID, transaction2.CoinID)
 	require.Equal(t, transaction1.Symbol, transaction2.Symbol)
 	require.Equal(t, transaction1.Type, transaction2.Type)
 	require.Equal(t, transaction1.Quantity, transaction2.Quantity)
@@ -73,13 +70,12 @@ func TestDeleteTransaction(t *testing.T) {
 }
 
 func createTransactionsForAccount(t *testing.T, user *User, portfolio *Portfolio) Transaction {
-	coin := createRandomPortfolioCoin(t)
+	coin := utils.RandomString(3)
 
 	arg := CreateTransactionParams{
 		PortfolioID:    portfolio.ID,
 		AccountID:      user.ID,
-		CoinID:         coin.ID,
-		Symbol:         coin.CoinSymbol,
+		Symbol:         coin,
 		Type:           0,
 		Quantity:       float64(utils.RandomInt()),
 		PricePerCoin:   float64(utils.RandomInt()),
@@ -92,7 +88,6 @@ func createTransactionsForAccount(t *testing.T, user *User, portfolio *Portfolio
 
 	require.Equal(t, arg.AccountID, transaction.AccountID)
 	require.Equal(t, arg.PortfolioID, transaction.PortfolioID)
-	require.Equal(t, arg.CoinID, transaction.CoinID)
 	require.Equal(t, arg.Symbol, transaction.Symbol)
 	require.Equal(t, arg.Type, transaction.Type)
 	require.Equal(t, arg.Quantity, transaction.Quantity)
@@ -124,13 +119,12 @@ func TestListTransactionsByAccount(t *testing.T) {
 
 }
 
-func createTransactionsForAccountForCoin(t *testing.T, user *User, portfolio *Portfolio, coin *Coin) Transaction {
+func createTransactionsForAccountForCoin(t *testing.T, user *User, portfolio *Portfolio, coin string) Transaction {
 
 	arg := CreateTransactionParams{
 		AccountID:      user.ID,
 		PortfolioID:    portfolio.ID,
-		CoinID:         coin.ID,
-		Symbol:         coin.CoinSymbol,
+		Symbol:         coin,
 		Type:           0,
 		Quantity:       float64(utils.RandomInt()),
 		PricePerCoin:   float64(utils.RandomInt()),
@@ -143,7 +137,6 @@ func createTransactionsForAccountForCoin(t *testing.T, user *User, portfolio *Po
 
 	require.Equal(t, arg.AccountID, transaction.AccountID)
 	require.Equal(t, arg.PortfolioID, transaction.PortfolioID)
-	require.Equal(t, arg.CoinID, transaction.CoinID)
 	require.Equal(t, arg.Symbol, transaction.Symbol)
 	require.Equal(t, arg.Type, transaction.Type)
 	require.Equal(t, arg.Quantity, transaction.Quantity)
@@ -155,17 +148,17 @@ func createTransactionsForAccountForCoin(t *testing.T, user *User, portfolio *Po
 
 func TestListTransactionsByAccountByCoin(t *testing.T) {
 	user, portfolio := createUserAndPortfolio(t)
-	coin := createRandomPortfolioCoin(t)
+	coin := utils.RandomString(3)
 
 	arg := ListTransactionsByAccountByCoinParams{
 		AccountID: user.ID,
-		CoinID:    coin.ID,
+		Symbol:    coin,
 		Limit:     10,
 		Offset:    0,
 	}
 
 	for i := 0; i < 10; i++ {
-		createTransactionsForAccountForCoin(t, &user, &portfolio, &coin)
+		createTransactionsForAccountForCoin(t, &user, &portfolio, coin)
 	}
 
 	userTransactions, err := testQueries.ListTransactionsByAccountByCoin(context.Background(), arg)
@@ -181,8 +174,8 @@ func TestGetRollUpByCoinByPortfolio(t *testing.T) {
 	user, portfolio := createUserAndPortfolio(t)
 
 	for i := 0; i < 10; i++ {
-		coin := createRandomPortfolioCoin(t)
-		createTransactionsForAccountForCoin(t, &user, &portfolio, &coin)
+		coin := utils.RandomString(3)
+		createTransactionsForAccountForCoin(t, &user, &portfolio, coin)
 	}
 
 	rollUp, err := testQueries.GetRollUpByCoinByPortfolio(context.Background(), portfolio.ID)

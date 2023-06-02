@@ -3,11 +3,11 @@ package database
 import (
 	"database/sql"
 	"fmt"
+	"github.com/jakub/aioportal/server/internal/models"
+	"github.com/jakub/aioportal/server/internal/utils"
 	"io"
 	"log"
 	"os"
-	"server/internal/models"
-	"server/internal/utils"
 
 	"github.com/dgrijalva/jwt-go"
 	"github.com/go-chi/jwtauth/v5"
@@ -22,8 +22,6 @@ const collectionUsers = "users"
 
 var secretKey string
 
-
-
 func init() {
 
 	//// Load env file
@@ -31,10 +29,10 @@ func init() {
 	if err != nil {
 		log.Fatal("Error loading .env file")
 	}
-	
+
 	//connectionString := os.Getenv("MONGODB_URI")
 	//secretKey = os.Getenv("SECRET_KEY")
-	dbDriver :=  os.Getenv("DB_DRIVER")
+	dbDriver := os.Getenv("DB_DRIVER")
 	dbSource := os.Getenv("DB_SOURCE")
 
 	_, err = sql.Open(dbDriver, dbSource)

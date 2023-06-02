@@ -2,7 +2,7 @@ package db
 
 import (
 	"context"
-	"server/internal/utils"
+	"github.com/jakub/aioportal/server/internal/utils"
 	"testing"
 
 	"github.com/stretchr/testify/require"

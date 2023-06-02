@@ -1,8 +1,8 @@
 package api
 
 import (
+	db "github.com/jakub/aioportal/server/db/sqlc"
 	"net/http"
-	db "server/db/sqlc"
 
 	"github.com/gin-gonic/gin"
 )

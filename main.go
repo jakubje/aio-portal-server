@@ -2,10 +2,10 @@ package main
 
 import (
 	"database/sql"
+	"github.com/jakub/aioportal/server/api"
+	db "github.com/jakub/aioportal/server/db/sqlc"
+	"github.com/jakub/aioportal/server/util"
 	"log"
-	"server/api"
-	db "server/db/sqlc"
-	"server/util"
 
 	_ "github.com/lib/pq"
 )

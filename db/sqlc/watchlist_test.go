@@ -3,8 +3,8 @@ package db
 import (
 	"context"
 	"database/sql"
+	"github.com/jakub/aioportal/server/internal/utils"
 	"github.com/stretchr/testify/require"
-	"server/internal/utils"
 	"testing"
 )
 

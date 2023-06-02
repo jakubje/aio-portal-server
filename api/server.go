@@ -1,7 +1,7 @@
 package api
 
 import (
-	db "server/db/sqlc"
+	db "github.com/jakub/aioportal/server/db/sqlc"
 
 	"github.com/gin-gonic/gin"
 )
@@ -35,12 +35,12 @@ func NewServer(store db.Store) *Server {
 	router.DELETE("/portfolio/:id", server.deletePortfolio)
 
 	// coint routes
-	// need a generic coins database and one for portfolio
-	router.POST("/coin", server.addCoin)
-	router.POST("/coin/update", server.updateCoin)
-	router.GET("/coin/:id", server.getCoin)
-	router.GET("/coins", server.listCoins)
-	router.DELETE("/coin/:id", server.deleteCoin)
+	//// need a generic coins database and one for portfolio
+	//router.POST("/coin", server.addCoin)
+	//router.POST("/coin/update", server.updateCoin)
+	//router.GET("/coin/:id", server.getCoin)
+	//router.GET("/coins", server.listCoins)
+	//router.DELETE("/coin/:id", server.deleteCoin)
 
 	// transaction routes
 	router.POST("/transaction", server.createTransaction)
