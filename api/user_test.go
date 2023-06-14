@@ -102,6 +102,150 @@ func TestGetUserAPI(t *testing.T) {
 	}
 }
 
+func TestDeleteUserAPI(t *testing.T) {
+	user := randomUser()
+
+	testCases := []struct {
+		name          string
+		accountID     int64
+		buildStubs    func(store *mockdb.MockStore)
+		checkResponse func(t *testing.T, recorded *httptest.ResponseRecorder)
+	}{
+		{
+			name:      "OK",
+			accountID: user.ID,
+			buildStubs: func(store *mockdb.MockStore) {
+				store.EXPECT().
+					DeleteUser(gomock.Any(), gomock.Eq(user.ID)).
+					Times(1)
+			},
+			checkResponse: func(t *testing.T, recorded *httptest.ResponseRecorder) {
+				require.Equal(t, http.StatusOK, recorded.Code)
+				requireBodyDeleteAccount(t, recorded.Body, "user deleted")
+			},
+		},
+	}
+	for i := range testCases {
+		tc := testCases[i]
+
+		t.Run(tc.name, func(t *testing.T) {
+			ctrl := gomock.NewController(t)
+			defer ctrl.Finish()
+
+			store := mockdb.NewMockStore(ctrl)
+			tc.buildStubs(store)
+
+			server := NewServer(store)
+			recorder := httptest.NewRecorder()
+
+			url := fmt.Sprintf("/user/%d", tc.accountID)
+			request, err := http.NewRequest(http.MethodDelete, url, nil)
+			require.NoError(t, err)
+
+			server.router.ServeHTTP(recorder, request)
+			tc.checkResponse(t, recorder)
+		})
+
+	}
+}
+
+func TestListUsersAPI(t *testing.T) {
+
+	n := 5
+	users := make([]db.User, n)
+	for i := 0; i < n; i++ {
+		users[i] = randomUser()
+	}
+
+	type Query struct {
+		pageID   int
+		pageSize int
+	}
+	testCases := []struct {
+		name          string
+		query         Query
+		buildStubs    func(store *mockdb.MockStore)
+		checkResponse func(recoder *httptest.ResponseRecorder)
+	}{
+		{
+			name: "InternalError",
+			query: Query{
+				pageID:   1,
+				pageSize: n,
+			},
+
+			buildStubs: func(store *mockdb.MockStore) {
+				store.EXPECT().
+					ListUsers(gomock.Any(), gomock.Any()).
+					Times(1).
+					Return([]db.User{}, sql.ErrConnDone)
+			},
+			checkResponse: func(recorder *httptest.ResponseRecorder) {
+				require.Equal(t, http.StatusInternalServerError, recorder.Code)
+			},
+		},
+		{
+			name: "InvalidPageID",
+			query: Query{
+				pageID:   -1,
+				pageSize: n,
+			},
+
+			buildStubs: func(store *mockdb.MockStore) {
+				store.EXPECT().
+					ListUsers(gomock.Any(), gomock.Any()).
+					Times(0)
+			},
+			checkResponse: func(recorder *httptest.ResponseRecorder) {
+				require.Equal(t, http.StatusBadRequest, recorder.Code)
+			},
+		},
+		{
+			name: "InvalidPageSize",
+			query: Query{
+				pageID:   1,
+				pageSize: 100000,
+			},
+			buildStubs: func(store *mockdb.MockStore) {
+				store.EXPECT().
+					ListUsers(gomock.Any(), gomock.Any()).
+					Times(0)
+			},
+			checkResponse: func(recorder *httptest.ResponseRecorder) {
+				require.Equal(t, http.StatusBadRequest, recorder.Code)
+			},
+		},
+	}
+	for i := range testCases {
+		tc := testCases[i]
+
+		t.Run(tc.name, func(t *testing.T) {
+			ctrl := gomock.NewController(t)
+			defer ctrl.Finish()
+
+			store := mockdb.NewMockStore(ctrl)
+			tc.buildStubs(store)
+
+			server := NewServer(store)
+			recorder := httptest.NewRecorder()
+
+			url := "/users"
+			request, err := http.NewRequest(http.MethodGet, url, nil)
+			require.NoError(t, err)
+
+			// Add query parameters to request URL
+			q := request.URL.Query()
+			q.Add("page_id", fmt.Sprintf("%d", tc.query.pageID))
+			q.Add("page_size", fmt.Sprintf("%d", tc.query.pageSize))
+			request.URL.RawQuery = q.Encode()
+
+			//tc.setupAuth(t, request, server.tokenMaker)
+			server.router.ServeHTTP(recorder, request)
+			tc.checkResponse(recorder)
+		})
+	}
+}
+
 func randomUser() db.User {
 	return db.User{
 		ID:       int64(utils.RandomInt()),
@@ -120,4 +264,18 @@ func requireBodyMatchAccount(t *testing.T, body *bytes.Buffer, user db.User) {
 	err = json.Unmarshal(data, &gotUser)
 	require.NoError(t, err)
 	require.Equal(t, user, gotUser)
+}
+
+func requireBodyDeleteAccount(t *testing.T, body *bytes.Buffer, message string) {
+	data, err := io.ReadAll(body)
+	require.NoError(t, err)
+
+	type deleteMessage struct {
+		Message string `json:"message"`
+	}
+	var deleteResponse deleteMessage
+
+	err = json.Unmarshal(data, &deleteResponse)
+	require.NoError(t, err)
+	require.Equal(t, message, deleteResponse.Message)
 }

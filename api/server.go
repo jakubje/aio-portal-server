@@ -21,7 +21,7 @@ func NewServer(store db.Store) *Server {
 	router.POST("/user", server.createUser)
 	router.POST("/user/update", server.updateUser)
 	router.GET("/user/:id", server.getUser)
-	router.GET("/user", server.listUsers)
+	router.GET("/users", server.listUsers)
 	// related to football so will need to check db migration
 	router.DELETE("/user/:id", server.deleteUser)
 

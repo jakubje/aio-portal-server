@@ -40,12 +40,13 @@ type Transaction struct {
 }
 
 type User struct {
-	ID        int64     `json:"id"`
-	Email     string    `json:"email"`
-	Name      string    `json:"name"`
-	LastName  string    `json:"last_name"`
-	Password  string    `json:"password"`
-	CreatedAt time.Time `json:"created_at"`
+	ID                int64     `json:"id"`
+	Email             string    `json:"email"`
+	Name              string    `json:"name"`
+	LastName          string    `json:"last_name"`
+	Password          string    `json:"password"`
+	PasswordChangedAt time.Time `json:"password_changed_at"`
+	CreatedAt         time.Time `json:"created_at"`
 }
 
 type Watchlist struct {

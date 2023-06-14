@@ -15,7 +15,7 @@ INSERT INTO users (
 ) VALUES (
              $1, $2, $3, $4
          )
-RETURNING id, email, name, last_name, password, created_at
+RETURNING id, email, name, last_name, password, password_changed_at, created_at
 `
 
 type CreateUserParams struct {
@@ -39,6 +39,7 @@ func (q *Queries) CreateUser(ctx context.Context, arg CreateUserParams) (User, e
 		&i.Name,
 		&i.LastName,
 		&i.Password,
+		&i.PasswordChangedAt,
 		&i.CreatedAt,
 	)
 	return i, err
@@ -55,7 +56,7 @@ func (q *Queries) DeleteUser(ctx context.Context, id int64) error {
 }
 
 const getUser = `-- name: GetUser :one
-SELECT id, email, name, last_name, password, created_at FROM users
+SELECT id, email, name, last_name, password, password_changed_at, created_at FROM users
 WHERE id = $1 LIMIT 1
 `
 
@@ -68,13 +69,14 @@ func (q *Queries) GetUser(ctx context.Context, id int64) (User, error) {
 		&i.Name,
 		&i.LastName,
 		&i.Password,
+		&i.PasswordChangedAt,
 		&i.CreatedAt,
 	)
 	return i, err
 }
 
 const listUsers = `-- name: ListUsers :many
-SELECT id, email, name, last_name, password, created_at FROM users
+SELECT id, email, name, last_name, password, password_changed_at, created_at FROM users
 ORDER BY id
 LIMIT $1
 OFFSET $2
@@ -100,6 +102,7 @@ func (q *Queries) ListUsers(ctx context.Context, arg ListUsersParams) ([]User, e
 			&i.Name,
 			&i.LastName,
 			&i.Password,
+			&i.PasswordChangedAt,
 			&i.CreatedAt,
 		); err != nil {
 			return nil, err
@@ -123,7 +126,7 @@ set
     last_name = COALESCE($4, last_name), 
     password = COALESCE($5, password)
 WHERE id = $1
-RETURNING id, email, name, last_name, password, created_at
+RETURNING id, email, name, last_name, password, password_changed_at, created_at
 `
 
 type UpdateUserParams struct {
@@ -149,6 +152,7 @@ func (q *Queries) UpdateUser(ctx context.Context, arg UpdateUserParams) (User, e
 		&i.Name,
 		&i.LastName,
 		&i.Password,
+		&i.PasswordChangedAt,
 		&i.CreatedAt,
 	)
 	return i, err

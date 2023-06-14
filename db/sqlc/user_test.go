@@ -4,6 +4,7 @@ import (
 	"context"
 	"database/sql"
 	"github.com/jakub/aioportal/server/internal/utils"
+	"github.com/jakub/aioportal/server/util"
 	"testing"
 	"time"
 
@@ -11,11 +12,14 @@ import (
 )
 
 func createRandomUser(t *testing.T) User {
+	hashedPassword, err := util.HashPassword(utils.RandomString(8))
+	require.NoError(t, err)
+
 	arg := CreateUserParams{
 		Email:    utils.RandomEmail(),
 		Name:     utils.RandomString(5),
 		LastName: utils.RandomString(5),
-		Password: utils.RandomString(8),
+		Password: hashedPassword,
 	}
 	user, err := testQueries.CreateUser(context.Background(), arg)
 	require.NoError(t, err)
