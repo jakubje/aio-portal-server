@@ -1,29 +1,49 @@
 package api
 
 import (
+	"fmt"
 	db "github.com/jakub/aioportal/server/db/sqlc"
+	"github.com/jakub/aioportal/server/token"
+	"github.com/jakub/aioportal/server/util"
 
 	"github.com/gin-gonic/gin"
 )
 
 // Server server HTTP requests for our service
 type Server struct {
-	store  db.Store
-	router *gin.Engine
+	config     util.Config
+	store      db.Store
+	tokenMaker token.Maker
+	router     *gin.Engine
 }
 
 // NewServer creates a new HTTP server and setup routing
-func NewServer(store db.Store) *Server {
-	server := &Server{store: store}
+func NewServer(config util.Config, store db.Store) (*Server, error) {
+	tokenMaker, err := token.NewPasetoMaker(config.TokenSymmetricKey)
+	if err != nil {
+		return nil, fmt.Errorf("cannot create token maker: %w", err)
+	}
+
+	server := &Server{
+		config:     config,
+		store:      store,
+		tokenMaker: tokenMaker,
+	}
+	server.setupRouter()
+	return server, nil
+}
+
+func (server *Server) setupRouter() {
 	router := gin.Default()
 
 	// user routes
-	router.POST("/user", server.createUser)
-	router.POST("/user/update", server.updateUser)
-	router.GET("/user/:id", server.getUser)
+	router.POST("/users/login", server.loginUser)
+	router.POST("/users", server.createUser)
+	router.POST("/users/update/:id", server.updateUser)
+	router.POST("/user", server.getUser)
 	router.GET("/users", server.listUsers)
 	// related to football so will need to check db migration
-	router.DELETE("/user/:id", server.deleteUser)
+	router.DELETE("/users/:id", server.deleteUser)
 
 	// portfolio routes
 	router.POST("/portfolio", server.createPortfolio)
@@ -69,7 +89,6 @@ func NewServer(store db.Store) *Server {
 	router.GET("/football/:id", server.getFootball)
 
 	server.router = router
-	return server
 }
 
 func (server *Server) Start(address string) error {

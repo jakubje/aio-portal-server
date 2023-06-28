@@ -26,7 +26,7 @@ type Querier interface {
 	GetPortfolio(ctx context.Context, id int64) (Portfolio, error)
 	GetRollUpByCoinByPortfolio(ctx context.Context, portfolioID int64) ([]GetRollUpByCoinByPortfolioRow, error)
 	GetTransaction(ctx context.Context, id uuid.UUID) (Transaction, error)
-	GetUser(ctx context.Context, id int64) (User, error)
+	GetUser(ctx context.Context, email string) (User, error)
 	GetWatchlist(ctx context.Context, id int64) (Watchlist, error)
 	GetWatchlistCoin(ctx context.Context, id int64) (WatchlistCoin, error)
 	ListPortforlios(ctx context.Context, accountID int64) ([]Portfolio, error)

@@ -3,10 +3,11 @@ package db
 import (
 	"context"
 	"database/sql"
-	"github.com/jakub/aioportal/server/internal/utils"
-	"github.com/jakub/aioportal/server/util"
 	"testing"
 	"time"
+
+	"github.com/jakub/aioportal/server/internal/utils"
+	"github.com/jakub/aioportal/server/util"
 
 	"github.com/stretchr/testify/require"
 )
@@ -43,7 +44,7 @@ func TestCreateUser(t *testing.T) {
 func TestGetUser(t *testing.T) {
 	//Create account
 	account1 := createRandomUser(t)
-	account2, err := testQueries.GetUser(context.Background(), account1.ID)
+	account2, err := testQueries.GetUser(context.Background(), account1.Email)
 	require.NoError(t, err)
 	require.NotEmpty(t, account2)
 
@@ -60,6 +61,7 @@ func TestUpdateUser(t *testing.T) {
 
 	arg := UpdateUserParams{
 		ID:       account1.ID,
+		Email:    account1.Email,
 		Name:     utils.RandomString(5),
 		LastName: utils.RandomString(5),
 		Password: utils.RandomString(8),
@@ -82,7 +84,7 @@ func TestDeleteUser(t *testing.T) {
 	err := testQueries.DeleteUser(context.Background(), account1.ID)
 	require.NoError(t, err)
 
-	account2, err := testQueries.GetUser(context.Background(), account1.ID)
+	account2, err := testQueries.GetUser(context.Background(), account1.Email)
 	require.Error(t, err)
 	require.EqualError(t, err, sql.ErrNoRows.Error())
 	require.Empty(t, account2)
