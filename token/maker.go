@@ -1,6 +1,8 @@
 package token
 
-import "time"
+import (
+	"time"
+)
 
 // Maker is an interface for managing tokens
 type Maker interface {

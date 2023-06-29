@@ -3,9 +3,10 @@ package db
 import (
 	"context"
 	"database/sql"
-	"github.com/jakub/aioportal/server/internal/utils"
 	"testing"
 	"time"
+
+	"github.com/jakub/aioportal/server/internal/utils"
 
 	"github.com/stretchr/testify/require"
 )
@@ -151,10 +152,9 @@ func TestListTransactionsByAccountByCoin(t *testing.T) {
 	coin := utils.RandomString(3)
 
 	arg := ListTransactionsByAccountByCoinParams{
-		AccountID: user.ID,
-		Symbol:    coin,
-		Limit:     10,
-		Offset:    0,
+		Symbol: coin,
+		Limit:  10,
+		Offset: 0,
 	}
 
 	for i := 0; i < 10; i++ {

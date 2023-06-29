@@ -2,6 +2,7 @@ package api
 
 import (
 	"database/sql"
+	"errors"
 	db "github.com/jakub/aioportal/server/db/sqlc"
 	"net/http"
 
@@ -9,8 +10,7 @@ import (
 )
 
 type createPortfolioRequest struct {
-	Name      string `json:"name"`
-	AccountID int64  `json:"account_id"`
+	Name string `json:"name"`
 }
 
 func (server *Server) createPortfolio(ctx *gin.Context) {
@@ -20,9 +20,15 @@ func (server *Server) createPortfolio(ctx *gin.Context) {
 		return
 	}
 
+	accountId, exists := server.ctx.Get("accountId")
+	if !exists {
+		ctx.JSON(http.StatusUnauthorized, errorResponse(errors.New("missing account id")))
+		return
+	}
+
 	arg := db.CreatePortfolioParams{
 		Name:      req.Name,
-		AccountID: req.AccountID,
+		AccountID: accountId.(int64),
 	}
 	portfolio, err := server.store.CreatePortfolio(ctx, arg)
 	if err != nil {
@@ -36,6 +42,13 @@ type getPortfolioRequest struct {
 	ID int64 `uri:"id" binding:"required,min=1"`
 }
 
+type portfolioResponse struct {
+	Name       string `json:"name"`
+	Holdings   int32  `json:"holdings"`
+	Change24H  int32  `json:"change_24h"`
+	ProfitLoss int32  `json:"profit_loss"`
+}
+
 func (server *Server) getPortfolio(ctx *gin.Context) {
 	var req getPortfolioRequest
 	if err := ctx.ShouldBindUri(&req); err != nil {
@@ -43,12 +56,28 @@ func (server *Server) getPortfolio(ctx *gin.Context) {
 		return
 	}
 
-	portfolio, err := server.store.GetPortfolio(ctx, req.ID)
+	accountId, exists := server.ctx.Get("accountId")
+	if !exists {
+		ctx.JSON(http.StatusUnauthorized, errorResponse(errors.New("missing account id")))
+		return
+	}
+	arg := db.GetPortfolioParams{
+		ID:        req.ID,
+		AccountID: accountId.(int64),
+	}
+
+	portfolio, err := server.store.GetPortfolio(ctx, arg)
 	if err != nil {
 		ctx.JSON(http.StatusInternalServerError, errorResponse(err))
 		return
 	}
-	ctx.JSON(http.StatusOK, portfolio)
+	rsp := portfolioResponse{
+		Name:       portfolio.Name,
+		Holdings:   portfolio.Holdings,
+		Change24H:  portfolio.Change24h,
+		ProfitLoss: portfolio.ProfitLoss,
+	}
+	ctx.JSON(http.StatusOK, rsp)
 }
 
 type listPortfoliosRequest struct {
@@ -56,13 +85,17 @@ type listPortfoliosRequest struct {
 }
 
 func (server *Server) listPortfolios(ctx *gin.Context) {
-	var req listPortfoliosRequest
-	if err := ctx.ShouldBindUri(&req); err != nil {
-		ctx.JSON(http.StatusBadRequest, errorResponse(err))
+	//var req listPortfoliosRequest
+	//if err := ctx.ShouldBindUri(&req); err != nil {
+	//	ctx.JSON(http.StatusBadRequest, errorResponse(err))
+	//	return
+	//}
+	accountId, exists := server.ctx.Get("accountId")
+	if !exists {
+		ctx.JSON(http.StatusUnauthorized, errorResponse(errors.New("missing account id")))
 		return
 	}
-
-	portfolios, err := server.store.ListPortforlios(ctx, req.AccountID)
+	portfolios, err := server.store.ListPortforlios(ctx, accountId.(int64))
 	if err != nil {
 		ctx.JSON(http.StatusInternalServerError, errorResponse(err))
 		return
@@ -105,7 +138,17 @@ func (server *Server) deletePortfolio(ctx *gin.Context) {
 		return
 	}
 
-	err := server.store.DeletePortfolio(ctx, req.ID)
+	accountId, exists := server.ctx.Get("accountId")
+	if !exists {
+		ctx.JSON(http.StatusUnauthorized, errorResponse(errors.New("missing account id")))
+		return
+	}
+	arg := db.DeletePortfolioParams{
+		ID:        req.ID,
+		AccountID: accountId.(int64),
+	}
+
+	err := server.store.DeletePortfolio(ctx, arg)
 	if err != nil {
 		if err == sql.ErrNoRows {
 			ctx.JSON(http.StatusNotFound, errorResponse(err))

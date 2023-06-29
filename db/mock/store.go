@@ -127,7 +127,7 @@ func (mr *MockStoreMockRecorder) CreateWatchlistCoins(arg0, arg1 interface{}) *g
 }
 
 // DeletePortfolio mocks base method.
-func (m *MockStore) DeletePortfolio(arg0 context.Context, arg1 int64) error {
+func (m *MockStore) DeletePortfolio(arg0 context.Context, arg1 db.DeletePortfolioParams) error {
 	m.ctrl.T.Helper()
 	ret := m.ctrl.Call(m, "DeletePortfolio", arg0, arg1)
 	ret0, _ := ret[0].(error)
@@ -212,7 +212,7 @@ func (mr *MockStoreMockRecorder) GetFootball(arg0, arg1 interface{}) *gomock.Cal
 }
 
 // GetPortfolio mocks base method.
-func (m *MockStore) GetPortfolio(arg0 context.Context, arg1 int64) (db.Portfolio, error) {
+func (m *MockStore) GetPortfolio(arg0 context.Context, arg1 db.GetPortfolioParams) (db.Portfolio, error) {
 	m.ctrl.T.Helper()
 	ret := m.ctrl.Call(m, "GetPortfolio", arg0, arg1)
 	ret0, _ := ret[0].(db.Portfolio)

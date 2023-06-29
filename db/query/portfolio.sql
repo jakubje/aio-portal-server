@@ -8,7 +8,7 @@ RETURNING *;
 
 -- name: GetPortfolio :one
 SELECT * FROM portfolios
-WHERE id = $1 LIMIT 1;
+WHERE id = $1 and account_id = $2 LIMIT 1;
 
 -- name: ListPortforlios :many
 SELECT * FROM portfolios
@@ -16,10 +16,10 @@ WHERE account_id = $1;
 
 -- name: DeletePortfolio :exec
 DELETE FROM portfolios
-WHERE id = $1;
+WHERE id = $1 and account_id = $2;
 
 -- name: UpdatePortfolio :one
 UPDATE portfolios
 set name = $2
-WHERE id = $1
+WHERE id = $1 and account_id = $3
 RETURNING *;

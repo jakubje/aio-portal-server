@@ -3,7 +3,6 @@ package api
 import (
 	"database/sql"
 	db "github.com/jakub/aioportal/server/db/sqlc"
-	"log"
 	"net/http"
 	"time"
 
@@ -52,7 +51,6 @@ type getTransactionRequest struct {
 
 func (server *Server) getTransaction(ctx *gin.Context) {
 	var req getTransactionRequest
-	log.Printf("getTransactionRequest: %v", req)
 	if err := ctx.ShouldBindUri(&req); err != nil {
 		ctx.JSON(http.StatusBadRequest, errorResponse(err))
 		return
@@ -108,10 +106,9 @@ func (server *Server) listTransactionsByAccountByCoin(ctx *gin.Context) {
 	}
 
 	arg := db.ListTransactionsByAccountByCoinParams{
-		AccountID: request.AccountID,
-		Symbol:    request.Symbol,
-		Limit:     request.Limit,
-		Offset:    request.Offset,
+		Symbol: request.Symbol,
+		Limit:  request.Limit,
+		Offset: request.Offset,
 	}
 
 	transactions, err := server.store.ListTransactionsByAccountByCoin(ctx, arg)

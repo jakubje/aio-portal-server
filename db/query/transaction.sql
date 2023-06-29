@@ -26,10 +26,10 @@ OFFSET $3;
 
 -- name: ListTransactionsByAccountByCoin :many
 SELECT * FROM transactions
-WHERE account_id = $1 AND symbol = $2
+WHERE symbol = $1
 ORDER BY id
-LIMIT $3
-OFFSET $4;
+LIMIT $2
+OFFSET $3;
 
 -- name: GetRollUpByCoinByPortfolio :many
 SELECT 

@@ -3,8 +3,7 @@ package api
 import (
 	"database/sql"
 	"errors"
-	"fmt"
-	"log"
+	"github.com/jakub/aioportal/server/token"
 	"net/http"
 	"time"
 
@@ -22,7 +21,6 @@ type createUserRequest struct {
 }
 
 type userResponse struct {
-	ID                int64     `json:"id"`
 	Email             string    `json:"email"`
 	Name              string    `json:"name"`
 	LastName          string    `json:"last_name"`
@@ -37,7 +35,6 @@ type listUsersResponse struct {
 
 func newUserResponse(user db.User) userResponse {
 	return userResponse{
-		ID:                user.ID,
 		Email:             user.Email,
 		Name:              user.Name,
 		LastName:          user.LastName,
@@ -80,7 +77,6 @@ func (server *Server) createUser(ctx *gin.Context) {
 		return
 	}
 	rsp := userResponse{
-		ID:                user.ID,
 		Email:             user.Email,
 		Name:              user.Name,
 		LastName:          user.LastName,
@@ -102,20 +98,24 @@ func (server *Server) getUser(ctx *gin.Context) {
 		return
 	}
 
-	log.Println(req.Email)
-	fmt.Println(req.Email)
 	user, err := server.store.GetUser(ctx, req.Email)
 	if err != nil {
 		if err == sql.ErrNoRows {
 			ctx.JSON(http.StatusNotFound, errorResponse(err))
 			return
 		}
-
 		ctx.JSON(http.StatusInternalServerError, errorResponse(err))
 		return
 	}
+
+	authPayload := ctx.MustGet(authorizationPayloadKey).(*token.Payload)
+	if user.Email != authPayload.Email {
+		err := errors.New("account doesn't belong to the authenticated user")
+		ctx.JSON(http.StatusUnauthorized, errorResponse(err))
+		return
+	}
+
 	rsp := userResponse{
-		ID:                user.ID,
 		Email:             user.Email,
 		Name:              user.Name,
 		LastName:          user.LastName,
@@ -150,7 +150,6 @@ func (server *Server) listUsers(ctx *gin.Context) {
 	resp := listUsersResponse{}
 	for _, user := range users {
 		rsp := userResponse{
-			ID:                user.ID,
 			Email:             user.Email,
 			Name:              user.Name,
 			LastName:          user.LastName,
@@ -277,6 +276,9 @@ func (server *Server) loginUser(ctx *gin.Context) {
 		ctx.JSON(http.StatusInternalServerError, errorResponse(err))
 		return
 	}
+
+	server.ctx.Set("accountId", user.ID)
+
 	rsp := loginUserResponse{
 		AccessToken: accessToken,
 		User:        newUserResponse(user),
