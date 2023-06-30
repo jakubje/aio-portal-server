@@ -6,6 +6,7 @@ import (
 	"encoding/json"
 	"fmt"
 	"io"
+	"log"
 	"net/http"
 	"net/http/httptest"
 	"reflect"
@@ -201,30 +202,31 @@ func TestLoginUserAPI(t *testing.T) {
 				Times(1).
 				Return(user, nil)
 		},
-		checkResponse: func(recorded *httptest.ResponseRecorder) {
-			require.Equal(t, http.StatusOK, recorded.Code)
+		checkResponse: func(recorder *httptest.ResponseRecorder) {
+			require.Equal(t, http.StatusOK, recorder.Code)
 		},
 	},
 		{
 			name: "UserNotFound",
 			body: gin.H{
-				"username": "NotFound",
+				"email":    "wrongemail@gmail.com",
 				"password": password,
 			},
 			buildStubs: func(store *mockdb.MockStore) {
 				store.EXPECT().
 					GetUser(gomock.Any(), gomock.Any()).
 					Times(1).
-					Return(db.User{})
+					Return(db.User{}, db.ErrRecordNotFound)
 			},
 			checkResponse: func(recorder *httptest.ResponseRecorder) {
+				log.Println(recorder.Body)
 				require.Equal(t, http.StatusNotFound, recorder.Code)
 			},
 		},
 		{
 			name: "IncorrectPassword",
 			body: gin.H{
-				"username": user.Email,
+				"email":    user.Email,
 				"password": "incorrect",
 			},
 			buildStubs: func(store *mockdb.MockStore) {
@@ -240,14 +242,12 @@ func TestLoginUserAPI(t *testing.T) {
 		{
 			name: "InternalError",
 			body: gin.H{
-				"email":     user.Email,
-				"password":  password,
-				"name":      user.Name,
-				"last_name": user.LastName,
+				"email":    user.Email,
+				"password": password,
 			},
 			buildStubs: func(store *mockdb.MockStore) {
 				store.EXPECT().
-					CreateUser(gomock.Any(), gomock.Any()).
+					GetUser(gomock.Any(), gomock.Any()).
 					Times(1).
 					Return(db.User{}, sql.ErrConnDone)
 			},
@@ -307,7 +307,7 @@ func TestLoginUserAPI(t *testing.T) {
 			data, err := json.Marshal(tc.body)
 			require.NoError(t, err)
 
-			url := "/users"
+			url := "/users/login"
 			request, err := http.NewRequest(http.MethodPost, url, bytes.NewReader(data))
 			require.NoError(t, err)
 

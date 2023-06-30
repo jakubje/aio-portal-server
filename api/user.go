@@ -97,7 +97,6 @@ func (server *Server) getUser(ctx *gin.Context) {
 		ctx.JSON(http.StatusBadRequest, errorResponse(err))
 		return
 	}
-
 	user, err := server.store.GetUser(ctx, req.Email)
 
 	if err != nil {
@@ -247,7 +246,7 @@ func (server *Server) loginUser(ctx *gin.Context) {
 
 	user, err := server.store.GetUser(ctx, req.Email)
 	if err != nil {
-		if err == sql.ErrNoRows {
+		if errors.Is(err, db.ErrRecordNotFound) {
 			ctx.JSON(http.StatusNotFound, errorResponse(err))
 			return
 		}
@@ -256,8 +255,13 @@ func (server *Server) loginUser(ctx *gin.Context) {
 	}
 
 	err = util.CheckPassword(req.Password, user.Password)
+	//if err != nil {
+	//	//ctx.JSON(http.StatusUnauthorized, errorResponse(errors.New("incorrect password")))
+	//	ctx.JSON(http.StatusUnauthorized, errorResponse(err))
+	//	return
+	//}
 	if err != nil {
-		ctx.JSON(http.StatusUnauthorized, errorResponse(errors.New("incorrect password")))
+		ctx.JSON(http.StatusUnauthorized, errorResponse(err))
 		return
 	}
 
