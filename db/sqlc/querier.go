@@ -6,8 +6,6 @@ package db
 
 import (
 	"context"
-
-	"github.com/google/uuid"
 )
 
 type Querier interface {
@@ -18,16 +16,16 @@ type Querier interface {
 	CreateWatchlist(ctx context.Context, arg CreateWatchlistParams) (Watchlist, error)
 	CreateWatchlistCoins(ctx context.Context, arg CreateWatchlistCoinsParams) (WatchlistCoin, error)
 	DeletePortfolio(ctx context.Context, arg DeletePortfolioParams) error
-	DeleteTransaction(ctx context.Context, id uuid.UUID) error
+	DeleteTransaction(ctx context.Context, arg DeleteTransactionParams) error
 	DeleteUser(ctx context.Context, id int64) error
-	DeleteWatchlist(ctx context.Context, id int64) error
+	DeleteWatchlist(ctx context.Context, arg DeleteWatchlistParams) error
 	DeleteWatchlistCoin(ctx context.Context, id int64) error
 	GetFootball(ctx context.Context, accountID int64) (Football, error)
 	GetPortfolio(ctx context.Context, arg GetPortfolioParams) (Portfolio, error)
-	GetRollUpByCoinByPortfolio(ctx context.Context, portfolioID int64) ([]GetRollUpByCoinByPortfolioRow, error)
-	GetTransaction(ctx context.Context, id uuid.UUID) (Transaction, error)
+	GetRollUpByCoinByPortfolio(ctx context.Context, arg GetRollUpByCoinByPortfolioParams) ([]GetRollUpByCoinByPortfolioRow, error)
+	GetTransaction(ctx context.Context, arg GetTransactionParams) (Transaction, error)
 	GetUser(ctx context.Context, email string) (User, error)
-	GetWatchlist(ctx context.Context, id int64) (Watchlist, error)
+	GetWatchlist(ctx context.Context, arg GetWatchlistParams) (Watchlist, error)
 	GetWatchlistCoin(ctx context.Context, id int64) (WatchlistCoin, error)
 	ListPortforlios(ctx context.Context, accountID int64) ([]Portfolio, error)
 	ListTransactionsByAccount(ctx context.Context, arg ListTransactionsByAccountParams) ([]Transaction, error)

@@ -13,11 +13,25 @@ import (
 type createTransactionRequest struct {
 	AccountID    int64   `json:"account_id"`
 	PortfolioID  int64   `json:"portfolio_id"`
-	CoinName     string  `json:"coin_name"`
 	Symbol       string  `json:"symbol"`
 	Type         int32   `json:"type"`
 	Quantity     float64 `json:"quantity"`
 	PricePerCoin float64 `json:"price_per_coin"`
+}
+
+type transactionResponse struct {
+	ID           uuid.UUID `json:"id"`
+	PortfolioID  int64     `json:"portfolio_id"`
+	Symbol       string    `json:"symbol"`
+	Type         int32     `json:"type"`
+	Quantity     float64   `json:"quantity"`
+	PricePerCoin float64   `json:"price_per_coin"`
+	TimeCreated  time.Time `json:"time_created"`
+}
+
+type transactionsResponse struct {
+	Total        int64                 `json:"total"`
+	Transactions []transactionResponse `json:"transactions"`
 }
 
 func (server *Server) createTransaction(ctx *gin.Context) {
@@ -27,8 +41,14 @@ func (server *Server) createTransaction(ctx *gin.Context) {
 		return
 	}
 
+	accountId, err := server.getAccountID()
+	if err != nil {
+		ctx.JSON(http.StatusUnauthorized, errorResponse(err))
+		return
+	}
+
 	arg := db.CreateTransactionParams{
-		AccountID:      req.AccountID,
+		AccountID:      accountId,
 		PortfolioID:    req.PortfolioID,
 		Symbol:         req.Symbol,
 		Type:           req.Type,
@@ -42,7 +62,16 @@ func (server *Server) createTransaction(ctx *gin.Context) {
 		ctx.JSON(http.StatusInternalServerError, errorResponse(err))
 		return
 	}
-	ctx.JSON(http.StatusOK, transaction)
+
+	rsp := transactionResponse{
+		ID:           transaction.ID,
+		PortfolioID:  transaction.PortfolioID,
+		Symbol:       transaction.Symbol,
+		Type:         transaction.Type,
+		Quantity:     transaction.Quantity,
+		PricePerCoin: transaction.PricePerCoin,
+	}
+	ctx.JSON(http.StatusOK, rsp)
 }
 
 type getTransactionRequest struct {
@@ -56,16 +85,37 @@ func (server *Server) getTransaction(ctx *gin.Context) {
 		return
 	}
 	parsedId, _ := uuid.Parse(req.ID)
-	transaction, err := server.store.GetTransaction(ctx, parsedId)
+
+	accountId, err := server.getAccountID()
+	if err != nil {
+		ctx.JSON(http.StatusUnauthorized, errorResponse(err))
+		return
+	}
+
+	arg := db.GetTransactionParams{
+		ID:        parsedId,
+		AccountID: accountId,
+	}
+
+	transaction, err := server.store.GetTransaction(ctx, arg)
 	if err != nil {
 		ctx.JSON(http.StatusInternalServerError, errorResponse(err))
 		return
 	}
-	ctx.JSON(http.StatusOK, transaction)
+
+	rsp := transactionResponse{
+		ID:           transaction.ID,
+		PortfolioID:  transaction.PortfolioID,
+		Symbol:       transaction.Symbol,
+		Type:         transaction.Type,
+		Quantity:     transaction.Quantity,
+		PricePerCoin: transaction.PricePerCoin,
+	}
+
+	ctx.JSON(http.StatusOK, rsp)
 }
 
 type listTransactionsByAccountRequest struct {
-	ID     int64 `form:"id" binding:"required,min=1"`
 	Limit  int32 `form:"limit,default=100" binding:"max=100"`
 	Offset int32 `form:"offset,default=0"`
 }
@@ -77,8 +127,14 @@ func (server *Server) listTransactions(ctx *gin.Context) {
 		return
 	}
 
+	accountId, err := server.getAccountID()
+	if err != nil {
+		ctx.JSON(http.StatusUnauthorized, errorResponse(err))
+		return
+	}
+
 	arg := db.ListTransactionsByAccountParams{
-		AccountID: req.ID,
+		AccountID: accountId,
 		Limit:     req.Limit,
 		Offset:    req.Offset,
 	}
@@ -88,14 +144,28 @@ func (server *Server) listTransactions(ctx *gin.Context) {
 		ctx.JSON(http.StatusInternalServerError, errorResponse(err))
 		return
 	}
-	ctx.JSON(http.StatusOK, transactions)
+
+	resp := transactionsResponse{}
+	for _, transaction := range transactions {
+		rsp := transactionResponse{
+			ID:           transaction.ID,
+			PortfolioID:  transaction.PortfolioID,
+			Symbol:       transaction.Symbol,
+			Type:         transaction.Type,
+			Quantity:     transaction.Quantity,
+			PricePerCoin: transaction.PricePerCoin,
+		}
+		resp.Transactions = append(resp.Transactions, rsp)
+	}
+	resp.Total = int64(len(transactions))
+
+	ctx.JSON(http.StatusOK, resp)
 }
 
 type listTransactionsByAccountByCoinRequest struct {
-	AccountID int64  `json:"account_id" binding:"required,min=1"`
-	Symbol    string `json:"symbol" binding:"required"`
-	Limit     int32  `json:"limit,default=10" binding:"max=100"`
-	Offset    int32  `json:"offset,default=0"`
+	Symbol string `json:"symbol" binding:"required"`
+	Limit  int32  `json:"limit,default=10" binding:"max=100"`
+	Offset int32  `json:"offset,default=0"`
 }
 
 func (server *Server) listTransactionsByAccountByCoin(ctx *gin.Context) {
@@ -105,10 +175,17 @@ func (server *Server) listTransactionsByAccountByCoin(ctx *gin.Context) {
 		return
 	}
 
+	accountId, err := server.getAccountID()
+	if err != nil {
+		ctx.JSON(http.StatusUnauthorized, errorResponse(err))
+		return
+	}
+
 	arg := db.ListTransactionsByAccountByCoinParams{
-		Symbol: request.Symbol,
-		Limit:  request.Limit,
-		Offset: request.Offset,
+		AccountID: accountId,
+		Symbol:    request.Symbol,
+		Limit:     request.Limit,
+		Offset:    request.Offset,
 	}
 
 	transactions, err := server.store.ListTransactionsByAccountByCoin(ctx, arg)
@@ -116,7 +193,22 @@ func (server *Server) listTransactionsByAccountByCoin(ctx *gin.Context) {
 		ctx.JSON(http.StatusInternalServerError, errorResponse(err))
 		return
 	}
-	ctx.JSON(http.StatusOK, transactions)
+
+	resp := transactionsResponse{}
+	for _, transaction := range transactions {
+		rsp := transactionResponse{
+			ID:           transaction.ID,
+			PortfolioID:  transaction.PortfolioID,
+			Symbol:       transaction.Symbol,
+			Type:         transaction.Type,
+			Quantity:     transaction.Quantity,
+			PricePerCoin: transaction.PricePerCoin,
+		}
+		resp.Transactions = append(resp.Transactions, rsp)
+	}
+	resp.Total = int64(len(transactions))
+
+	ctx.JSON(http.StatusOK, resp)
 }
 
 type deleteTransactionReqiest struct {
@@ -130,7 +222,19 @@ func (server *Server) deleteTransaction(ctx *gin.Context) {
 		return
 	}
 	parsedId, _ := uuid.Parse(req.ID)
-	err := server.store.DeleteTransaction(ctx, parsedId)
+
+	accountId, err := server.getAccountID()
+	if err != nil {
+		ctx.JSON(http.StatusUnauthorized, errorResponse(err))
+		return
+	}
+
+	arg := db.DeleteTransactionParams{
+		ID:        parsedId,
+		AccountID: accountId,
+	}
+
+	err = server.store.DeleteTransaction(ctx, arg)
 	if err != nil {
 		if err == sql.ErrNoRows {
 			ctx.JSON(http.StatusNotFound, errorResponse(err))

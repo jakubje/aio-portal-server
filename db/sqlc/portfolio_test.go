@@ -54,14 +54,19 @@ func TestCreateUserAndPortfolio(t *testing.T) {
 }
 
 func TestGetPortfolio(t *testing.T) {
+	user := createRandomUser(t)
 	portfolio1 := createRandomPortfolio(t)
-	portfolio2, err := testQueries.GetPortfolio(context.Background(), portfolio1.ID)
+	arg := GetPortfolioParams{
+		ID:        portfolio1.ID,
+		AccountID: user.ID,
+	}
+	portfolio2, err := testQueries.GetPortfolio(context.Background(), arg)
 	require.NoError(t, err)
 	require.NotEmpty(t, portfolio2)
 
 	require.Equal(t, portfolio1.ID, portfolio2.ID)
-	require.Equal(t, portfolio1.Name, portfolio2.Name)
 	require.Equal(t, portfolio1.AccountID, portfolio2.AccountID)
+	require.Equal(t, portfolio1.Name, portfolio2.Name)
 }
 
 func TestUpdatePortfolio(t *testing.T) {
@@ -82,11 +87,16 @@ func TestUpdatePortfolio(t *testing.T) {
 }
 
 func TestDeletePortfolio(t *testing.T) {
+	user := createRandomUser(t)
 	portfolio1 := createRandomPortfolio(t)
-	err := testQueries.DeletePortfolio(context.Background(), portfolio1.ID)
+	arg := DeletePortfolioParams{
+		ID:        portfolio1.ID,
+		AccountID: user.ID,
+	}
+	err := testQueries.DeletePortfolio(context.Background(), arg)
 	require.NoError(t, err)
 
-	portfolio2, err := testQueries.GetPortfolio(context.Background(), portfolio1.ID)
+	portfolio2, err := testQueries.GetPortfolio(context.Background(), GetPortfolioParams(arg))
 	require.Error(t, err)
 	require.EqualError(t, err, sql.ErrNoRows.Error())
 	require.Empty(t, portfolio2)

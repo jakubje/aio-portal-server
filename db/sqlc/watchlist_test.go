@@ -8,7 +8,7 @@ import (
 	"testing"
 )
 
-func CreateRandomWatchlist(t *testing.T) Watchlist {
+func CreateRandomWatchlist(t *testing.T) (User, Watchlist) {
 	user := createRandomUser(t)
 	arg := CreateWatchlistParams{
 		Name:      utils.RandomString(5),
@@ -21,7 +21,7 @@ func CreateRandomWatchlist(t *testing.T) Watchlist {
 	require.Equal(t, arg.Name, watchlist.Name)
 	require.Equal(t, arg.AccountID, user.ID)
 
-	return watchlist
+	return user, watchlist
 }
 
 func TestCreateWatchlist(t *testing.T) {
@@ -29,8 +29,12 @@ func TestCreateWatchlist(t *testing.T) {
 }
 
 func TestGetWatchlist(t *testing.T) {
-	watchlist1 := CreateRandomWatchlist(t)
-	watchlist2, err := testQueries.GetWatchlist(context.Background(), watchlist1.ID)
+	user, watchlist1 := CreateRandomWatchlist(t)
+	arg := GetWatchlistParams{
+		ID:        watchlist1.ID,
+		AccountID: user.ID,
+	}
+	watchlist2, err := testQueries.GetWatchlist(context.Background(), arg)
 	require.NoError(t, err)
 	require.NotEmpty(t, watchlist2)
 
@@ -40,10 +44,11 @@ func TestGetWatchlist(t *testing.T) {
 }
 
 func TestUpdateWatchlist(t *testing.T) {
-	watchlist1 := CreateRandomWatchlist(t)
+	user, watchlist1 := CreateRandomWatchlist(t)
 	arg := UpdateWatchlistParams{
-		ID:   watchlist1.ID,
-		Name: utils.RandomString(6),
+		ID:        watchlist1.ID,
+		Name:      utils.RandomString(6),
+		AccountID: user.ID,
 	}
 	watchlist2, err := testQueries.UpdateWatchlist(context.Background(), arg)
 	require.NoError(t, err)
@@ -55,11 +60,15 @@ func TestUpdateWatchlist(t *testing.T) {
 }
 
 func TestDeleteWatchlist(t *testing.T) {
-	watchlist1 := CreateRandomWatchlist(t)
-	err := testQueries.DeleteWatchlist(context.Background(), watchlist1.ID)
+	user, watchlist1 := CreateRandomWatchlist(t)
+	arg := DeleteWatchlistParams{
+		ID:        watchlist1.ID,
+		AccountID: user.ID,
+	}
+	err := testQueries.DeleteWatchlist(context.Background(), arg)
 	require.NoError(t, err)
 
-	watchlist2, err := testQueries.GetWatchlist(context.Background(), watchlist1.ID)
+	watchlist2, err := testQueries.GetWatchlist(context.Background(), GetWatchlistParams(arg))
 	require.Error(t, err)
 	require.EqualError(t, err, sql.ErrNoRows.Error())
 	require.Empty(t, watchlist2)

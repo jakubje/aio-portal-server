@@ -9,28 +9,44 @@ import (
 	"github.com/gin-gonic/gin"
 )
 
-type createWatchlistRequest struct {
-	Name      string `json:"name"`
-	AccountID int64  `json:"account_id"`
+type watchListRequestResponse struct {
+	ID   int64  `json:"id"`
+	Name string `json:"name"`
+}
+
+type watchListsResponse struct {
+	Total      int64                      `json:"total"`
+	Watchlists []watchListRequestResponse `json:"watchlists"`
 }
 
 func (server *Server) createWatchlist(ctx *gin.Context) {
-	var req createWatchlistRequest
+	var req watchListRequestResponse
 	if err := ctx.ShouldBindJSON(&req); err != nil {
 		ctx.JSON(http.StatusBadRequest, errorResponse(err))
 		return
 	}
 
+	accountId, err := server.getAccountID()
+	if err != nil {
+		ctx.JSON(http.StatusUnauthorized, errorResponse(err))
+		return
+	}
+
 	arg := db.CreateWatchlistParams{
 		Name:      req.Name,
-		AccountID: req.AccountID,
+		AccountID: accountId,
 	}
 	watchlist, err := server.store.CreateWatchlist(ctx, arg)
 	if err != nil {
 		ctx.JSON(http.StatusInternalServerError, errorResponse(err))
 		return
 	}
-	ctx.JSON(http.StatusOK, watchlist)
+
+	rsp := watchListRequestResponse{
+		ID:   watchlist.ID,
+		Name: watchlist.Name,
+	}
+	ctx.JSON(http.StatusOK, rsp)
 }
 
 type deleteWatchlist struct {
@@ -43,7 +59,19 @@ func (server *Server) deleteWatchlist(ctx *gin.Context) {
 		ctx.JSON(http.StatusBadRequest, errorResponse(err))
 		return
 	}
-	err := server.store.DeleteWatchlist(ctx, req.ID)
+
+	accountId, err := server.getAccountID()
+	if err != nil {
+		ctx.JSON(http.StatusUnauthorized, errorResponse(err))
+		return
+	}
+
+	arg := db.DeleteWatchlistParams{
+		ID:        req.ID,
+		AccountID: accountId,
+	}
+
+	err = server.store.DeleteWatchlist(ctx, arg)
 	if err != nil {
 		if err == sql.ErrNoRows {
 			ctx.JSON(http.StatusNotFound, errorResponse(err))
@@ -66,31 +94,54 @@ func (server *Server) getWatchlist(ctx *gin.Context) {
 		return
 	}
 
-	watchlist, err := server.store.GetWatchlist(ctx, req.ID)
+	accountId, err := server.getAccountID()
+	if err != nil {
+		ctx.JSON(http.StatusUnauthorized, errorResponse(err))
+		return
+	}
+
+	arg := db.GetWatchlistParams{
+		ID:        req.ID,
+		AccountID: accountId,
+	}
+
+	watchlist, err := server.store.GetWatchlist(ctx, arg)
 	if err != nil {
 		ctx.JSON(http.StatusInternalServerError, errorResponse(err))
 		return
 	}
-	ctx.JSON(http.StatusOK, watchlist)
-}
 
-type listWatchlistsRequest struct {
-	AccountID int64 `uri:"account_id" binding:"required,min=1"`
+	rsp := watchListRequestResponse{
+		ID:   watchlist.ID,
+		Name: watchlist.Name,
+	}
+	ctx.JSON(http.StatusOK, rsp)
 }
 
 func (server *Server) listWatchlists(ctx *gin.Context) {
-	var req listWatchlistsRequest
-	if err := ctx.ShouldBindUri(&req); err != nil {
-		ctx.JSON(http.StatusBadRequest, errorResponse(err))
+	accountId, err := server.getAccountID()
+	if err != nil {
+		ctx.JSON(http.StatusUnauthorized, errorResponse(err))
 		return
 	}
 
-	watchlists, err := server.store.ListWatchlists(ctx, req.AccountID)
+	watchlists, err := server.store.ListWatchlists(ctx, accountId)
 	if err != nil {
 		ctx.JSON(http.StatusInternalServerError, errorResponse(err))
 		return
 	}
-	ctx.JSON(http.StatusOK, watchlists)
+
+	resp := watchListsResponse{}
+	for _, watchList := range watchlists {
+		rsp := watchListRequestResponse{
+			ID:   watchList.ID,
+			Name: watchList.Name,
+		}
+		resp.Watchlists = append(resp.Watchlists, rsp)
+	}
+	resp.Total = int64(len(watchlists))
+
+	ctx.JSON(http.StatusOK, resp)
 }
 
 type updateWatchlistRequest struct {
@@ -105,10 +156,18 @@ func (server *Server) updateWatchlist(ctx *gin.Context) {
 		return
 	}
 
-	arg := db.UpdateWatchlistParams{
-		ID:   req.ID,
-		Name: req.Name,
+	accountId, err := server.getAccountID()
+	if err != nil {
+		ctx.JSON(http.StatusUnauthorized, errorResponse(err))
+		return
 	}
+
+	arg := db.UpdateWatchlistParams{
+		AccountID: accountId,
+		ID:        req.ID,
+		Name:      req.Name,
+	}
+
 	watchlist, err := server.store.UpdateWatchlist(ctx, arg)
 	if err != nil {
 		if err == sql.ErrNoRows {
@@ -118,5 +177,11 @@ func (server *Server) updateWatchlist(ctx *gin.Context) {
 		ctx.JSON(http.StatusInternalServerError, errorResponse(err))
 		return
 	}
-	ctx.JSON(http.StatusOK, watchlist)
+
+	rsp := watchListRequestResponse{
+		ID:   watchlist.ID,
+		Name: watchlist.Name,
+	}
+
+	ctx.JSON(http.StatusOK, rsp)
 }

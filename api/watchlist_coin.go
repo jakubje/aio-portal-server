@@ -15,6 +15,18 @@ type createWatchlistCoinRequest struct {
 	Rank        int16  `json:"rank"`
 }
 
+type watchListCoinResponse struct {
+	ID     int64  `json:"id"`
+	Name   string `json:"name"`
+	Symbol string `json:"symbol"`
+	Rank   int16  `json:"rank"`
+}
+
+type watchListCoinsResponse struct {
+	Total int64                   `json:"total"`
+	Coins []watchListCoinResponse `json:"coins"`
+}
+
 func (server *Server) createWatchlistCoin(ctx *gin.Context) {
 	var req createWatchlistCoinRequest
 	if err := ctx.ShouldBindJSON(&req); err != nil {
@@ -33,7 +45,13 @@ func (server *Server) createWatchlistCoin(ctx *gin.Context) {
 		ctx.JSON(http.StatusInternalServerError, errorResponse(err))
 		return
 	}
-	ctx.JSON(http.StatusOK, coin)
+
+	rsp := watchListCoinResponse{
+		Name:   coin.Name,
+		Symbol: coin.Symbol,
+		Rank:   coin.Rank,
+	}
+	ctx.JSON(http.StatusOK, rsp)
 }
 
 type deleteWachlistCoin struct {
@@ -68,12 +86,18 @@ func (server *Server) getWatchlistCoin(ctx *gin.Context) {
 		ctx.JSON(http.StatusBadRequest, errorResponse(err))
 		return
 	}
-	watchlistCoin, err := server.store.GetWatchlistCoin(ctx, req.ID)
+	coin, err := server.store.GetWatchlistCoin(ctx, req.ID)
 	if err != nil {
 		ctx.JSON(http.StatusInternalServerError, errorResponse(err))
 		return
 	}
-	ctx.JSON(http.StatusOK, watchlistCoin)
+
+	rsp := watchListCoinResponse{
+		Name:   coin.Name,
+		Symbol: coin.Symbol,
+		Rank:   coin.Rank,
+	}
+	ctx.JSON(http.StatusOK, rsp)
 }
 
 type listWatchlistCoins struct {
@@ -92,5 +116,18 @@ func (server *Server) listWatchlistCoins(ctx *gin.Context) {
 		ctx.JSON(http.StatusInternalServerError, errorResponse(err))
 		return
 	}
-	ctx.JSON(http.StatusOK, coins)
+
+	resp := watchListCoinsResponse{}
+	for _, coin := range coins {
+		rsp := watchListCoinResponse{
+			ID:     coin.ID,
+			Name:   coin.Name,
+			Symbol: coin.Symbol,
+			Rank:   coin.Rank,
+		}
+		resp.Coins = append(resp.Coins, rsp)
+	}
+	resp.Total = int64(len(coins))
+
+	ctx.JSON(http.StatusOK, resp)
 }

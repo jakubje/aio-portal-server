@@ -60,11 +60,16 @@ func (q *Queries) CreateTransaction(ctx context.Context, arg CreateTransactionPa
 
 const deleteTransaction = `-- name: DeleteTransaction :exec
 DELETE FROM transactions
-WHERE id = $1
+WHERE id = $1 and account_id = $2
 `
 
-func (q *Queries) DeleteTransaction(ctx context.Context, id uuid.UUID) error {
-	_, err := q.db.ExecContext(ctx, deleteTransaction, id)
+type DeleteTransactionParams struct {
+	ID        uuid.UUID `json:"id"`
+	AccountID int64     `json:"account_id"`
+}
+
+func (q *Queries) DeleteTransaction(ctx context.Context, arg DeleteTransactionParams) error {
+	_, err := q.db.ExecContext(ctx, deleteTransaction, arg.ID, arg.AccountID)
 	return err
 }
 
@@ -75,9 +80,14 @@ CAST (SUM(price_per_coin) AS FLOAT) AS total_cost,
 CAST (SUM(quantity) AS FLOAT) AS total_coins,
 CAST (CAST(SUM(price_per_coin) AS FLOAT) *1.0 / CAST (SUM(quantity) AS FLOAT) AS FLOAT) AS price_per_coin
 FROM transactions
-WHERE portfolio_id = $1
+WHERE portfolio_id = $1 and account_id = $2
 GROUP BY symbol, type
 `
+
+type GetRollUpByCoinByPortfolioParams struct {
+	PortfolioID int64 `json:"portfolio_id"`
+	AccountID   int64 `json:"account_id"`
+}
 
 type GetRollUpByCoinByPortfolioRow struct {
 	Symbol       string  `json:"symbol"`
@@ -87,8 +97,8 @@ type GetRollUpByCoinByPortfolioRow struct {
 	PricePerCoin float64 `json:"price_per_coin"`
 }
 
-func (q *Queries) GetRollUpByCoinByPortfolio(ctx context.Context, portfolioID int64) ([]GetRollUpByCoinByPortfolioRow, error) {
-	rows, err := q.db.QueryContext(ctx, getRollUpByCoinByPortfolio, portfolioID)
+func (q *Queries) GetRollUpByCoinByPortfolio(ctx context.Context, arg GetRollUpByCoinByPortfolioParams) ([]GetRollUpByCoinByPortfolioRow, error) {
+	rows, err := q.db.QueryContext(ctx, getRollUpByCoinByPortfolio, arg.PortfolioID, arg.AccountID)
 	if err != nil {
 		return nil, err
 	}
@@ -118,11 +128,17 @@ func (q *Queries) GetRollUpByCoinByPortfolio(ctx context.Context, portfolioID in
 
 const getTransaction = `-- name: GetTransaction :one
 SELECT id, account_id, portfolio_id, type, symbol, price_per_coin, quantity, time_transacted, time_created FROM transactions
-WHERE id = $1 LIMIT 1
+WHERE id = $1 and account_id = $2
+LIMIT 1
 `
 
-func (q *Queries) GetTransaction(ctx context.Context, id uuid.UUID) (Transaction, error) {
-	row := q.db.QueryRowContext(ctx, getTransaction, id)
+type GetTransactionParams struct {
+	ID        uuid.UUID `json:"id"`
+	AccountID int64     `json:"account_id"`
+}
+
+func (q *Queries) GetTransaction(ctx context.Context, arg GetTransactionParams) (Transaction, error) {
+	row := q.db.QueryRowContext(ctx, getTransaction, arg.ID, arg.AccountID)
 	var i Transaction
 	err := row.Scan(
 		&i.ID,
@@ -187,20 +203,26 @@ func (q *Queries) ListTransactionsByAccount(ctx context.Context, arg ListTransac
 
 const listTransactionsByAccountByCoin = `-- name: ListTransactionsByAccountByCoin :many
 SELECT id, account_id, portfolio_id, type, symbol, price_per_coin, quantity, time_transacted, time_created FROM transactions
-WHERE symbol = $1
+WHERE symbol = $1 and account_id = $2
 ORDER BY id
-LIMIT $2
-OFFSET $3
+LIMIT $3
+OFFSET $4
 `
 
 type ListTransactionsByAccountByCoinParams struct {
-	Symbol string `json:"symbol"`
-	Limit  int32  `json:"limit"`
-	Offset int32  `json:"offset"`
+	Symbol    string `json:"symbol"`
+	AccountID int64  `json:"account_id"`
+	Limit     int32  `json:"limit"`
+	Offset    int32  `json:"offset"`
 }
 
 func (q *Queries) ListTransactionsByAccountByCoin(ctx context.Context, arg ListTransactionsByAccountByCoinParams) ([]Transaction, error) {
-	rows, err := q.db.QueryContext(ctx, listTransactionsByAccountByCoin, arg.Symbol, arg.Limit, arg.Offset)
+	rows, err := q.db.QueryContext(ctx, listTransactionsByAccountByCoin,
+		arg.Symbol,
+		arg.AccountID,
+		arg.Limit,
+		arg.Offset,
+	)
 	if err != nil {
 		return nil, err
 	}

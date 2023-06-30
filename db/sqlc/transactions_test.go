@@ -11,7 +11,7 @@ import (
 	"github.com/stretchr/testify/require"
 )
 
-func createRandomTransaction(t *testing.T) Transaction {
+func createRandomTransaction(t *testing.T) (User, Transaction) {
 	user, portfolio := createUserAndPortfolio(t)
 	coin := utils.RandomString(3)
 	arg := CreateTransactionParams{
@@ -36,7 +36,7 @@ func createRandomTransaction(t *testing.T) Transaction {
 	require.Equal(t, arg.PricePerCoin, transaction.PricePerCoin)
 	require.WithinDuration(t, arg.TimeTransacted, transaction.TimeTransacted, time.Second)
 
-	return transaction
+	return user, transaction
 }
 
 func TestCreateTransaction(t *testing.T) {
@@ -44,8 +44,12 @@ func TestCreateTransaction(t *testing.T) {
 }
 
 func TestGetTransaction(t *testing.T) {
-	transaction1 := createRandomTransaction(t)
-	transaction2, err := testQueries.GetTransaction(context.Background(), transaction1.ID)
+	user, transaction1 := createRandomTransaction(t)
+	arg := GetTransactionParams{
+		ID:        transaction1.ID,
+		AccountID: user.ID,
+	}
+	transaction2, err := testQueries.GetTransaction(context.Background(), arg)
 	require.NoError(t, err)
 	require.NotEmpty(t, transaction2)
 
@@ -60,11 +64,15 @@ func TestGetTransaction(t *testing.T) {
 }
 
 func TestDeleteTransaction(t *testing.T) {
-	transaction1 := createRandomTransaction(t)
-	err := testQueries.DeleteTransaction(context.Background(), transaction1.ID)
+	user, transaction1 := createRandomTransaction(t)
+	arg := DeleteTransactionParams{
+		ID:        transaction1.ID,
+		AccountID: user.ID,
+	}
+	err := testQueries.DeleteTransaction(context.Background(), arg)
 	require.NoError(t, err)
 
-	transaction2, err := testQueries.GetTransaction(context.Background(), transaction1.ID)
+	transaction2, err := testQueries.GetTransaction(context.Background(), GetTransactionParams(arg))
 	require.Error(t, err)
 	require.EqualError(t, err, sql.ErrNoRows.Error())
 	require.Empty(t, transaction2)
@@ -177,8 +185,11 @@ func TestGetRollUpByCoinByPortfolio(t *testing.T) {
 		coin := utils.RandomString(3)
 		createTransactionsForAccountForCoin(t, &user, &portfolio, coin)
 	}
-
-	rollUp, err := testQueries.GetRollUpByCoinByPortfolio(context.Background(), portfolio.ID)
+	arg := GetRollUpByCoinByPortfolioParams{
+		PortfolioID: portfolio.ID,
+		AccountID:   user.ID,
+	}
+	rollUp, err := testQueries.GetRollUpByCoinByPortfolio(context.Background(), arg)
 
 	require.NoError(t, err)
 	require.Len(t, rollUp, 10)

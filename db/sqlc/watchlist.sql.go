@@ -32,21 +32,32 @@ func (q *Queries) CreateWatchlist(ctx context.Context, arg CreateWatchlistParams
 
 const deleteWatchlist = `-- name: DeleteWatchlist :exec
 DELETE FROM watchlists
-WHERE id = $1
+WHERE id = $1 and account_id = $2
 `
 
-func (q *Queries) DeleteWatchlist(ctx context.Context, id int64) error {
-	_, err := q.db.ExecContext(ctx, deleteWatchlist, id)
+type DeleteWatchlistParams struct {
+	ID        int64 `json:"id"`
+	AccountID int64 `json:"account_id"`
+}
+
+func (q *Queries) DeleteWatchlist(ctx context.Context, arg DeleteWatchlistParams) error {
+	_, err := q.db.ExecContext(ctx, deleteWatchlist, arg.ID, arg.AccountID)
 	return err
 }
 
 const getWatchlist = `-- name: GetWatchlist :one
 SELECT id, name, account_id FROM watchlists
-WHERE id = $1 LIMIT 1
+WHERE id = $1 and account_id = $2
+LIMIT 1
 `
 
-func (q *Queries) GetWatchlist(ctx context.Context, id int64) (Watchlist, error) {
-	row := q.db.QueryRowContext(ctx, getWatchlist, id)
+type GetWatchlistParams struct {
+	ID        int64 `json:"id"`
+	AccountID int64 `json:"account_id"`
+}
+
+func (q *Queries) GetWatchlist(ctx context.Context, arg GetWatchlistParams) (Watchlist, error) {
+	row := q.db.QueryRowContext(ctx, getWatchlist, arg.ID, arg.AccountID)
 	var i Watchlist
 	err := row.Scan(&i.ID, &i.Name, &i.AccountID)
 	return i, err
@@ -83,17 +94,18 @@ func (q *Queries) ListWatchlists(ctx context.Context, accountID int64) ([]Watchl
 const updateWatchlist = `-- name: UpdateWatchlist :one
 UPDATE watchlists
 set name = $2
-WHERE id = $1
+WHERE id = $1 and account_id = $3
 RETURNING id, name, account_id
 `
 
 type UpdateWatchlistParams struct {
-	ID   int64  `json:"id"`
-	Name string `json:"name"`
+	ID        int64  `json:"id"`
+	Name      string `json:"name"`
+	AccountID int64  `json:"account_id"`
 }
 
 func (q *Queries) UpdateWatchlist(ctx context.Context, arg UpdateWatchlistParams) (Watchlist, error) {
-	row := q.db.QueryRowContext(ctx, updateWatchlist, arg.ID, arg.Name)
+	row := q.db.QueryRowContext(ctx, updateWatchlist, arg.ID, arg.Name, arg.AccountID)
 	var i Watchlist
 	err := row.Scan(&i.ID, &i.Name, &i.AccountID)
 	return i, err

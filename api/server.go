@@ -43,11 +43,11 @@ func (server *Server) setupRouter() {
 
 	authRoutes := router.Group("/").Use(authMiddleware(server.tokenMaker))
 
-	authRoutes.POST("/users/update/:id", server.updateUser)
+	authRoutes.POST("/users/update", server.updateUser)
 	authRoutes.POST("/user", server.getUser)
 	authRoutes.GET("/users", server.listUsers)
 	// related to football so will need to check db migration
-	authRoutes.DELETE("/users/:id", server.deleteUser)
+	authRoutes.DELETE("/users", server.deleteUser)
 
 	// portfolio routes
 	authRoutes.POST("/portfolio", server.createPortfolio)
@@ -77,7 +77,7 @@ func (server *Server) setupRouter() {
 	authRoutes.POST("/watchlist", server.createWatchlist)
 	authRoutes.POST("/watchlist/update", server.updateWatchlist)
 	authRoutes.GET("/watchlist/:id", server.getWatchlist)
-	authRoutes.GET("/watchlists/:account_id", server.listWatchlists)
+	authRoutes.GET("/watchlists", server.listWatchlists)
 	authRoutes.DELETE("/watchlist/:id", server.deleteWatchlist)
 
 	// watchlistcoin routes
@@ -90,7 +90,7 @@ func (server *Server) setupRouter() {
 	authRoutes.POST("/football", server.addFootball)
 	authRoutes.POST("/football/update", server.updateFootball)
 	// get returns a EOF error
-	authRoutes.GET("/football/:id", server.getFootball)
+	authRoutes.GET("/football", server.getFootball)
 
 	server.router = router
 }

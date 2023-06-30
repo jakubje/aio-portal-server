@@ -9,7 +9,6 @@ import (
 	reflect "reflect"
 
 	gomock "github.com/golang/mock/gomock"
-	uuid "github.com/google/uuid"
 	db "github.com/jakub/aioportal/server/db/sqlc"
 )
 
@@ -141,7 +140,7 @@ func (mr *MockStoreMockRecorder) DeletePortfolio(arg0, arg1 interface{}) *gomock
 }
 
 // DeleteTransaction mocks base method.
-func (m *MockStore) DeleteTransaction(arg0 context.Context, arg1 uuid.UUID) error {
+func (m *MockStore) DeleteTransaction(arg0 context.Context, arg1 db.DeleteTransactionParams) error {
 	m.ctrl.T.Helper()
 	ret := m.ctrl.Call(m, "DeleteTransaction", arg0, arg1)
 	ret0, _ := ret[0].(error)
@@ -169,7 +168,7 @@ func (mr *MockStoreMockRecorder) DeleteUser(arg0, arg1 interface{}) *gomock.Call
 }
 
 // DeleteWatchlist mocks base method.
-func (m *MockStore) DeleteWatchlist(arg0 context.Context, arg1 int64) error {
+func (m *MockStore) DeleteWatchlist(arg0 context.Context, arg1 db.DeleteWatchlistParams) error {
 	m.ctrl.T.Helper()
 	ret := m.ctrl.Call(m, "DeleteWatchlist", arg0, arg1)
 	ret0, _ := ret[0].(error)
@@ -227,7 +226,7 @@ func (mr *MockStoreMockRecorder) GetPortfolio(arg0, arg1 interface{}) *gomock.Ca
 }
 
 // GetRollUpByCoinByPortfolio mocks base method.
-func (m *MockStore) GetRollUpByCoinByPortfolio(arg0 context.Context, arg1 int64) ([]db.GetRollUpByCoinByPortfolioRow, error) {
+func (m *MockStore) GetRollUpByCoinByPortfolio(arg0 context.Context, arg1 db.GetRollUpByCoinByPortfolioParams) ([]db.GetRollUpByCoinByPortfolioRow, error) {
 	m.ctrl.T.Helper()
 	ret := m.ctrl.Call(m, "GetRollUpByCoinByPortfolio", arg0, arg1)
 	ret0, _ := ret[0].([]db.GetRollUpByCoinByPortfolioRow)
@@ -242,7 +241,7 @@ func (mr *MockStoreMockRecorder) GetRollUpByCoinByPortfolio(arg0, arg1 interface
 }
 
 // GetTransaction mocks base method.
-func (m *MockStore) GetTransaction(arg0 context.Context, arg1 uuid.UUID) (db.Transaction, error) {
+func (m *MockStore) GetTransaction(arg0 context.Context, arg1 db.GetTransactionParams) (db.Transaction, error) {
 	m.ctrl.T.Helper()
 	ret := m.ctrl.Call(m, "GetTransaction", arg0, arg1)
 	ret0, _ := ret[0].(db.Transaction)
@@ -272,7 +271,7 @@ func (mr *MockStoreMockRecorder) GetUser(arg0, arg1 interface{}) *gomock.Call {
 }
 
 // GetWatchlist mocks base method.
-func (m *MockStore) GetWatchlist(arg0 context.Context, arg1 int64) (db.Watchlist, error) {
+func (m *MockStore) GetWatchlist(arg0 context.Context, arg1 db.GetWatchlistParams) (db.Watchlist, error) {
 	m.ctrl.T.Helper()
 	ret := m.ctrl.Call(m, "GetWatchlist", arg0, arg1)
 	ret0, _ := ret[0].(db.Watchlist)

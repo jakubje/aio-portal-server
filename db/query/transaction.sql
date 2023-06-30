@@ -8,7 +8,8 @@ RETURNING *;
 
 -- name: GetTransaction :one
 SELECT * FROM transactions
-WHERE id = $1 LIMIT 1;
+WHERE id = $1 and account_id = $2
+LIMIT 1;
 
 -- name: ListTransactionsByAccount :many
 SELECT * FROM transactions
@@ -26,10 +27,10 @@ OFFSET $3;
 
 -- name: ListTransactionsByAccountByCoin :many
 SELECT * FROM transactions
-WHERE symbol = $1
+WHERE symbol = $1 and account_id = $2
 ORDER BY id
-LIMIT $2
-OFFSET $3;
+LIMIT $3
+OFFSET $4;
 
 -- name: GetRollUpByCoinByPortfolio :many
 SELECT 
@@ -38,9 +39,9 @@ CAST (SUM(price_per_coin) AS FLOAT) AS total_cost,
 CAST (SUM(quantity) AS FLOAT) AS total_coins,
 CAST (CAST(SUM(price_per_coin) AS FLOAT) *1.0 / CAST (SUM(quantity) AS FLOAT) AS FLOAT) AS price_per_coin
 FROM transactions
-WHERE portfolio_id = $1
+WHERE portfolio_id = $1 and account_id = $2
 GROUP BY symbol, type;
 
 -- name: DeleteTransaction :exec
 DELETE FROM transactions
-WHERE id = $1;
+WHERE id = $1 and account_id = $2 ;

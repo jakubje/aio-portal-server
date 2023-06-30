@@ -9,7 +9,7 @@ import (
 )
 
 func createRandomWatchlistCoin(t *testing.T) WatchlistCoin {
-	watchlist := CreateRandomWatchlist(t)
+	_, watchlist := CreateRandomWatchlist(t)
 	arg := CreateWatchlistCoinsParams{
 		WatchlistID: watchlist.ID,
 		Name:        utils.RandomString(5),
@@ -81,7 +81,7 @@ func TestDeleteWatchlistCoin(t *testing.T) {
 }
 
 func TestListWatchlistCoins(t *testing.T) {
-	watchList := CreateRandomWatchlist(t)
+	_, watchList := CreateRandomWatchlist(t)
 
 	for i := 0; i < 10; i++ {
 		createWatchlistCoinsForWatchlist(t, &watchList)

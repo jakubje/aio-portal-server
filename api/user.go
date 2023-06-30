@@ -99,6 +99,7 @@ func (server *Server) getUser(ctx *gin.Context) {
 	}
 
 	user, err := server.store.GetUser(ctx, req.Email)
+
 	if err != nil {
 		if err == sql.ErrNoRows {
 			ctx.JSON(http.StatusNotFound, errorResponse(err))
@@ -162,18 +163,14 @@ func (server *Server) listUsers(ctx *gin.Context) {
 	ctx.JSON(http.StatusOK, resp)
 }
 
-type deleteUserRequest struct {
-	ID int64 `uri:"id" binding:"required,min=1"`
-}
-
 func (server *Server) deleteUser(ctx *gin.Context) {
-	var req deleteUserRequest
-	if err := ctx.ShouldBindUri(&req); err != nil {
-		ctx.JSON(http.StatusBadRequest, errorResponse(err))
+	accountId, err := server.getAccountID()
+	if err != nil {
+		ctx.JSON(http.StatusUnauthorized, errorResponse(err))
 		return
 	}
-	// change the sql to it throws an eror if the user does not exist
-	err := server.store.DeleteUser(ctx, req.ID)
+
+	err = server.store.DeleteUser(ctx, accountId)
 	if err != nil {
 		if err == sql.ErrNoRows {
 			ctx.JSON(http.StatusNotFound, errorResponse(err))
@@ -192,21 +189,17 @@ type updateUserRequest struct {
 	Password string `json:"password" binding:"required,min=6"`
 }
 
-type updateUserRequestUri struct {
-	ID int64 `uri:"id" binding:"required,min=1"`
-}
-
 func (server *Server) updateUser(ctx *gin.Context) {
 	var req updateUserRequest
-	var uri updateUserRequestUri
 
-	if err := ctx.ShouldBindUri(&uri); err != nil {
+	if err := ctx.ShouldBindJSON(&req); err != nil {
 		ctx.JSON(http.StatusBadRequest, errorResponse(err))
 		return
 	}
 
-	if err := ctx.ShouldBindJSON(&req); err != nil {
-		ctx.JSON(http.StatusBadRequest, errorResponse(err))
+	accountId, err := server.getAccountID()
+	if err != nil {
+		ctx.JSON(http.StatusUnauthorized, errorResponse(err))
 		return
 	}
 
@@ -218,7 +211,7 @@ func (server *Server) updateUser(ctx *gin.Context) {
 	t := time.Now().UTC()
 
 	arg := db.UpdateUserParams{
-		ID:                uri.ID,
+		ID:                accountId,
 		Email:             req.Email,
 		Name:              req.Name,
 		LastName:          req.LastName,
@@ -284,4 +277,13 @@ func (server *Server) loginUser(ctx *gin.Context) {
 		User:        newUserResponse(user),
 	}
 	ctx.JSON(http.StatusOK, rsp)
+}
+
+func (server *Server) getAccountID() (accountId int64, err error) {
+	account, exists := server.ctx.Get("accountId")
+	if !exists {
+		return 0, errors.New("missing account id")
+	}
+
+	return account.(int64), nil
 }
