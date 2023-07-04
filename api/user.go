@@ -109,7 +109,7 @@ func (server *Server) getUser(ctx *gin.Context) {
 	}
 
 	authPayload := ctx.MustGet(authorizationPayloadKey).(*token.Payload)
-	if user.Email != authPayload.Email {
+	if user.ID != authPayload.AccountId {
 		err := errors.New("account doesn't belong to the authenticated user")
 		ctx.JSON(http.StatusUnauthorized, errorResponse(err))
 		return
@@ -163,13 +163,9 @@ func (server *Server) listUsers(ctx *gin.Context) {
 }
 
 func (server *Server) deleteUser(ctx *gin.Context) {
-	accountId, err := server.getAccountID()
-	if err != nil {
-		ctx.JSON(http.StatusUnauthorized, errorResponse(err))
-		return
-	}
+	authPayload := ctx.MustGet(authorizationPayloadKey).(*token.Payload)
 
-	err = server.store.DeleteUser(ctx, accountId)
+	err := server.store.DeleteUser(ctx, authPayload.AccountId)
 	if err != nil {
 		if err == sql.ErrNoRows {
 			ctx.JSON(http.StatusNotFound, errorResponse(err))
@@ -196,13 +192,8 @@ func (server *Server) updateUser(ctx *gin.Context) {
 		return
 	}
 
-	accountId, err := server.getAccountID()
-	if err != nil {
-		ctx.JSON(http.StatusUnauthorized, errorResponse(err))
-		return
-	}
-
 	hashedPassword, err := util.HashPassword(req.Password)
+	authPayload := ctx.MustGet(authorizationPayloadKey).(*token.Payload)
 	if err != nil {
 		ctx.JSON(http.StatusInternalServerError, errorResponse(err))
 		return
@@ -210,7 +201,7 @@ func (server *Server) updateUser(ctx *gin.Context) {
 	t := time.Now().UTC()
 
 	arg := db.UpdateUserParams{
-		ID:                accountId,
+		ID:                authPayload.AccountId,
 		Email:             req.Email,
 		Name:              req.Name,
 		LastName:          req.LastName,
@@ -266,7 +257,7 @@ func (server *Server) loginUser(ctx *gin.Context) {
 	}
 
 	accessToken, err := server.tokenMaker.CreateToken(
-		user.Email,
+		user.ID,
 		server.config.AccessTokenDuration,
 	)
 	if err != nil {
@@ -274,20 +265,9 @@ func (server *Server) loginUser(ctx *gin.Context) {
 		return
 	}
 
-	server.ctx.Set("accountId", user.ID)
-
 	rsp := loginUserResponse{
 		AccessToken: accessToken,
 		User:        newUserResponse(user),
 	}
 	ctx.JSON(http.StatusOK, rsp)
-}
-
-func (server *Server) getAccountID() (accountId int64, err error) {
-	account, exists := server.ctx.Get("accountId")
-	if !exists {
-		return 0, errors.New("missing account id")
-	}
-
-	return account.(int64), nil
 }

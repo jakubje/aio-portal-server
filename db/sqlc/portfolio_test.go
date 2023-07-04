@@ -54,8 +54,7 @@ func TestCreateUserAndPortfolio(t *testing.T) {
 }
 
 func TestGetPortfolio(t *testing.T) {
-	user := createRandomUser(t)
-	portfolio1 := createRandomPortfolio(t)
+	user, portfolio1 := createUserAndPortfolio(t)
 	arg := GetPortfolioParams{
 		ID:        portfolio1.ID,
 		AccountID: user.ID,
@@ -70,11 +69,12 @@ func TestGetPortfolio(t *testing.T) {
 }
 
 func TestUpdatePortfolio(t *testing.T) {
-	portfolio1 := createRandomPortfolio(t)
+	user, portfolio1 := createUserAndPortfolio(t)
 
 	arg := UpdatePortfolioParams{
-		ID:   portfolio1.ID,
-		Name: utils.RandomString(5),
+		ID:        portfolio1.ID,
+		Name:      utils.RandomString(5),
+		AccountID: user.ID,
 	}
 
 	portfolio2, err := testQueries.UpdatePortfolio(context.Background(), arg)
@@ -87,8 +87,8 @@ func TestUpdatePortfolio(t *testing.T) {
 }
 
 func TestDeletePortfolio(t *testing.T) {
-	user := createRandomUser(t)
-	portfolio1 := createRandomPortfolio(t)
+	user, portfolio1 := createUserAndPortfolio(t)
+
 	arg := DeletePortfolioParams{
 		ID:        portfolio1.ID,
 		AccountID: user.ID,

@@ -2,6 +2,7 @@ package api
 
 import (
 	db "github.com/jakub/aioportal/server/db/sqlc"
+	"github.com/jakub/aioportal/server/token"
 	"net/http"
 
 	"github.com/gin-gonic/gin"
@@ -19,15 +20,9 @@ func (server *Server) addFootball(ctx *gin.Context) {
 		ctx.JSON(http.StatusBadRequest, errorResponse(err))
 		return
 	}
-
-	accountId, err := server.getAccountID()
-	if err != nil {
-		ctx.JSON(http.StatusUnauthorized, errorResponse(err))
-		return
-	}
-
+	authPayload := ctx.MustGet(authorizationPayloadKey).(*token.Payload)
 	arg := db.CreateFootballParams{
-		AccountID: accountId,
+		AccountID: authPayload.AccountId,
 		Team:      req.Team,
 		League:    req.League,
 		Country:   req.Country,
@@ -48,13 +43,9 @@ func (server *Server) addFootball(ctx *gin.Context) {
 
 func (server *Server) getFootball(ctx *gin.Context) {
 
-	accountId, err := server.getAccountID()
-	if err != nil {
-		ctx.JSON(http.StatusUnauthorized, errorResponse(err))
-		return
-	}
+	authPayload := ctx.MustGet(authorizationPayloadKey).(*token.Payload)
 
-	football, err := server.store.GetFootball(ctx, accountId)
+	football, err := server.store.GetFootball(ctx, authPayload.AccountId)
 	if err != nil {
 		ctx.JSON(http.StatusInternalServerError, errorResponse(err))
 		return
@@ -75,15 +66,9 @@ func (server *Server) updateFootball(ctx *gin.Context) {
 		ctx.JSON(http.StatusBadRequest, errorResponse(err))
 		return
 	}
-
-	accountId, err := server.getAccountID()
-	if err != nil {
-		ctx.JSON(http.StatusUnauthorized, errorResponse(err))
-		return
-	}
-
+	authPayload := ctx.MustGet(authorizationPayloadKey).(*token.Payload)
 	arg := db.UpdateFootballParams{
-		AccountID: accountId,
+		AccountID: authPayload.AccountId,
 		Team:      req.Team,
 		League:    req.League,
 		Country:   req.Country,

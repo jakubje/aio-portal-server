@@ -2,6 +2,7 @@ package api
 
 import (
 	"database/sql"
+	"github.com/jakub/aioportal/server/token"
 	"net/http"
 
 	db "github.com/jakub/aioportal/server/db/sqlc"
@@ -25,16 +26,10 @@ func (server *Server) createWatchlist(ctx *gin.Context) {
 		ctx.JSON(http.StatusBadRequest, errorResponse(err))
 		return
 	}
-
-	accountId, err := server.getAccountID()
-	if err != nil {
-		ctx.JSON(http.StatusUnauthorized, errorResponse(err))
-		return
-	}
-
+	authPayload := ctx.MustGet(authorizationPayloadKey).(*token.Payload)
 	arg := db.CreateWatchlistParams{
 		Name:      req.Name,
-		AccountID: accountId,
+		AccountID: authPayload.AccountId,
 	}
 	watchlist, err := server.store.CreateWatchlist(ctx, arg)
 	if err != nil {
@@ -59,19 +54,13 @@ func (server *Server) deleteWatchlist(ctx *gin.Context) {
 		ctx.JSON(http.StatusBadRequest, errorResponse(err))
 		return
 	}
-
-	accountId, err := server.getAccountID()
-	if err != nil {
-		ctx.JSON(http.StatusUnauthorized, errorResponse(err))
-		return
-	}
-
+	authPayload := ctx.MustGet(authorizationPayloadKey).(*token.Payload)
 	arg := db.DeleteWatchlistParams{
 		ID:        req.ID,
-		AccountID: accountId,
+		AccountID: authPayload.AccountId,
 	}
 
-	err = server.store.DeleteWatchlist(ctx, arg)
+	err := server.store.DeleteWatchlist(ctx, arg)
 	if err != nil {
 		if err == sql.ErrNoRows {
 			ctx.JSON(http.StatusNotFound, errorResponse(err))
@@ -93,16 +82,10 @@ func (server *Server) getWatchlist(ctx *gin.Context) {
 		ctx.JSON(http.StatusBadRequest, errorResponse(err))
 		return
 	}
-
-	accountId, err := server.getAccountID()
-	if err != nil {
-		ctx.JSON(http.StatusUnauthorized, errorResponse(err))
-		return
-	}
-
+	authPayload := ctx.MustGet(authorizationPayloadKey).(*token.Payload)
 	arg := db.GetWatchlistParams{
 		ID:        req.ID,
-		AccountID: accountId,
+		AccountID: authPayload.AccountId,
 	}
 
 	watchlist, err := server.store.GetWatchlist(ctx, arg)
@@ -119,13 +102,8 @@ func (server *Server) getWatchlist(ctx *gin.Context) {
 }
 
 func (server *Server) listWatchlists(ctx *gin.Context) {
-	accountId, err := server.getAccountID()
-	if err != nil {
-		ctx.JSON(http.StatusUnauthorized, errorResponse(err))
-		return
-	}
-
-	watchlists, err := server.store.ListWatchlists(ctx, accountId)
+	authPayload := ctx.MustGet(authorizationPayloadKey).(*token.Payload)
+	watchlists, err := server.store.ListWatchlists(ctx, authPayload.AccountId)
 	if err != nil {
 		ctx.JSON(http.StatusInternalServerError, errorResponse(err))
 		return
@@ -155,15 +133,9 @@ func (server *Server) updateWatchlist(ctx *gin.Context) {
 		ctx.JSON(http.StatusBadRequest, errorResponse(err))
 		return
 	}
-
-	accountId, err := server.getAccountID()
-	if err != nil {
-		ctx.JSON(http.StatusUnauthorized, errorResponse(err))
-		return
-	}
-
+	authPayload := ctx.MustGet(authorizationPayloadKey).(*token.Payload)
 	arg := db.UpdateWatchlistParams{
-		AccountID: accountId,
+		AccountID: authPayload.AccountId,
 		ID:        req.ID,
 		Name:      req.Name,
 	}

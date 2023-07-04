@@ -3,6 +3,7 @@ package api
 import (
 	"database/sql"
 	db "github.com/jakub/aioportal/server/db/sqlc"
+	"github.com/jakub/aioportal/server/token"
 	"net/http"
 
 	"github.com/gin-gonic/gin"
@@ -18,16 +19,10 @@ func (server *Server) createPortfolio(ctx *gin.Context) {
 		ctx.JSON(http.StatusBadRequest, errorResponse(err))
 		return
 	}
-
-	accountId, err := server.getAccountID()
-	if err != nil {
-		ctx.JSON(http.StatusUnauthorized, errorResponse(err))
-		return
-	}
-
+	authPayload := ctx.MustGet(authorizationPayloadKey).(*token.Payload)
 	arg := db.CreatePortfolioParams{
 		Name:      req.Name,
-		AccountID: accountId,
+		AccountID: authPayload.AccountId,
 	}
 
 	portfolio, err := server.store.CreatePortfolio(ctx, arg)
@@ -55,16 +50,10 @@ func (server *Server) getPortfolio(ctx *gin.Context) {
 		ctx.JSON(http.StatusBadRequest, errorResponse(err))
 		return
 	}
-
-	accountId, err := server.getAccountID()
-	if err != nil {
-		ctx.JSON(http.StatusUnauthorized, errorResponse(err))
-		return
-	}
-
+	authPayload := ctx.MustGet(authorizationPayloadKey).(*token.Payload)
 	arg := db.GetPortfolioParams{
 		ID:        req.ID,
-		AccountID: accountId,
+		AccountID: authPayload.AccountId,
 	}
 
 	portfolio, err := server.store.GetPortfolio(ctx, arg)
@@ -86,13 +75,8 @@ type listPortfoliosRequest struct {
 }
 
 func (server *Server) listPortfolios(ctx *gin.Context) {
-
-	accountId, err := server.getAccountID()
-	if err != nil {
-		ctx.JSON(http.StatusUnauthorized, errorResponse(err))
-		return
-	}
-	portfolios, err := server.store.ListPortforlios(ctx, accountId)
+	authPayload := ctx.MustGet(authorizationPayloadKey).(*token.Payload)
+	portfolios, err := server.store.ListPortforlios(ctx, authPayload.AccountId)
 	if err != nil {
 		ctx.JSON(http.StatusInternalServerError, errorResponse(err))
 		return
@@ -111,17 +95,11 @@ func (server *Server) updatePortfolio(ctx *gin.Context) {
 		ctx.JSON(http.StatusBadRequest, errorResponse(err))
 		return
 	}
-
-	accountId, err := server.getAccountID()
-	if err != nil {
-		ctx.JSON(http.StatusUnauthorized, errorResponse(err))
-		return
-	}
-
+	authPayload := ctx.MustGet(authorizationPayloadKey).(*token.Payload)
 	arg := db.UpdatePortfolioParams{
 		ID:        req.ID,
 		Name:      req.Name,
-		AccountID: accountId,
+		AccountID: authPayload.AccountId,
 	}
 
 	portfolio, err := server.store.UpdatePortfolio(ctx, arg)
@@ -142,19 +120,13 @@ func (server *Server) deletePortfolio(ctx *gin.Context) {
 		ctx.JSON(http.StatusBadRequest, errorResponse(err))
 		return
 	}
-
-	accountId, err := server.getAccountID()
-	if err != nil {
-		ctx.JSON(http.StatusUnauthorized, errorResponse(err))
-		return
-	}
-
+	authPayload := ctx.MustGet(authorizationPayloadKey).(*token.Payload)
 	arg := db.DeletePortfolioParams{
 		ID:        req.ID,
-		AccountID: accountId,
+		AccountID: authPayload.AccountId,
 	}
 
-	err = server.store.DeletePortfolio(ctx, arg)
+	err := server.store.DeletePortfolio(ctx, arg)
 	if err != nil {
 		if err == sql.ErrNoRows {
 			ctx.JSON(http.StatusNotFound, errorResponse(err))
@@ -176,16 +148,10 @@ func (server *Server) getRollUpByCoinByPortfolio(ctx *gin.Context) {
 		ctx.JSON(http.StatusBadRequest, errorResponse(err))
 		return
 	}
-
-	accountId, err := server.getAccountID()
-	if err != nil {
-		ctx.JSON(http.StatusUnauthorized, errorResponse(err))
-		return
-	}
-
+	authPayload := ctx.MustGet(authorizationPayloadKey).(*token.Payload)
 	arg := db.GetRollUpByCoinByPortfolioParams{
 		PortfolioID: req.PortfolioID,
-		AccountID:   accountId,
+		AccountID:   authPayload.AccountId,
 	}
 
 	rollup, err := server.store.GetRollUpByCoinByPortfolio(ctx, arg)

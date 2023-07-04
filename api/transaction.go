@@ -3,6 +3,7 @@ package api
 import (
 	"database/sql"
 	db "github.com/jakub/aioportal/server/db/sqlc"
+	"github.com/jakub/aioportal/server/token"
 	"net/http"
 	"time"
 
@@ -40,15 +41,9 @@ func (server *Server) createTransaction(ctx *gin.Context) {
 		ctx.JSON(http.StatusBadRequest, errorResponse(err))
 		return
 	}
-
-	accountId, err := server.getAccountID()
-	if err != nil {
-		ctx.JSON(http.StatusUnauthorized, errorResponse(err))
-		return
-	}
-
+	authPayload := ctx.MustGet(authorizationPayloadKey).(*token.Payload)
 	arg := db.CreateTransactionParams{
-		AccountID:      accountId,
+		AccountID:      authPayload.AccountId,
 		PortfolioID:    req.PortfolioID,
 		Symbol:         req.Symbol,
 		Type:           req.Type,
@@ -85,16 +80,11 @@ func (server *Server) getTransaction(ctx *gin.Context) {
 		return
 	}
 	parsedId, _ := uuid.Parse(req.ID)
-
-	accountId, err := server.getAccountID()
-	if err != nil {
-		ctx.JSON(http.StatusUnauthorized, errorResponse(err))
-		return
-	}
+	authPayload := ctx.MustGet(authorizationPayloadKey).(*token.Payload)
 
 	arg := db.GetTransactionParams{
 		ID:        parsedId,
-		AccountID: accountId,
+		AccountID: authPayload.AccountId,
 	}
 
 	transaction, err := server.store.GetTransaction(ctx, arg)
@@ -126,15 +116,9 @@ func (server *Server) listTransactions(ctx *gin.Context) {
 		ctx.JSON(http.StatusBadRequest, errorResponse(err))
 		return
 	}
-
-	accountId, err := server.getAccountID()
-	if err != nil {
-		ctx.JSON(http.StatusUnauthorized, errorResponse(err))
-		return
-	}
-
+	authPayload := ctx.MustGet(authorizationPayloadKey).(*token.Payload)
 	arg := db.ListTransactionsByAccountParams{
-		AccountID: accountId,
+		AccountID: authPayload.AccountId,
 		Limit:     req.Limit,
 		Offset:    req.Offset,
 	}
@@ -174,15 +158,9 @@ func (server *Server) listTransactionsByAccountByCoin(ctx *gin.Context) {
 		ctx.JSON(http.StatusBadRequest, errorResponse(err))
 		return
 	}
-
-	accountId, err := server.getAccountID()
-	if err != nil {
-		ctx.JSON(http.StatusUnauthorized, errorResponse(err))
-		return
-	}
-
+	authPayload := ctx.MustGet(authorizationPayloadKey).(*token.Payload)
 	arg := db.ListTransactionsByAccountByCoinParams{
-		AccountID: accountId,
+		AccountID: authPayload.AccountId,
 		Symbol:    request.Symbol,
 		Limit:     request.Limit,
 		Offset:    request.Offset,
@@ -222,19 +200,13 @@ func (server *Server) deleteTransaction(ctx *gin.Context) {
 		return
 	}
 	parsedId, _ := uuid.Parse(req.ID)
-
-	accountId, err := server.getAccountID()
-	if err != nil {
-		ctx.JSON(http.StatusUnauthorized, errorResponse(err))
-		return
-	}
-
+	authPayload := ctx.MustGet(authorizationPayloadKey).(*token.Payload)
 	arg := db.DeleteTransactionParams{
 		ID:        parsedId,
-		AccountID: accountId,
+		AccountID: authPayload.AccountId,
 	}
 
-	err = server.store.DeleteTransaction(ctx, arg)
+	err := server.store.DeleteTransaction(ctx, arg)
 	if err != nil {
 		if err == sql.ErrNoRows {
 			ctx.JSON(http.StatusNotFound, errorResponse(err))
