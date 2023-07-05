@@ -134,7 +134,7 @@ func createTransactionsForAccountForCoin(t *testing.T, user *User, portfolio *Po
 		AccountID:      user.ID,
 		PortfolioID:    portfolio.ID,
 		Symbol:         coin,
-		Type:           0,
+		Type:           1,
 		Quantity:       float64(utils.RandomInt()),
 		PricePerCoin:   float64(utils.RandomInt()),
 		TimeTransacted: time.Time{},
@@ -160,9 +160,10 @@ func TestListTransactionsByAccountByCoin(t *testing.T) {
 	coin := utils.RandomString(3)
 
 	arg := ListTransactionsByAccountByCoinParams{
-		Symbol: coin,
-		Limit:  10,
-		Offset: 0,
+		AccountID: user.ID,
+		Symbol:    coin,
+		Limit:     10,
+		Offset:    0,
 	}
 
 	for i := 0; i < 10; i++ {

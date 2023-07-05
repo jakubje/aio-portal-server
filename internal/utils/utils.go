@@ -50,6 +50,10 @@ func RandomInt() int {
 	return rand.Intn(1000)
 }
 
+func RandomInt64() int64 {
+	return int64(rand.Intn(1000))
+}
+
 func RandomEmail() string {
 	return fmt.Sprintf("%s@gmail.com", RandomString(6))
 }

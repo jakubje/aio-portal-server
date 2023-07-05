@@ -1,5 +1,5 @@
 postgres:
-	docker run --name portal -p 5432:5432 -e POSTGRES_USER=root -e POSTGRES_PASSWORD=root -d postgres
+	docker run --name portal --network aioportal-network -p 5432:5432 -e POSTGRES_USER=root -e POSTGRES_PASSWORD=root -d postgres
 createdb: 
 	docker exec -it portal createdb --username=root --owner=root aio_portal
 
