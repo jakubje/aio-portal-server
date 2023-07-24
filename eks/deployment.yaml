@@ -1,0 +1,22 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: aio-portal-api-deployment
+  labels:
+    app: aio-portal-api
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: aio-portal-api
+  template:
+    metadata:
+      labels:
+        app: aio-portal-api
+    spec:
+      containers:
+        - name: aio-portal-api
+          image: 807669619150.dkr.ecr.eu-west-2.amazonaws.com/aioportal:latest
+          imagePullPolicy: Always
+          ports:
+            - containerPort: 8080
