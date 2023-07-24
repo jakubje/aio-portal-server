@@ -42,8 +42,12 @@ jobs:
           REPOSITORY: aioportal
           IMAGE_TAG: ${{ github.sha }}
         run: |
-          docker build -t $REGISTRY/$REPOSITORY:$IMAGE_TAG -t latest .
+          docker build -t $REGISTRY/$REPOSITORY:$IMAGE_TAG -t $REGISTRY/$REPOSITORY:latest .
           docker push -a $REGISTRY/$REPOSITORY
+
+      - name: Update kube config
+        run: aws eks update-kubeconfig --name aio-portal --region eu-west-2
+
       - name: Deploy image to Amazon EKS
         run: |
           kubectl apply -f eks/aws-auth.yaml
