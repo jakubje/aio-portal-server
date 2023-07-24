@@ -46,8 +46,8 @@ jobs:
           docker push -a $REGISTRY/$REPOSITORY
       - name: Deploy image to Amazon EKS
         run: |
-          kubectly apply -f eks/aws-auth.yaml
-          kubectly apply -f eks/deployment.yaml
-          kubectly apply -f eks/service.yaml
-          kubectly apply -f eks/issuer.yaml
-          kubectly apply -f eks/ingress.yaml
+          kubectl apply -f eks/aws-auth.yaml
+          kubectl apply -f eks/deployment.yaml
+          kubectl apply -f eks/service.yaml
+          kubectl apply -f eks/issuer.yaml
+          kubectl apply -f eks/ingress.yaml
