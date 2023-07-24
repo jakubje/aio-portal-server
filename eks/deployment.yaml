@@ -17,5 +17,6 @@ spec:
       containers:
         - name: aio-portal-api
           image: 807669619150.dkr.ecr.eu-west-2.amazonaws.com/aioportal:latest
+          imagePullPolicy: Always
           ports:
             - containerPort: 8080
