@@ -337,7 +337,7 @@ func TestGetUserAPI(t *testing.T) {
 		{
 			name: "OK",
 			setupAuth: func(t *testing.T, request *http.Request, tokenMaker token.Maker) {
-				addAuthorization(t, request, tokenMaker, authorizationTypeBearer, user.ID, time.Minute)
+				addAuthorization(t, request, tokenMaker, authorizationTypeBearer, user.ID, user.Email, time.Minute)
 			},
 			body: gin.H{
 				"email": user.Email,
@@ -356,7 +356,7 @@ func TestGetUserAPI(t *testing.T) {
 		{
 			name: "NotFound",
 			setupAuth: func(t *testing.T, request *http.Request, tokenMaker token.Maker) {
-				addAuthorization(t, request, tokenMaker, authorizationTypeBearer, user.ID, time.Minute)
+				addAuthorization(t, request, tokenMaker, authorizationTypeBearer, user.ID, user.Email, time.Minute)
 			},
 			body: gin.H{
 				"email": user.Email,
@@ -374,7 +374,7 @@ func TestGetUserAPI(t *testing.T) {
 		{
 			name: "InternalError",
 			setupAuth: func(t *testing.T, request *http.Request, tokenMaker token.Maker) {
-				addAuthorization(t, request, tokenMaker, authorizationTypeBearer, user.ID, time.Minute)
+				addAuthorization(t, request, tokenMaker, authorizationTypeBearer, user.ID, user.Email, time.Minute)
 			},
 			body: gin.H{
 				"email": user.Email,
@@ -392,7 +392,7 @@ func TestGetUserAPI(t *testing.T) {
 		{
 			name: "InvalidEmail",
 			setupAuth: func(t *testing.T, request *http.Request, tokenMaker token.Maker) {
-				addAuthorization(t, request, tokenMaker, authorizationTypeBearer, user.ID, time.Minute)
+				addAuthorization(t, request, tokenMaker, authorizationTypeBearer, user.ID, user.Email, time.Minute)
 			},
 			body: gin.H{
 				"email": "invalid-email",
@@ -409,7 +409,7 @@ func TestGetUserAPI(t *testing.T) {
 		{
 			name: "UnauthorizedUser",
 			setupAuth: func(t *testing.T, request *http.Request, tokenMaker token.Maker) {
-				addAuthorization(t, request, tokenMaker, authorizationTypeBearer, 123, time.Minute)
+				addAuthorization(t, request, tokenMaker, authorizationTypeBearer, 123, "test@gmail.com", time.Minute)
 			},
 			body: gin.H{
 				"email": user.Email,
