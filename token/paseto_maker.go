@@ -26,13 +26,14 @@ func NewPasetoMaker(symmetricKey string) (Maker, error) {
 	return maker, nil
 }
 
-func (maker *PasetoMaker) CreateToken(userId int64, duration time.Duration) (string, error) {
-	payload, err := NewPayload(userId, duration)
+func (maker *PasetoMaker) CreateToken(userId int64, email string, duration time.Duration) (string, *Payload, error) {
+	payload, err := NewPayload(userId, email, duration)
 	if err != nil {
-		return "", err
+		return "", payload, err
 	}
 
-	return maker.paseto.Encrypt(maker.symmetricKey, payload, nil)
+	token, err := maker.paseto.Encrypt(maker.symmetricKey, payload, nil)
+	return token, payload, err
 }
 
 func (maker *PasetoMaker) VerifyToken(token string) (*Payload, error) {

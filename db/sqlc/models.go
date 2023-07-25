@@ -27,6 +27,17 @@ type Portfolio struct {
 	ProfitLoss int32  `json:"profit_loss"`
 }
 
+type Session struct {
+	ID           uuid.UUID `json:"id"`
+	Email        string    `json:"email"`
+	AccountID    int64     `json:"account_id"`
+	RefreshToken string    `json:"refresh_token"`
+	UserAgent    string    `json:"user_agent"`
+	ClientIp     string    `json:"client_ip"`
+	IsBlocked    bool      `json:"is_blocked"`
+	ExpiresAt    time.Time `json:"expires_at"`
+}
+
 type Transaction struct {
 	ID             uuid.UUID `json:"id"`
 	AccountID      int64     `json:"account_id"`
