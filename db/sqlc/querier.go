@@ -6,11 +6,14 @@ package db
 
 import (
 	"context"
+
+	"github.com/google/uuid"
 )
 
 type Querier interface {
 	CreateFootball(ctx context.Context, arg CreateFootballParams) (Football, error)
 	CreatePortfolio(ctx context.Context, arg CreatePortfolioParams) (Portfolio, error)
+	CreateSession(ctx context.Context, arg CreateSessionParams) (Session, error)
 	CreateTransaction(ctx context.Context, arg CreateTransactionParams) (Transaction, error)
 	CreateUser(ctx context.Context, arg CreateUserParams) (User, error)
 	CreateWatchlist(ctx context.Context, arg CreateWatchlistParams) (Watchlist, error)
@@ -23,6 +26,7 @@ type Querier interface {
 	GetFootball(ctx context.Context, accountID int64) (Football, error)
 	GetPortfolio(ctx context.Context, arg GetPortfolioParams) (Portfolio, error)
 	GetRollUpByCoinByPortfolio(ctx context.Context, arg GetRollUpByCoinByPortfolioParams) ([]GetRollUpByCoinByPortfolioRow, error)
+	GetSession(ctx context.Context, id uuid.UUID) (Session, error)
 	GetTransaction(ctx context.Context, arg GetTransactionParams) (Transaction, error)
 	GetUser(ctx context.Context, email string) (User, error)
 	GetWatchlist(ctx context.Context, arg GetWatchlistParams) (Watchlist, error)
