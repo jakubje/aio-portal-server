@@ -10,13 +10,17 @@ require (
 	github.com/go-pg/pg/v10 v10.10.7
 	github.com/golang/mock v1.6.0
 	github.com/google/uuid v1.3.0
+	github.com/grpc-ecosystem/grpc-gateway/v2 v2.16.1
 	github.com/ifreddyrondon/bastion v3.1.0+incompatible
 	github.com/jackc/pgx/v5 v5.4.1
 	github.com/lib/pq v1.10.7
 	github.com/o1egl/paseto v1.0.0
 	github.com/spf13/viper v1.16.0
 	go.mongodb.org/mongo-driver v1.10.4
-	golang.org/x/crypto v0.10.0
+	golang.org/x/crypto v0.11.0
+	google.golang.org/grpc v1.56.2
+	google.golang.org/grpc/cmd/protoc-gen-go-grpc v1.3.0
+	google.golang.org/protobuf v1.31.0
 )
 
 require (
@@ -31,6 +35,8 @@ require (
 	github.com/go-playground/locales v0.14.1 // indirect
 	github.com/go-playground/universal-translator v0.18.1 // indirect
 	github.com/go-playground/validator/v10 v10.14.0 // indirect
+	github.com/golang/glog v1.1.0 // indirect
+	github.com/golang/protobuf v1.5.3 // indirect
 	github.com/hashicorp/hcl v1.0.0 // indirect
 	github.com/jackc/pgpassfile v1.0.0 // indirect
 	github.com/jackc/pgservicefile v0.0.0-20221227161230-091c0ba34f0a // indirect
@@ -52,8 +58,10 @@ require (
 	github.com/twitchyliquid64/golang-asm v0.15.1 // indirect
 	github.com/ugorji/go/codec v1.2.11 // indirect
 	golang.org/x/arch v0.3.0 // indirect
-	golang.org/x/text v0.10.0 // indirect
-	google.golang.org/protobuf v1.30.0 // indirect
+	golang.org/x/text v0.11.0 // indirect
+	google.golang.org/genproto v0.0.0-20230706204954-ccb25ca9f130 // indirect
+	google.golang.org/genproto/googleapis/api v0.0.0-20230724170836-66ad5b6ff146 // indirect
+	google.golang.org/genproto/googleapis/rpc v0.0.0-20230724170836-66ad5b6ff146 // indirect
 	gopkg.in/ini.v1 v1.67.0 // indirect
 	gopkg.in/yaml.v2 v2.4.0 // indirect
 )
@@ -92,8 +100,8 @@ require (
 	github.com/yalp/jsonpath v0.0.0-20180802001716-5cc68e5049a0 // indirect
 	github.com/yudai/gojsondiff v1.0.0 // indirect
 	github.com/yudai/golcs v0.0.0-20170316035057-ecda9a501e82 // indirect
-	golang.org/x/net v0.10.0 // indirect
-	golang.org/x/sys v0.9.0 // indirect
+	golang.org/x/net v0.12.0 // indirect
+	golang.org/x/sys v0.10.0 // indirect
 	gopkg.in/gavv/httpexpect.v1 v1.1.3 // indirect
 	gopkg.in/yaml.v3 v3.0.1 // indirect
 	mellium.im/sasl v0.2.1 // indirect
