@@ -20,4 +20,3 @@ message LoginUserResponse {
   google.protobuf.Timestamp access_token_expires_at = 5;
   google.protobuf.Timestamp refresh_token_expires_at = 6;
 }
-
