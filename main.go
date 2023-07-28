@@ -3,6 +3,9 @@ package main
 import (
 	"context"
 	"database/sql"
+	"github.com/golang-migrate/migrate/v4"
+	_ "github.com/golang-migrate/migrate/v4/database/postgres"
+	_ "github.com/golang-migrate/migrate/v4/source/file"
 	"github.com/grpc-ecosystem/grpc-gateway/v2/runtime"
 	"github.com/jakub/aioportal/server/api"
 	db "github.com/jakub/aioportal/server/db/sqlc"
@@ -36,11 +39,26 @@ func main() {
 	if err != nil {
 		log.Fatal("cannot connect to db: ", err)
 	}
-
+	// run db migration
+	runDBMigration(config.MigrationURL, config.DBSource)
 	store := db.NewStore(conn)
 	//runGinServer(config, store)
 	go runGatewayServer(config, store)
 	runGrpcServer(config, store)
+
+}
+
+func runDBMigration(migrationURL string, dbSource string) {
+	migration, err := migrate.New(migrationURL, dbSource)
+	log.Println(migrationURL, dbSource)
+	if err != nil {
+		log.Fatal("cannot create new migrate instance: ", err)
+	}
+
+	if err = migration.Up(); err != nil && err != migrate.ErrNoChange {
+		log.Fatal("failed to run  migrate up: ", err)
+	}
+	log.Println("db migrated successfully")
 
 }
 func runGrpcServer(config util.Config, store db.Store) {
@@ -103,6 +121,7 @@ func runGatewayServer(config util.Config, store db.Store) {
 	if err != nil {
 		log.Fatal("cannot create listener")
 	}
+
 	log.Printf("start HTTPS gateway server at %s", listener.Addr().String())
 	err = http.Serve(listener, mux)
 	if err != nil {

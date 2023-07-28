@@ -11,7 +11,7 @@ services:
       context: .
       dockerfile: Dockerfile
     ports:
-      - "8080:8888"
+      - "8888:8888"
     environment:
       - DB_SOURCE=postgresql://root:root@postgres:5432/aio_portal?sslmode=disable
     depends_on:
