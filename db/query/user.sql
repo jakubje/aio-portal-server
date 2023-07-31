@@ -29,7 +29,9 @@ SET
 
     last_name = COALESCE(sqlc.narg(last_name), last_name),
 
-    password = COALESCE(sqlc.narg(password), password)
+    password = COALESCE(sqlc.narg(password), password),
+
+    password_changed_at = COALESCE(sqlc.narg(password_changed_at), password_changed_at)
 
 WHERE id = sqlc.arg(id)
 RETURNING *;

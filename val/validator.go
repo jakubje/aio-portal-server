@@ -18,6 +18,13 @@ func ValidateString(value string, minLength int, maxLength int) error {
 	return nil
 }
 
+func ValidateID(value int64) error {
+	if value <= 0 {
+		return fmt.Errorf("invalid user id")
+	}
+	return nil
+}
+
 func ValidateEmail(value string) error {
 	if err := ValidateString(value, 3, 100); err != nil {
 		return err
