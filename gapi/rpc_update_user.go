@@ -14,13 +14,24 @@ import (
 )
 
 func (server *Server) UpdateUser(ctx context.Context, req *pb.UpdateUserRequest) (*pb.UpdateUserResponse, error) {
+	authPayload, err := server.authorizeUser(ctx)
+	if err != nil {
+		return nil, unauthenticatedError(err)
+	}
+
 	violations := validateUpdateUserRequest(req)
 	if violations != nil {
 		return nil, invalidArgumentError(violations)
 	}
 
+	if authPayload.Email != req.GetEmail() {
+		return nil, status.Errorf(codes.PermissionDenied, "cannot update other user's info")
+	}
+
+	req.Id = authPayload.AccountId
+
 	arg := db.UpdateUserParams{
-		ID: req.GetId(),
+		ID: authPayload.AccountId,
 		Email: sql.NullString{
 			String: req.GetEmail(),
 			Valid:  req.Email != nil,
@@ -67,10 +78,6 @@ func (server *Server) UpdateUser(ctx context.Context, req *pb.UpdateUserRequest)
 }
 
 func validateUpdateUserRequest(req *pb.UpdateUserRequest) (violations []*errdetails.BadRequest_FieldViolation) {
-	if err := val.ValidateID(req.GetId()); err != nil {
-		violations = append(violations, fieldViolation("id", err))
-	}
-
 	if req.Email != nil {
 		if err := val.ValidateEmail(req.GetEmail()); err != nil {
 			violations = append(violations, fieldViolation("email", err))
