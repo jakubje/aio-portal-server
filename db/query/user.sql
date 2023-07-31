@@ -22,12 +22,14 @@ WHERE id = $1;
 
 -- name: UpdateUser :one
 UPDATE users
-set 
-    email = COALESCE($2, email), 
-    name = COALESCE($3, name), 
-    last_name = COALESCE($4, last_name), 
-    password = COALESCE($5, password),
-    password_changed_at = COALESCE($6, password_changed_at)
+SET
+    email = COALESCE(sqlc.narg(email), email),
 
-WHERE id = $1
+    name = COALESCE(sqlc.narg(name), name),
+
+    last_name = COALESCE(sqlc.narg(last_name), last_name),
+
+    password = COALESCE(sqlc.narg(password), password)
+
+WHERE id = sqlc.arg(id)
 RETURNING *;

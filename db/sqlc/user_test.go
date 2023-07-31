@@ -56,15 +56,15 @@ func TestGetUser(t *testing.T) {
 	require.WithinDuration(t, account1.CreatedAt, account2.CreatedAt, time.Second)
 }
 
-func TestUpdateUser(t *testing.T) {
+func TestUpdateUserName(t *testing.T) {
 	account1 := createRandomUser(t)
 
 	arg := UpdateUserParams{
-		ID:       account1.ID,
-		Email:    account1.Email,
-		Name:     utils.RandomString(5),
-		LastName: utils.RandomString(5),
-		Password: utils.RandomString(8),
+		ID: account1.ID,
+		Name: sql.NullString{
+			String: utils.RandomString(5),
+			Valid:  true,
+		},
 	}
 
 	account2, err := testQueries.UpdateUser(context.Background(), arg)
@@ -72,9 +72,84 @@ func TestUpdateUser(t *testing.T) {
 	require.NotEmpty(t, account2)
 
 	require.Equal(t, arg.ID, account2.ID)
-	require.Equal(t, arg.Name, account2.Name)
-	require.Equal(t, arg.LastName, account2.LastName)
-	require.Equal(t, arg.Password, account2.Password)
+	require.NotEqual(t, account1.Name, account2.Name)
+	require.Equal(t, account1.LastName, account2.LastName)
+	require.Equal(t, account1.Password, account2.Password)
+	require.WithinDuration(t, account1.CreatedAt, account2.CreatedAt, time.Second)
+
+}
+
+func TestUpdateUserEmail(t *testing.T) {
+	account1 := createRandomUser(t)
+
+	arg := UpdateUserParams{
+		ID: account1.ID,
+		Email: sql.NullString{
+			String: utils.RandomEmail(),
+			Valid:  true,
+		},
+	}
+
+	account2, err := testQueries.UpdateUser(context.Background(), arg)
+	require.NoError(t, err)
+	require.NotEmpty(t, account2)
+
+	require.Equal(t, arg.ID, account2.ID)
+	require.NotEqual(t, account1.Email, account2.Email)
+	require.Equal(t, account1.Name, account2.Name)
+	require.Equal(t, account1.LastName, account2.LastName)
+	require.Equal(t, account1.Password, account2.Password)
+	require.WithinDuration(t, account1.CreatedAt, account2.CreatedAt, time.Second)
+
+}
+
+func TestUpdateUserLastName(t *testing.T) {
+	account1 := createRandomUser(t)
+
+	arg := UpdateUserParams{
+		ID: account1.ID,
+		LastName: sql.NullString{
+			String: utils.RandomString(7),
+			Valid:  true,
+		},
+	}
+
+	account2, err := testQueries.UpdateUser(context.Background(), arg)
+	require.NoError(t, err)
+	require.NotEmpty(t, account2)
+
+	require.Equal(t, arg.ID, account2.ID)
+	require.NotEqual(t, account1.LastName, account2.LastName)
+	require.Equal(t, account1.Email, account2.Email)
+	require.Equal(t, account1.Name, account2.Name)
+	require.Equal(t, account1.Password, account2.Password)
+	require.WithinDuration(t, account1.CreatedAt, account2.CreatedAt, time.Second)
+
+}
+
+func TestUpdateUserPassword(t *testing.T) {
+	account1 := createRandomUser(t)
+
+	hashedPassword, err := utils.HashPasswod(utils.RandomString(10))
+	require.NoError(t, err)
+
+	arg := UpdateUserParams{
+		ID: account1.ID,
+		Password: sql.NullString{
+			String: hashedPassword,
+			Valid:  true,
+		},
+	}
+
+	account2, err := testQueries.UpdateUser(context.Background(), arg)
+	require.NoError(t, err)
+	require.NotEmpty(t, account2)
+
+	require.Equal(t, arg.ID, account2.ID)
+	require.NotEqual(t, account1.Password, account2.Password)
+	require.Equal(t, account1.Email, account2.Email)
+	require.Equal(t, account1.Name, account2.Name)
+	require.Equal(t, account1.LastName, account2.LastName)
 	require.WithinDuration(t, account1.CreatedAt, account2.CreatedAt, time.Second)
 
 }

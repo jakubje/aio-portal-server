@@ -198,15 +198,26 @@ func (server *Server) updateUser(ctx *gin.Context) {
 		ctx.JSON(http.StatusInternalServerError, errorResponse(err))
 		return
 	}
-	t := time.Now().UTC()
+	//t := time.Now().UTC()
 
 	arg := db.UpdateUserParams{
-		ID:                authPayload.AccountId,
-		Email:             req.Email,
-		Name:              req.Name,
-		LastName:          req.LastName,
-		Password:          hashedPassword,
-		PasswordChangedAt: t,
+		ID: authPayload.AccountId,
+		Email: sql.NullString{
+			String: req.Email,
+			Valid:  true,
+		},
+		Name: sql.NullString{
+			String: req.Name,
+			Valid:  true,
+		},
+		LastName: sql.NullString{
+			String: req.LastName,
+			Valid:  true,
+		},
+		Password: sql.NullString{
+			String: hashedPassword,
+			Valid:  true,
+		},
 	}
 	user, err := server.store.UpdateUser(ctx, arg)
 	if err != nil {
