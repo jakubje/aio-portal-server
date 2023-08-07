@@ -16,6 +16,7 @@ type Querier interface {
 	CreateSession(ctx context.Context, arg CreateSessionParams) (Session, error)
 	CreateTransaction(ctx context.Context, arg CreateTransactionParams) (Transaction, error)
 	CreateUser(ctx context.Context, arg CreateUserParams) (User, error)
+	CreateVerifyEmail(ctx context.Context, arg CreateVerifyEmailParams) (VerifyEmail, error)
 	CreateWatchlist(ctx context.Context, arg CreateWatchlistParams) (Watchlist, error)
 	CreateWatchlistCoins(ctx context.Context, arg CreateWatchlistCoinsParams) (WatchlistCoin, error)
 	DeletePortfolio(ctx context.Context, arg DeletePortfolioParams) error
@@ -41,6 +42,7 @@ type Querier interface {
 	UpdateFootball(ctx context.Context, arg UpdateFootballParams) (Football, error)
 	UpdatePortfolio(ctx context.Context, arg UpdatePortfolioParams) (Portfolio, error)
 	UpdateUser(ctx context.Context, arg UpdateUserParams) (User, error)
+	UpdateVerifyEmail(ctx context.Context, arg UpdateVerifyEmailParams) (VerifyEmail, error)
 	UpdateWatchlist(ctx context.Context, arg UpdateWatchlistParams) (Watchlist, error)
 }
 

@@ -1,0 +1,96 @@
+
+Table "users" as U {
+  "id" bigserial [pk, increment]
+  "email" varchar [unique, not null]
+  "name" varchar [not null]
+  "last_name" varchar [not null]
+  "password" varchar [not null]
+  "is_email_verified" bool [not null, default: false]
+  "password_changed_at" timestamptz [not null, default: `'0001-01-01 00:00:00Z'`]
+  "created_at" timestamptz [not null, default: `now()`]
+
+Indexes {
+  email
+}
+}
+
+Table "verify_emails" {
+  id bigserial [pk]
+  userID varchar [ref: > U.id, not null]
+  email varchar [not null]
+  secret_code varchar [not null]
+  is_used bool [not null, default: false]
+  created_at timestamptz [not null, default: `now()`]
+  expired_at timestamptz [not null, default: `now() + interval '15 minutes'`]
+}
+
+Table "watchlists" {
+  "id" bigserial [pk, increment]
+  "name" varchar [not null]
+  "account_id" bigint [not null]
+
+Indexes {
+  account_id
+}
+}
+
+Table "watchlist_coins" {
+  "id" bigserial [pk, increment]
+  "watchlist_id" bigint [not null]
+  "name" varchar [not null]
+  "symbol" varchar [not null]
+  "rank" smallint [not null]
+
+Indexes {
+  symbol
+}
+}
+
+Table "portfolios" {
+  "id" bigserial [pk, increment]
+  "account_id" bigint [not null]
+  "name" varchar [not null]
+  "holdings" integer [not null, default: 0]
+  "change_24h" integer [not null, default: 0]
+  "profit_loss" integer [not null, default: 0]
+
+Indexes {
+  account_id
+}
+}
+
+Table "transactions" {
+  "id" uuid [pk, default: `uuid_generate_v4 ()`]
+  "account_id" bigint [not null]
+  "portfolio_id" bigint [not null]
+  "type" int [not null]
+  "symbol" varchar [not null]
+  "price_per_coin" float [not null]
+  "quantity" float [not null]
+  "time_transacted" timestamp [not null]
+  "time_created" timestamptz [not null, default: `now()`]
+
+Indexes {
+  type
+}
+}
+
+Table "football" {
+  "id" bigserial [pk, increment]
+  "account_id" bigint [not null]
+  "team" varchar [not null]
+  "league" varchar [not null]
+  "country" varchar [not null]
+}
+
+Ref:"users"."id" < "watchlists"."account_id"
+
+Ref:"watchlists"."id" < "watchlist_coins"."watchlist_id"
+
+Ref:"users"."id" < "portfolios"."account_id"
+
+Ref:"users"."id" < "transactions"."account_id"
+
+Ref:"portfolios"."id" < "transactions"."portfolio_id"
+
+Ref:"users"."id" < "football"."account_id"
