@@ -2,21 +2,22 @@ package db
 
 import (
 	"context"
-	"database/sql"
-	"github.com/jakub/aioportal/server/internal/utils"
-	"github.com/stretchr/testify/require"
+
 	"testing"
+
+	"github.com/jakub/aioportal/server/util"
+	"github.com/stretchr/testify/require"
 )
 
 func createRandomWatchlistCoin(t *testing.T) WatchlistCoin {
 	_, watchlist := CreateRandomWatchlist(t)
 	arg := CreateWatchlistCoinsParams{
 		WatchlistID: watchlist.ID,
-		Name:        utils.RandomString(5),
-		Symbol:      utils.RandomString(3),
-		Rank:        int16(utils.RandomInt()),
+		Name:        util.RandomString(5),
+		Symbol:      util.RandomString(3),
+		Rank:        int16(util.RandomInt()),
 	}
-	watchlistCoin, err := testQueries.CreateWatchlistCoins(context.Background(), arg)
+	watchlistCoin, err := testStore.CreateWatchlistCoins(context.Background(), arg)
 	require.NoError(t, err)
 	require.NotEmpty(t, watchlistCoin)
 
@@ -34,11 +35,11 @@ func createWatchlistCoinsForWatchlist(t *testing.T, watchlist *Watchlist) Watchl
 
 	arg := CreateWatchlistCoinsParams{
 		WatchlistID: watchlist.ID,
-		Name:        utils.RandomString(5),
-		Symbol:      utils.RandomString(3),
-		Rank:        int16(utils.RandomInt()),
+		Name:        util.RandomString(5),
+		Symbol:      util.RandomString(3),
+		Rank:        int16(util.RandomInt()),
 	}
-	watchlistCoin, err := testQueries.CreateWatchlistCoins(context.Background(), arg)
+	watchlistCoin, err := testStore.CreateWatchlistCoins(context.Background(), arg)
 	require.NoError(t, err)
 	require.NotEmpty(t, watchlistCoin)
 
@@ -58,7 +59,7 @@ func TestCreateWatchlistCoin(t *testing.T) {
 
 func TestGetWachlistCoin(t *testing.T) {
 	coin1 := createRandomWatchlistCoin(t)
-	coin2, err := testQueries.GetWatchlistCoin(context.Background(), coin1.ID)
+	coin2, err := testStore.GetWatchlistCoin(context.Background(), coin1.ID)
 	require.NoError(t, err)
 	require.NotEmpty(t, coin2)
 
@@ -71,12 +72,12 @@ func TestGetWachlistCoin(t *testing.T) {
 
 func TestDeleteWatchlistCoin(t *testing.T) {
 	coin1 := createRandomWatchlistCoin(t)
-	err := testQueries.DeleteWatchlistCoin(context.Background(), coin1.ID)
+	err := testStore.DeleteWatchlistCoin(context.Background(), coin1.ID)
 	require.NoError(t, err)
 
-	coin2, err := testQueries.GetWatchlistCoin(context.Background(), coin1.ID)
+	coin2, err := testStore.GetWatchlistCoin(context.Background(), coin1.ID)
 	require.Error(t, err)
-	require.EqualError(t, err, sql.ErrNoRows.Error())
+	require.EqualError(t, err, ErrRecordNotFound.Error())
 	require.Empty(t, coin2)
 }
 
@@ -87,7 +88,7 @@ func TestListWatchlistCoins(t *testing.T) {
 		createWatchlistCoinsForWatchlist(t, &watchList)
 	}
 
-	watchlistCoins, err := testQueries.ListWatchlistsCoins(context.Background(), watchList.ID)
+	watchlistCoins, err := testStore.ListWatchlistsCoins(context.Background(), watchList.ID)
 	require.NoError(t, err)
 	require.Len(t, watchlistCoins, 10)
 

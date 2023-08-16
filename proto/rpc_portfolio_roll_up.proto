@@ -1,0 +1,15 @@
+syntax = "proto3";
+
+package pb;
+
+import "roll_up.proto";
+
+option go_package = "github.com/jakub/aioportal/server/pb";
+
+message RollUpRequest {
+  int64 id = 1;
+}
+
+message RollUpResponse {
+  repeated Roll_Up summary = 1;
+}

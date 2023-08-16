@@ -1,7 +1,7 @@
 package api
 
 import (
-	"database/sql"
+	"errors"
 	"github.com/jakub/aioportal/server/token"
 	"net/http"
 
@@ -62,7 +62,7 @@ func (server *Server) deleteWatchlist(ctx *gin.Context) {
 
 	err := server.store.DeleteWatchlist(ctx, arg)
 	if err != nil {
-		if err == sql.ErrNoRows {
+		if errors.Is(err, db.ErrRecordNotFound) {
 			ctx.JSON(http.StatusNotFound, errorResponse(err))
 			return
 		}
@@ -142,7 +142,7 @@ func (server *Server) updateWatchlist(ctx *gin.Context) {
 
 	watchlist, err := server.store.UpdateWatchlist(ctx, arg)
 	if err != nil {
-		if err == sql.ErrNoRows {
+		if errors.Is(err, db.ErrRecordNotFound) {
 			ctx.JSON(http.StatusNotFound, errorResponse(err))
 			return
 		}

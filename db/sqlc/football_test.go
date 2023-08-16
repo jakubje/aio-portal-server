@@ -2,9 +2,9 @@ package db
 
 import (
 	"context"
-	"github.com/jakub/aioportal/server/internal/utils"
 	"testing"
 
+	"github.com/jakub/aioportal/server/util"
 	"github.com/stretchr/testify/require"
 )
 
@@ -12,12 +12,12 @@ func createRandomFootball(t *testing.T) (Football, User) {
 	user := createRandomUser(t)
 	arg := CreateFootballParams{
 		AccountID: user.ID,
-		Team:      utils.RandomString(5),
-		League:    utils.RandomString(5),
-		Country:   utils.RandomString(5),
+		Team:      util.RandomString(5),
+		League:    util.RandomString(5),
+		Country:   util.RandomString(5),
 	}
 
-	football, err := testQueries.CreateFootball(context.Background(), arg)
+	football, err := testStore.CreateFootball(context.Background(), arg)
 	require.NoError(t, err)
 	require.NotEmpty(t, football)
 
@@ -37,7 +37,7 @@ func TestCreateFootball(t *testing.T) {
 func TestGetFootball(t *testing.T) {
 
 	football1, user := createRandomFootball(t)
-	football2, err := testQueries.GetFootball(context.Background(), user.ID)
+	football2, err := testStore.GetFootball(context.Background(), user.ID)
 	require.NoError(t, err)
 	require.NotEmpty(t, football2)
 
@@ -53,12 +53,12 @@ func TestUpdateFootball(t *testing.T) {
 
 	arg := UpdateFootballParams{
 		AccountID: user.ID,
-		Team:      utils.RandomString(5),
-		League:    utils.RandomString(5),
-		Country:   utils.RandomString(5),
+		Team:      util.RandomString(5),
+		League:    util.RandomString(5),
+		Country:   util.RandomString(5),
 	}
 
-	football2, err := testQueries.UpdateFootball(context.Background(), arg)
+	football2, err := testStore.UpdateFootball(context.Background(), arg)
 	require.NoError(t, err)
 	require.NotEmpty(t, football2)
 

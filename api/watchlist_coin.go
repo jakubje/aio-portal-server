@@ -1,7 +1,7 @@
 package api
 
 import (
-	"database/sql"
+	"errors"
 	db "github.com/jakub/aioportal/server/db/sqlc"
 	"net/http"
 
@@ -65,14 +65,18 @@ func (server *Server) deleteWachlistCoin(ctx *gin.Context) {
 		return
 	}
 	err := server.store.DeleteWatchlistCoin(ctx, req.ID)
+
 	if err != nil {
-		if err == sql.ErrNoRows {
+		if errors.Is(err, db.ErrRecordNotFound) {
 			ctx.JSON(http.StatusNotFound, errorResponse(err))
 			return
 		}
 		ctx.JSON(http.StatusInternalServerError, errorResponse(err))
 		return
 	}
+	ctx.JSON(http.StatusInternalServerError, errorResponse(err))
+	return
+
 	ctx.JSON(http.StatusOK, gin.H{"message": "watchlist coin deleted"})
 }
 

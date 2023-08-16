@@ -2,27 +2,26 @@ package db
 
 import (
 	"context"
-	"database/sql"
+
 	"testing"
 	"time"
 
-	"github.com/jakub/aioportal/server/internal/utils"
+	"github.com/jackc/pgx/v5/pgtype"
 	"github.com/jakub/aioportal/server/util"
-
 	"github.com/stretchr/testify/require"
 )
 
 func createRandomUser(t *testing.T) User {
-	hashedPassword, err := util.HashPassword(utils.RandomString(8))
+	hashedPassword, err := util.HashPassword(util.RandomString(8))
 	require.NoError(t, err)
 
 	arg := CreateUserParams{
-		Email:    utils.RandomEmail(),
-		Name:     utils.RandomString(5),
-		LastName: utils.RandomString(5),
+		Email:    util.RandomEmail(),
+		Name:     util.RandomString(5),
+		LastName: util.RandomString(5),
 		Password: hashedPassword,
 	}
-	user, err := testQueries.CreateUser(context.Background(), arg)
+	user, err := testStore.CreateUser(context.Background(), arg)
 	require.NoError(t, err)
 	require.NotEmpty(t, user)
 
@@ -44,7 +43,7 @@ func TestCreateUser(t *testing.T) {
 func TestGetUser(t *testing.T) {
 	//Create account
 	account1 := createRandomUser(t)
-	account2, err := testQueries.GetUser(context.Background(), account1.Email)
+	account2, err := testStore.GetUser(context.Background(), account1.Email)
 	require.NoError(t, err)
 	require.NotEmpty(t, account2)
 
@@ -61,13 +60,13 @@ func TestUpdateUserName(t *testing.T) {
 
 	arg := UpdateUserParams{
 		ID: account1.ID,
-		Name: sql.NullString{
-			String: utils.RandomString(5),
+		Name: pgtype.Text{
+			String: util.RandomString(5),
 			Valid:  true,
 		},
 	}
 
-	account2, err := testQueries.UpdateUser(context.Background(), arg)
+	account2, err := testStore.UpdateUser(context.Background(), arg)
 	require.NoError(t, err)
 	require.NotEmpty(t, account2)
 
@@ -84,13 +83,13 @@ func TestUpdateUserEmail(t *testing.T) {
 
 	arg := UpdateUserParams{
 		ID: account1.ID,
-		Email: sql.NullString{
-			String: utils.RandomEmail(),
+		Email: pgtype.Text{
+			String: util.RandomEmail(),
 			Valid:  true,
 		},
 	}
 
-	account2, err := testQueries.UpdateUser(context.Background(), arg)
+	account2, err := testStore.UpdateUser(context.Background(), arg)
 	require.NoError(t, err)
 	require.NotEmpty(t, account2)
 
@@ -108,13 +107,13 @@ func TestUpdateUserLastName(t *testing.T) {
 
 	arg := UpdateUserParams{
 		ID: account1.ID,
-		LastName: sql.NullString{
-			String: utils.RandomString(7),
+		LastName: pgtype.Text{
+			String: util.RandomString(7),
 			Valid:  true,
 		},
 	}
 
-	account2, err := testQueries.UpdateUser(context.Background(), arg)
+	account2, err := testStore.UpdateUser(context.Background(), arg)
 	require.NoError(t, err)
 	require.NotEmpty(t, account2)
 
@@ -130,18 +129,18 @@ func TestUpdateUserLastName(t *testing.T) {
 func TestUpdateUserPassword(t *testing.T) {
 	account1 := createRandomUser(t)
 
-	hashedPassword, err := utils.HashPasswod(utils.RandomString(10))
+	hashedPassword, err := util.HashPasswod(util.RandomString(10))
 	require.NoError(t, err)
 
 	arg := UpdateUserParams{
 		ID: account1.ID,
-		Password: sql.NullString{
+		Password: pgtype.Text{
 			String: hashedPassword,
 			Valid:  true,
 		},
 	}
 
-	account2, err := testQueries.UpdateUser(context.Background(), arg)
+	account2, err := testStore.UpdateUser(context.Background(), arg)
 	require.NoError(t, err)
 	require.NotEmpty(t, account2)
 
@@ -156,12 +155,12 @@ func TestUpdateUserPassword(t *testing.T) {
 
 func TestDeleteUser(t *testing.T) {
 	account1 := createRandomUser(t)
-	err := testQueries.DeleteUser(context.Background(), account1.ID)
+	err := testStore.DeleteUser(context.Background(), account1.ID)
 	require.NoError(t, err)
 
-	account2, err := testQueries.GetUser(context.Background(), account1.Email)
+	account2, err := testStore.GetUser(context.Background(), account1.Email)
 	require.Error(t, err)
-	require.EqualError(t, err, sql.ErrNoRows.Error())
+	require.EqualError(t, err, ErrRecordNotFound.Error())
 	require.Empty(t, account2)
 }
 
@@ -174,7 +173,7 @@ func TestListUsers(t *testing.T) {
 		Offset: 0,
 	}
 
-	accounts, err := testQueries.ListUsers(context.Background(), arg)
+	accounts, err := testStore.ListUsers(context.Background(), arg)
 	require.NoError(t, err)
 	require.Len(t, accounts, 5)
 

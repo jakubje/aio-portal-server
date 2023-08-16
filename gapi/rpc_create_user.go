@@ -8,7 +8,6 @@ import (
 	"github.com/jakub/aioportal/server/util"
 	"github.com/jakub/aioportal/server/val"
 	"github.com/jakub/aioportal/server/worker"
-	"github.com/lib/pq"
 	"google.golang.org/genproto/googleapis/rpc/errdetails"
 	"google.golang.org/grpc/codes"
 	"google.golang.org/grpc/status"
@@ -48,16 +47,11 @@ func (server *Server) CreateUser(ctx context.Context, req *pb.CreateUserRequest)
 
 	txResult, err := server.store.CreateUserTx(ctx, arg)
 	if err != nil {
-		if pqErr, ok := err.(*pq.Error); ok {
-			switch pqErr.Code.Name() {
-			case "foreign_key_violation", "unique_violation":
-				return nil, status.Errorf(codes.AlreadyExists, "email already exists: %s", err)
-			}
+		if db.ErrorCode(err) == db.UniqueViolation {
+			return nil, status.Errorf(codes.AlreadyExists, "email already exists: %s", err)
 		}
 		return nil, status.Errorf(codes.Internal, "failed to create user: %s", err)
 	}
-
-	// TODO: use db transaction
 
 	rsp := &pb.CreateUserResponse{
 		User: convertUser(txResult.User),

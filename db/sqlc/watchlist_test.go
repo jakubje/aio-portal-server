@@ -2,19 +2,20 @@ package db
 
 import (
 	"context"
-	"database/sql"
-	"github.com/jakub/aioportal/server/internal/utils"
-	"github.com/stretchr/testify/require"
+
 	"testing"
+
+	"github.com/jakub/aioportal/server/util"
+	"github.com/stretchr/testify/require"
 )
 
 func CreateRandomWatchlist(t *testing.T) (User, Watchlist) {
 	user := createRandomUser(t)
 	arg := CreateWatchlistParams{
-		Name:      utils.RandomString(5),
+		Name:      util.RandomString(5),
 		AccountID: user.ID,
 	}
-	watchlist, err := testQueries.CreateWatchlist(context.Background(), arg)
+	watchlist, err := testStore.CreateWatchlist(context.Background(), arg)
 	require.NoError(t, err)
 	require.NotEmpty(t, watchlist)
 
@@ -34,7 +35,7 @@ func TestGetWatchlist(t *testing.T) {
 		ID:        watchlist1.ID,
 		AccountID: user.ID,
 	}
-	watchlist2, err := testQueries.GetWatchlist(context.Background(), arg)
+	watchlist2, err := testStore.GetWatchlist(context.Background(), arg)
 	require.NoError(t, err)
 	require.NotEmpty(t, watchlist2)
 
@@ -47,10 +48,10 @@ func TestUpdateWatchlist(t *testing.T) {
 	user, watchlist1 := CreateRandomWatchlist(t)
 	arg := UpdateWatchlistParams{
 		ID:        watchlist1.ID,
-		Name:      utils.RandomString(6),
+		Name:      util.RandomString(6),
 		AccountID: user.ID,
 	}
-	watchlist2, err := testQueries.UpdateWatchlist(context.Background(), arg)
+	watchlist2, err := testStore.UpdateWatchlist(context.Background(), arg)
 	require.NoError(t, err)
 	require.NotEmpty(t, watchlist2)
 
@@ -65,22 +66,22 @@ func TestDeleteWatchlist(t *testing.T) {
 		ID:        watchlist1.ID,
 		AccountID: user.ID,
 	}
-	err := testQueries.DeleteWatchlist(context.Background(), arg)
+	err := testStore.DeleteWatchlist(context.Background(), arg)
 	require.NoError(t, err)
 
-	watchlist2, err := testQueries.GetWatchlist(context.Background(), GetWatchlistParams(arg))
+	watchlist2, err := testStore.GetWatchlist(context.Background(), GetWatchlistParams(arg))
 	require.Error(t, err)
-	require.EqualError(t, err, sql.ErrNoRows.Error())
+	require.EqualError(t, err, ErrRecordNotFound.Error())
 	require.Empty(t, watchlist2)
 }
 
 func createWatchlistForUser(t *testing.T, user *User) Watchlist {
 
 	arg := CreateWatchlistParams{
-		Name:      utils.RandomString(5),
+		Name:      util.RandomString(5),
 		AccountID: user.ID,
 	}
-	watchlist, err := testQueries.CreateWatchlist(context.Background(), arg)
+	watchlist, err := testStore.CreateWatchlist(context.Background(), arg)
 	require.NoError(t, err)
 	require.NotEmpty(t, watchlist)
 
@@ -96,7 +97,7 @@ func TestListWatchlists(t *testing.T) {
 		createWatchlistForUser(t, &user)
 	}
 
-	watchlists, err := testQueries.ListWatchlists(context.Background(), user.ID)
+	watchlists, err := testStore.ListWatchlists(context.Background(), user.ID)
 	require.NoError(t, err)
 	require.Len(t, watchlists, 10)
 	for _, watchlist := range watchlists {

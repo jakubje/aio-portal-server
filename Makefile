@@ -36,6 +36,7 @@ server:
 
 mock:
 	mockgen -package mockdb -destination db/mock/store.go github.com/jakub/aioportal/server/db/sqlc Store
+	mockgen -package mockwk -destination worker/mock/distributor.go github.com/jakub/aioportal/server/worker TaskDistributor
 
 proto:
 	rm -f pb/*.go

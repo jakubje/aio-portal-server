@@ -1,22 +1,23 @@
 package token
 
 import (
-	"github.com/jakub/aioportal/server/internal/utils"
-	"github.com/stretchr/testify/require"
 	"testing"
 	"time"
+
+	"github.com/jakub/aioportal/server/util"
+	"github.com/stretchr/testify/require"
 )
 
 func TestNewPasetoMaker(t *testing.T) {
-	maker, err := NewPasetoMaker(utils.RandomString(32))
+	maker, err := NewPasetoMaker(util.RandomString(32))
 	require.NoError(t, err)
 
-	userId := utils.RandomInt64()
+	userId := util.RandomInt64(1, 1000)
 	duration := time.Minute
 
 	issuedAt := time.Now()
 	expriedAt := issuedAt.Add(duration)
-	userEmail := utils.RandomEmail()
+	userEmail := util.RandomEmail()
 
 	token, payload, err := maker.CreateToken(userId, userEmail, duration)
 	require.NoError(t, err)
@@ -34,10 +35,10 @@ func TestNewPasetoMaker(t *testing.T) {
 }
 
 func TestExpiredPasetoToken(t *testing.T) {
-	maker, err := NewPasetoMaker(utils.RandomString(32))
+	maker, err := NewPasetoMaker(util.RandomString(32))
 	require.NoError(t, err)
-	userId := utils.RandomInt64()
-	userEmail := utils.RandomEmail()
+	userId := util.RandomInt64(1, 1000)
+	userEmail := util.RandomEmail()
 	token, payload, err := maker.CreateToken(userId, userEmail, -time.Minute)
 	require.NoError(t, err)
 	require.NotEmpty(t, token)

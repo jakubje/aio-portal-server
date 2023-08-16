@@ -2,10 +2,11 @@ package api
 
 import (
 	"database/sql"
-	db "github.com/jakub/aioportal/server/db/sqlc"
-	"github.com/jakub/aioportal/server/token"
 	"net/http"
 	"time"
+
+	db "github.com/jakub/aioportal/server/db/sqlc"
+	"github.com/jakub/aioportal/server/token"
 
 	"github.com/gin-gonic/gin"
 	"github.com/google/uuid"

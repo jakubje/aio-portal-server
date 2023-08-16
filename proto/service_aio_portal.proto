@@ -7,6 +7,11 @@ import "rpc_create_user.proto";
 import "rpc_login_user.proto";
 import "rpc_update_user.proto";
 import "rpc_verify_email.proto";
+import "rpc_create_portfolio.proto";
+import "rpc_update_portfolio.proto";
+import "rpc_get_portfolio.proto";
+import "rpc_list_portfolios.proto";
+import "rpc_portfolio_roll_up.proto";
 import "protoc-gen-openapiv2/options/annotations.proto";
 
 option go_package = "github.com/jakub/aioportal/server/pb";
@@ -61,6 +66,53 @@ service AioPortal {
     option (grpc.gateway.protoc_gen_openapiv2.options.openapiv2_operation) = {
       description: "Use this API to verify user email";
       summary: "Verify email";
+    };
+  }
+  rpc CreatePortfolio (CreatePortfolioRequest) returns (CreatePortfolioResponse) {
+    option (google.api.http) = {
+      post: "/v1/create_portfolio"
+      body: "*"
+    };
+    option (grpc.gateway.protoc_gen_openapiv2.options.openapiv2_operation) = {
+      description: "Use this API to create a new portfolio";
+      summary: "Create new portfolio";
+    };
+  }
+  rpc UpdatePortfolio (UpdatePortfolioRequest) returns (UpdatePortfolioResponse) {
+    option (google.api.http) = {
+      post: "/v1/update_portfolio"
+      body: "*"
+    };
+    option (grpc.gateway.protoc_gen_openapiv2.options.openapiv2_operation) = {
+      description: "Use this API to update a portfolio";
+      summary: "Update a portfolio";
+    };
+  }
+  rpc GetPortfolio (GetPortfolioRequest) returns (GetPortfolioResponse) {
+    option (google.api.http) = {
+      get: "/v1/get_portfolio"
+    };
+    option (grpc.gateway.protoc_gen_openapiv2.options.openapiv2_operation) = {
+      description: "Use this API to get a portfolio";
+      summary: "Get a portfolio";
+    };
+  }
+  rpc ListPortfolios (ListPortfoliosRequest) returns (ListPortfoliosResponse) {
+    option (google.api.http) = {
+      get: "/v1/get_portfolios"
+    };
+    option (grpc.gateway.protoc_gen_openapiv2.options.openapiv2_operation) = {
+      description: "Use this API to get a list of user portfolios";
+      summary: "Get a list of user portfolios";
+    };
+  }
+  rpc GetRollUp (RollUpRequest) returns (RollUpResponse) {
+    option (google.api.http) = {
+      get: "/v1/get_rollup"
+    };
+    option (grpc.gateway.protoc_gen_openapiv2.options.openapiv2_operation) = {
+      description: "Use this API to get a summary of account holdings";
+      summary: "Get a list of user currency holdings";
     };
   }
 }

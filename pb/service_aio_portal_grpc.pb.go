@@ -19,10 +19,15 @@ import (
 const _ = grpc.SupportPackageIsVersion7
 
 const (
-	AioPortal_CreateUser_FullMethodName  = "/pb.AioPortal/CreateUser"
-	AioPortal_LoginUser_FullMethodName   = "/pb.AioPortal/LoginUser"
-	AioPortal_UpdateUser_FullMethodName  = "/pb.AioPortal/UpdateUser"
-	AioPortal_VerifyEmail_FullMethodName = "/pb.AioPortal/VerifyEmail"
+	AioPortal_CreateUser_FullMethodName      = "/pb.AioPortal/CreateUser"
+	AioPortal_LoginUser_FullMethodName       = "/pb.AioPortal/LoginUser"
+	AioPortal_UpdateUser_FullMethodName      = "/pb.AioPortal/UpdateUser"
+	AioPortal_VerifyEmail_FullMethodName     = "/pb.AioPortal/VerifyEmail"
+	AioPortal_CreatePortfolio_FullMethodName = "/pb.AioPortal/CreatePortfolio"
+	AioPortal_UpdatePortfolio_FullMethodName = "/pb.AioPortal/UpdatePortfolio"
+	AioPortal_GetPortfolio_FullMethodName    = "/pb.AioPortal/GetPortfolio"
+	AioPortal_ListPortfolios_FullMethodName  = "/pb.AioPortal/ListPortfolios"
+	AioPortal_GetRollUp_FullMethodName       = "/pb.AioPortal/GetRollUp"
 )
 
 // AioPortalClient is the client API for AioPortal service.
@@ -33,6 +38,11 @@ type AioPortalClient interface {
 	LoginUser(ctx context.Context, in *LoginUserRequest, opts ...grpc.CallOption) (*LoginUserResponse, error)
 	UpdateUser(ctx context.Context, in *UpdateUserRequest, opts ...grpc.CallOption) (*UpdateUserResponse, error)
 	VerifyEmail(ctx context.Context, in *VerifyEmailRequest, opts ...grpc.CallOption) (*VerifyEmailResponse, error)
+	CreatePortfolio(ctx context.Context, in *CreatePortfolioRequest, opts ...grpc.CallOption) (*CreatePortfolioResponse, error)
+	UpdatePortfolio(ctx context.Context, in *UpdatePortfolioRequest, opts ...grpc.CallOption) (*UpdatePortfolioResponse, error)
+	GetPortfolio(ctx context.Context, in *GetPortfolioRequest, opts ...grpc.CallOption) (*GetPortfolioResponse, error)
+	ListPortfolios(ctx context.Context, in *ListPortfoliosRequest, opts ...grpc.CallOption) (*ListPortfoliosResponse, error)
+	GetRollUp(ctx context.Context, in *RollUpRequest, opts ...grpc.CallOption) (*RollUpResponse, error)
 }
 
 type aioPortalClient struct {
@@ -79,6 +89,51 @@ func (c *aioPortalClient) VerifyEmail(ctx context.Context, in *VerifyEmailReques
 	return out, nil
 }
 
+func (c *aioPortalClient) CreatePortfolio(ctx context.Context, in *CreatePortfolioRequest, opts ...grpc.CallOption) (*CreatePortfolioResponse, error) {
+	out := new(CreatePortfolioResponse)
+	err := c.cc.Invoke(ctx, AioPortal_CreatePortfolio_FullMethodName, in, out, opts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
+func (c *aioPortalClient) UpdatePortfolio(ctx context.Context, in *UpdatePortfolioRequest, opts ...grpc.CallOption) (*UpdatePortfolioResponse, error) {
+	out := new(UpdatePortfolioResponse)
+	err := c.cc.Invoke(ctx, AioPortal_UpdatePortfolio_FullMethodName, in, out, opts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
+func (c *aioPortalClient) GetPortfolio(ctx context.Context, in *GetPortfolioRequest, opts ...grpc.CallOption) (*GetPortfolioResponse, error) {
+	out := new(GetPortfolioResponse)
+	err := c.cc.Invoke(ctx, AioPortal_GetPortfolio_FullMethodName, in, out, opts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
+func (c *aioPortalClient) ListPortfolios(ctx context.Context, in *ListPortfoliosRequest, opts ...grpc.CallOption) (*ListPortfoliosResponse, error) {
+	out := new(ListPortfoliosResponse)
+	err := c.cc.Invoke(ctx, AioPortal_ListPortfolios_FullMethodName, in, out, opts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
+func (c *aioPortalClient) GetRollUp(ctx context.Context, in *RollUpRequest, opts ...grpc.CallOption) (*RollUpResponse, error) {
+	out := new(RollUpResponse)
+	err := c.cc.Invoke(ctx, AioPortal_GetRollUp_FullMethodName, in, out, opts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
 // AioPortalServer is the server API for AioPortal service.
 // All implementations must embed UnimplementedAioPortalServer
 // for forward compatibility
@@ -87,6 +142,11 @@ type AioPortalServer interface {
 	LoginUser(context.Context, *LoginUserRequest) (*LoginUserResponse, error)
 	UpdateUser(context.Context, *UpdateUserRequest) (*UpdateUserResponse, error)
 	VerifyEmail(context.Context, *VerifyEmailRequest) (*VerifyEmailResponse, error)
+	CreatePortfolio(context.Context, *CreatePortfolioRequest) (*CreatePortfolioResponse, error)
+	UpdatePortfolio(context.Context, *UpdatePortfolioRequest) (*UpdatePortfolioResponse, error)
+	GetPortfolio(context.Context, *GetPortfolioRequest) (*GetPortfolioResponse, error)
+	ListPortfolios(context.Context, *ListPortfoliosRequest) (*ListPortfoliosResponse, error)
+	GetRollUp(context.Context, *RollUpRequest) (*RollUpResponse, error)
 	mustEmbedUnimplementedAioPortalServer()
 }
 
@@ -105,6 +165,21 @@ func (UnimplementedAioPortalServer) UpdateUser(context.Context, *UpdateUserReque
 }
 func (UnimplementedAioPortalServer) VerifyEmail(context.Context, *VerifyEmailRequest) (*VerifyEmailResponse, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method VerifyEmail not implemented")
+}
+func (UnimplementedAioPortalServer) CreatePortfolio(context.Context, *CreatePortfolioRequest) (*CreatePortfolioResponse, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method CreatePortfolio not implemented")
+}
+func (UnimplementedAioPortalServer) UpdatePortfolio(context.Context, *UpdatePortfolioRequest) (*UpdatePortfolioResponse, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method UpdatePortfolio not implemented")
+}
+func (UnimplementedAioPortalServer) GetPortfolio(context.Context, *GetPortfolioRequest) (*GetPortfolioResponse, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method GetPortfolio not implemented")
+}
+func (UnimplementedAioPortalServer) ListPortfolios(context.Context, *ListPortfoliosRequest) (*ListPortfoliosResponse, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method ListPortfolios not implemented")
+}
+func (UnimplementedAioPortalServer) GetRollUp(context.Context, *RollUpRequest) (*RollUpResponse, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method GetRollUp not implemented")
 }
 func (UnimplementedAioPortalServer) mustEmbedUnimplementedAioPortalServer() {}
 
@@ -191,6 +266,96 @@ func _AioPortal_VerifyEmail_Handler(srv interface{}, ctx context.Context, dec fu
 	return interceptor(ctx, in, info, handler)
 }
 
+func _AioPortal_CreatePortfolio_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(CreatePortfolioRequest)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(AioPortalServer).CreatePortfolio(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: AioPortal_CreatePortfolio_FullMethodName,
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(AioPortalServer).CreatePortfolio(ctx, req.(*CreatePortfolioRequest))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
+func _AioPortal_UpdatePortfolio_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(UpdatePortfolioRequest)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(AioPortalServer).UpdatePortfolio(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: AioPortal_UpdatePortfolio_FullMethodName,
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(AioPortalServer).UpdatePortfolio(ctx, req.(*UpdatePortfolioRequest))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
+func _AioPortal_GetPortfolio_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(GetPortfolioRequest)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(AioPortalServer).GetPortfolio(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: AioPortal_GetPortfolio_FullMethodName,
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(AioPortalServer).GetPortfolio(ctx, req.(*GetPortfolioRequest))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
+func _AioPortal_ListPortfolios_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(ListPortfoliosRequest)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(AioPortalServer).ListPortfolios(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: AioPortal_ListPortfolios_FullMethodName,
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(AioPortalServer).ListPortfolios(ctx, req.(*ListPortfoliosRequest))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
+func _AioPortal_GetRollUp_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(RollUpRequest)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(AioPortalServer).GetRollUp(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: AioPortal_GetRollUp_FullMethodName,
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(AioPortalServer).GetRollUp(ctx, req.(*RollUpRequest))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
 // AioPortal_ServiceDesc is the grpc.ServiceDesc for AioPortal service.
 // It's only intended for direct use with grpc.RegisterService,
 // and not to be introspected or modified (even as a copy)
@@ -213,6 +378,26 @@ var AioPortal_ServiceDesc = grpc.ServiceDesc{
 		{
 			MethodName: "VerifyEmail",
 			Handler:    _AioPortal_VerifyEmail_Handler,
+		},
+		{
+			MethodName: "CreatePortfolio",
+			Handler:    _AioPortal_CreatePortfolio_Handler,
+		},
+		{
+			MethodName: "UpdatePortfolio",
+			Handler:    _AioPortal_UpdatePortfolio_Handler,
+		},
+		{
+			MethodName: "GetPortfolio",
+			Handler:    _AioPortal_GetPortfolio_Handler,
+		},
+		{
+			MethodName: "ListPortfolios",
+			Handler:    _AioPortal_ListPortfolios_Handler,
+		},
+		{
+			MethodName: "GetRollUp",
+			Handler:    _AioPortal_GetRollUp_Handler,
 		},
 	},
 	Streams:  []grpc.StreamDesc{},

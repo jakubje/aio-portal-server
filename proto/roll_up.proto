@@ -1,0 +1,13 @@
+syntax = "proto3";
+
+package pb;
+
+option go_package = "github.com/jakub/aioportal/server/pb";
+
+message Roll_Up {
+  string symbol = 1;
+  int32 type = 2;
+  float total_cost = 3;
+  float total_coins = 4;
+  float price_per_coin = 5;
+}

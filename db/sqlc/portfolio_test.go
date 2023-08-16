@@ -2,20 +2,20 @@ package db
 
 import (
 	"context"
-	"database/sql"
-	"github.com/jakub/aioportal/server/internal/utils"
+
 	"testing"
 
+	"github.com/jakub/aioportal/server/util"
 	"github.com/stretchr/testify/require"
 )
 
 func createRandomPortfolio(t *testing.T) Portfolio {
 	user := createRandomUser(t)
 	arg := CreatePortfolioParams{
-		Name:      utils.RandomString(5),
+		Name:      util.RandomString(5),
 		AccountID: user.ID,
 	}
-	portfolio, err := testQueries.CreatePortfolio(context.Background(), arg)
+	portfolio, err := testStore.CreatePortfolio(context.Background(), arg)
 	require.NoError(t, err)
 	require.NotEmpty(t, portfolio)
 
@@ -34,10 +34,10 @@ func TestCreatePortfolio(t *testing.T) {
 func createUserAndPortfolio(t *testing.T) (User, Portfolio) {
 	user := createRandomUser(t)
 	arg := CreatePortfolioParams{
-		Name:      utils.RandomString(5),
+		Name:      util.RandomString(5),
 		AccountID: user.ID,
 	}
-	portfolio, err := testQueries.CreatePortfolio(context.Background(), arg)
+	portfolio, err := testStore.CreatePortfolio(context.Background(), arg)
 	require.NoError(t, err)
 	require.NotEmpty(t, portfolio)
 
@@ -59,7 +59,7 @@ func TestGetPortfolio(t *testing.T) {
 		ID:        portfolio1.ID,
 		AccountID: user.ID,
 	}
-	portfolio2, err := testQueries.GetPortfolio(context.Background(), arg)
+	portfolio2, err := testStore.GetPortfolio(context.Background(), arg)
 	require.NoError(t, err)
 	require.NotEmpty(t, portfolio2)
 
@@ -73,11 +73,11 @@ func TestUpdatePortfolio(t *testing.T) {
 
 	arg := UpdatePortfolioParams{
 		ID:        portfolio1.ID,
-		Name:      utils.RandomString(5),
+		Name:      util.RandomString(5),
 		AccountID: user.ID,
 	}
 
-	portfolio2, err := testQueries.UpdatePortfolio(context.Background(), arg)
+	portfolio2, err := testStore.UpdatePortfolio(context.Background(), arg)
 	require.NoError(t, err)
 	require.NotEmpty(t, portfolio2)
 
@@ -93,22 +93,22 @@ func TestDeletePortfolio(t *testing.T) {
 		ID:        portfolio1.ID,
 		AccountID: user.ID,
 	}
-	err := testQueries.DeletePortfolio(context.Background(), arg)
+	err := testStore.DeletePortfolio(context.Background(), arg)
 	require.NoError(t, err)
 
-	portfolio2, err := testQueries.GetPortfolio(context.Background(), GetPortfolioParams(arg))
+	portfolio2, err := testStore.GetPortfolio(context.Background(), GetPortfolioParams(arg))
 	require.Error(t, err)
-	require.EqualError(t, err, sql.ErrNoRows.Error())
+	require.EqualError(t, err, ErrRecordNotFound.Error())
 	require.Empty(t, portfolio2)
 
 }
 
 func createPortfoliosByUser(t *testing.T, user *User) Portfolio {
 	arg := CreatePortfolioParams{
-		Name:      utils.RandomString(5),
+		Name:      util.RandomString(5),
 		AccountID: user.ID,
 	}
-	portfolio, err := testQueries.CreatePortfolio(context.Background(), arg)
+	portfolio, err := testStore.CreatePortfolio(context.Background(), arg)
 	require.NoError(t, err)
 	require.NotEmpty(t, portfolio)
 
@@ -127,7 +127,7 @@ func TestListPortfoliosByUser(t *testing.T) {
 		createPortfoliosByUser(t, &user)
 	}
 
-	userPortfolios, err := testQueries.ListPortforlios(context.Background(), user.ID)
+	userPortfolios, err := testStore.ListPortforlios(context.Background(), user.ID)
 	require.NoError(t, err)
 	require.Len(t, userPortfolios, 10)
 

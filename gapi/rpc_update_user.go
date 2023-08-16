@@ -2,7 +2,9 @@ package gapi
 
 import (
 	"context"
-	"database/sql"
+	"github.com/jackc/pgx/v5"
+	"github.com/jackc/pgx/v5/pgtype"
+
 	db "github.com/jakub/aioportal/server/db/sqlc"
 	"github.com/jakub/aioportal/server/pb"
 	"github.com/jakub/aioportal/server/util"
@@ -32,15 +34,15 @@ func (server *Server) UpdateUser(ctx context.Context, req *pb.UpdateUserRequest)
 
 	arg := db.UpdateUserParams{
 		ID: authPayload.AccountId,
-		Email: sql.NullString{
+		Email: pgtype.Text{
 			String: req.GetEmail(),
 			Valid:  req.Email != nil,
 		},
-		Name: sql.NullString{
+		Name: pgtype.Text{
 			String: req.GetName(),
 			Valid:  req.Name != nil,
 		},
-		LastName: sql.NullString{
+		LastName: pgtype.Text{
 			String: req.GetLastName(),
 			Valid:  req.LastName != nil,
 		},
@@ -52,12 +54,12 @@ func (server *Server) UpdateUser(ctx context.Context, req *pb.UpdateUserRequest)
 			return nil, status.Errorf(codes.Internal, "failed to has hash password: %s", err)
 		}
 
-		arg.Password = sql.NullString{
+		arg.Password = pgtype.Text{
 			String: hashedPassword,
 			Valid:  true,
 		}
 
-		arg.PasswordChangedAt = sql.NullTime{
+		arg.PasswordChangedAt = pgtype.Timestamptz{
 			Time:  time.Now(),
 			Valid: true,
 		}
@@ -65,7 +67,7 @@ func (server *Server) UpdateUser(ctx context.Context, req *pb.UpdateUserRequest)
 
 	user, err := server.store.UpdateUser(ctx, arg)
 	if err != nil {
-		if err == sql.ErrNoRows {
+		if err == pgx.ErrNoRows {
 			return nil, status.Errorf(codes.NotFound, "user not found")
 		}
 		return nil, status.Errorf(codes.Internal, "failed to get user: %s", err)

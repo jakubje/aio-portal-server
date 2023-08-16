@@ -21,6 +21,40 @@
     "application/json"
   ],
   "paths": {
+    "/v1/create_portfolio": {
+      "post": {
+        "summary": "Create new portfolio",
+        "description": "Use this API to create a new portfolio",
+        "operationId": "AioPortal_CreatePortfolio",
+        "responses": {
+          "200": {
+            "description": "A successful response.",
+            "schema": {
+              "$ref": "#/definitions/pbCreatePortfolioResponse"
+            }
+          },
+          "default": {
+            "description": "An unexpected error response.",
+            "schema": {
+              "$ref": "#/definitions/rpcStatus"
+            }
+          }
+        },
+        "parameters": [
+          {
+            "name": "body",
+            "in": "body",
+            "required": true,
+            "schema": {
+              "$ref": "#/definitions/pbCreatePortfolioRequest"
+            }
+          }
+        ],
+        "tags": [
+          "AioPortal"
+        ]
+      }
+    },
     "/v1/create_user": {
       "post": {
         "summary": "Create new user",
@@ -55,6 +89,105 @@
         ]
       }
     },
+    "/v1/get_portfolio": {
+      "get": {
+        "summary": "Get a portfolio",
+        "description": "Use this API to get a portfolio",
+        "operationId": "AioPortal_GetPortfolio",
+        "responses": {
+          "200": {
+            "description": "A successful response.",
+            "schema": {
+              "$ref": "#/definitions/pbGetPortfolioResponse"
+            }
+          },
+          "default": {
+            "description": "An unexpected error response.",
+            "schema": {
+              "$ref": "#/definitions/rpcStatus"
+            }
+          }
+        },
+        "parameters": [
+          {
+            "name": "id",
+            "in": "query",
+            "required": false,
+            "type": "string",
+            "format": "int64"
+          }
+        ],
+        "tags": [
+          "AioPortal"
+        ]
+      }
+    },
+    "/v1/get_portfolios": {
+      "get": {
+        "summary": "Get a list of user portfolios",
+        "description": "Use this API to get a list of user portfolios",
+        "operationId": "AioPortal_ListPortfolios",
+        "responses": {
+          "200": {
+            "description": "A successful response.",
+            "schema": {
+              "$ref": "#/definitions/pbListPortfoliosResponse"
+            }
+          },
+          "default": {
+            "description": "An unexpected error response.",
+            "schema": {
+              "$ref": "#/definitions/rpcStatus"
+            }
+          }
+        },
+        "parameters": [
+          {
+            "name": "id",
+            "in": "query",
+            "required": false,
+            "type": "string",
+            "format": "int64"
+          }
+        ],
+        "tags": [
+          "AioPortal"
+        ]
+      }
+    },
+    "/v1/get_rollup": {
+      "get": {
+        "summary": "Get a list of user currency holdings",
+        "description": "Use this API to get a summary of account holdings",
+        "operationId": "AioPortal_GetRollUp",
+        "responses": {
+          "200": {
+            "description": "A successful response.",
+            "schema": {
+              "$ref": "#/definitions/pbRollUpResponse"
+            }
+          },
+          "default": {
+            "description": "An unexpected error response.",
+            "schema": {
+              "$ref": "#/definitions/rpcStatus"
+            }
+          }
+        },
+        "parameters": [
+          {
+            "name": "id",
+            "in": "query",
+            "required": false,
+            "type": "string",
+            "format": "int64"
+          }
+        ],
+        "tags": [
+          "AioPortal"
+        ]
+      }
+    },
     "/v1/login_user": {
       "post": {
         "summary": "Login user",
@@ -81,6 +214,40 @@
             "required": true,
             "schema": {
               "$ref": "#/definitions/pbLoginUserRequest"
+            }
+          }
+        ],
+        "tags": [
+          "AioPortal"
+        ]
+      }
+    },
+    "/v1/update_portfolio": {
+      "post": {
+        "summary": "Update a portfolio",
+        "description": "Use this API to update a portfolio",
+        "operationId": "AioPortal_UpdatePortfolio",
+        "responses": {
+          "200": {
+            "description": "A successful response.",
+            "schema": {
+              "$ref": "#/definitions/pbUpdatePortfolioResponse"
+            }
+          },
+          "default": {
+            "description": "An unexpected error response.",
+            "schema": {
+              "$ref": "#/definitions/rpcStatus"
+            }
+          }
+        },
+        "parameters": [
+          {
+            "name": "body",
+            "in": "body",
+            "required": true,
+            "schema": {
+              "$ref": "#/definitions/pbUpdatePortfolioRequest"
             }
           }
         ],
@@ -164,6 +331,22 @@
     }
   },
   "definitions": {
+    "pbCreatePortfolioRequest": {
+      "type": "object",
+      "properties": {
+        "name": {
+          "type": "string"
+        }
+      }
+    },
+    "pbCreatePortfolioResponse": {
+      "type": "object",
+      "properties": {
+        "portfolio": {
+          "$ref": "#/definitions/pbPortfolio"
+        }
+      }
+    },
     "pbCreateUserRequest": {
       "type": "object",
       "properties": {
@@ -186,6 +369,26 @@
       "properties": {
         "user": {
           "$ref": "#/definitions/pbUser"
+        }
+      }
+    },
+    "pbGetPortfolioResponse": {
+      "type": "object",
+      "properties": {
+        "portfolio": {
+          "$ref": "#/definitions/pbPortfolio"
+        }
+      }
+    },
+    "pbListPortfoliosResponse": {
+      "type": "object",
+      "properties": {
+        "portfolios": {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "$ref": "#/definitions/pbPortfolio"
+          }
         }
       }
     },
@@ -225,6 +428,90 @@
         }
       }
     },
+    "pbPortfolio": {
+      "type": "object",
+      "properties": {
+        "id": {
+          "type": "string",
+          "format": "int64"
+        },
+        "accountId": {
+          "type": "string",
+          "format": "int64"
+        },
+        "name": {
+          "type": "string"
+        },
+        "holdings": {
+          "type": "integer",
+          "format": "int32"
+        },
+        "change24h": {
+          "type": "integer",
+          "format": "int32"
+        },
+        "profitLoss": {
+          "type": "integer",
+          "format": "int32"
+        }
+      }
+    },
+    "pbRollUpResponse": {
+      "type": "object",
+      "properties": {
+        "summary": {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "$ref": "#/definitions/pbRoll_Up"
+          }
+        }
+      }
+    },
+    "pbRoll_Up": {
+      "type": "object",
+      "properties": {
+        "symbol": {
+          "type": "string"
+        },
+        "type": {
+          "type": "integer",
+          "format": "int32"
+        },
+        "totalCost": {
+          "type": "number",
+          "format": "float"
+        },
+        "totalCoins": {
+          "type": "number",
+          "format": "float"
+        },
+        "pricePerCoin": {
+          "type": "number",
+          "format": "float"
+        }
+      }
+    },
+    "pbUpdatePortfolioRequest": {
+      "type": "object",
+      "properties": {
+        "id": {
+          "type": "string",
+          "format": "int64"
+        },
+        "name": {
+          "type": "string"
+        }
+      }
+    },
+    "pbUpdatePortfolioResponse": {
+      "type": "object",
+      "properties": {
+        "portfolio": {
+          "$ref": "#/definitions/pbPortfolio"
+        }
+      }
+    },
     "pbUpdateUserRequest": {
       "type": "object",
       "properties": {
@@ -257,6 +544,10 @@
     "pbUser": {
       "type": "object",
       "properties": {
+        "ID": {
+          "type": "string",
+          "format": "int64"
+        },
         "email": {
           "type": "string"
         },

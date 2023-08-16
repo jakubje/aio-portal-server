@@ -40,7 +40,7 @@ CREATE TABLE "transactions" (
                                 "symbol" varchar NOT NULL,
                                 "price_per_coin" float NOT NULL,
                                 "quantity" float NOT NULL,
-                                "time_transacted" timestamp NOT NULL,
+                                "time_transacted" timestamptz NOT NULL,
                                 "time_created" timestamptz NOT NULL DEFAULT (now()),
                                 PRIMARY KEY ("id")
 );

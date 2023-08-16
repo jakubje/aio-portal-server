@@ -3,15 +3,16 @@ package api
 import (
 	"database/sql"
 	"errors"
-	"github.com/google/uuid"
-	"github.com/jakub/aioportal/server/token"
+	"github.com/jackc/pgx/v5/pgtype"
 	"net/http"
 	"time"
+
+	"github.com/google/uuid"
+	"github.com/jakub/aioportal/server/token"
 
 	"github.com/gin-gonic/gin"
 	db "github.com/jakub/aioportal/server/db/sqlc"
 	"github.com/jakub/aioportal/server/util"
-	"github.com/lib/pq"
 )
 
 type createUserRequest struct {
@@ -66,16 +67,14 @@ func (server *Server) createUser(ctx *gin.Context) {
 
 	user, err := server.store.CreateUser(ctx, arg)
 	if err != nil {
-		if pqErr, ok := err.(*pq.Error); ok {
-			switch pqErr.Code.Name() {
-			case "foreign_key_violation", "unique_violation":
-				ctx.JSON(http.StatusForbidden, errorResponse(err))
-				return
-			}
+		if db.ErrorCode(err) == db.UniqueViolation {
+			ctx.JSON(http.StatusForbidden, errorResponse(err))
+			return
 		}
 		ctx.JSON(http.StatusInternalServerError, errorResponse(err))
 		return
 	}
+
 	rsp := userResponse{
 		Email:             user.Email,
 		Name:              user.Name,
@@ -202,19 +201,19 @@ func (server *Server) updateUser(ctx *gin.Context) {
 
 	arg := db.UpdateUserParams{
 		ID: authPayload.AccountId,
-		Email: sql.NullString{
+		Email: pgtype.Text{
 			String: req.Email,
 			Valid:  true,
 		},
-		Name: sql.NullString{
+		Name: pgtype.Text{
 			String: req.Name,
 			Valid:  true,
 		},
-		LastName: sql.NullString{
+		LastName: pgtype.Text{
 			String: req.LastName,
 			Valid:  true,
 		},
-		Password: sql.NullString{
+		Password: pgtype.Text{
 			String: hashedPassword,
 			Valid:  true,
 		},
