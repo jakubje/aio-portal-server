@@ -28,9 +28,6 @@ func (server *Server) CreatePortfolio(ctx context.Context, req *pb.CreatePortfol
 
 	portfolio, err := server.store.CreatePortfolio(ctx, arg)
 	if err != nil {
-		if db.ErrorCode(err) == db.UniqueViolation {
-			return nil, status.Errorf(codes.AlreadyExists, "email already exists: %s", err)
-		}
 		return nil, status.Errorf(codes.Internal, "failed to create user: %s", err)
 	}
 

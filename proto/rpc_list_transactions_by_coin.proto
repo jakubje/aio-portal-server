@@ -1,0 +1,12 @@
+syntax = "proto3";
+
+package pb;
+
+option go_package = "github.com/jakub/aioportal/server/pb";
+
+message ListTransactionsByCoinRequest {
+  string symbol = 1;
+  int32 limit = 2;
+  int32 offset = 3;
+}
+

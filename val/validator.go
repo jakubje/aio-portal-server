@@ -2,6 +2,10 @@ package val
 
 import (
 	"fmt"
+	"github.com/google/uuid"
+	"google.golang.org/grpc/codes"
+	"google.golang.org/grpc/status"
+	"math"
 	"regexp"
 )
 
@@ -9,6 +13,10 @@ var (
 	isValidEmail = regexp.MustCompile(`^[a-z0-9._%+\-]+@[a-z0-9.\-]+\.[a-z]{2,4}$`).MatchString
 	isValidName  = regexp.MustCompile(`^[a-zA-Z]+$`).MatchString
 )
+
+type Numeric interface {
+	int32 | int64
+}
 
 func ValidateString(value string, minLength int, maxLength int) error {
 	n := len(value)
@@ -18,9 +26,26 @@ func ValidateString(value string, minLength int, maxLength int) error {
 	return nil
 }
 
+func ValidateNumberLimit[T Numeric](value T, minLength T, maxLength T) error {
+	//if value == nil {
+	//	return fmt.Errorf("value is required")
+	//}
+	if value < minLength || value > maxLength {
+		return fmt.Errorf("must be in the range %d-%d", minLength, maxLength)
+	}
+	return nil
+}
+
 func ValidateID(value int64) error {
 	if value <= 0 {
 		return fmt.Errorf("invalid user id")
+	}
+	return nil
+}
+
+func ValidateFloat(value float64) error {
+	if math.IsNaN(value) && math.IsInf(value, 0) {
+		fmt.Errorf("must be a valid number")
 	}
 	return nil
 }
@@ -58,4 +83,19 @@ func ValidateEmailId(value int64) error {
 
 func ValidateSecretCode(value string) error {
 	return ValidateString(value, 32, 128)
+}
+
+func ValidateType(value int32) error {
+	if value != 0 && value != 1 {
+		return fmt.Errorf("type can only be a 0 (buy) or 1(sell)")
+	}
+	return nil
+}
+
+func ValidateUUID(value string) error {
+	_, err := uuid.Parse(value)
+	if err != nil {
+		return status.Errorf(codes.InvalidArgument, "error parsing UUID")
+	}
+	return nil
 }

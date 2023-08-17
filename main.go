@@ -60,7 +60,7 @@ func main() {
 	go runTaskProcessor(config, redisOpt, store)
 
 	go runGatewayServer(config, store, taskDistributor)
-	//runGinServer(config, store)
+	//go runGinServer(config, store)
 	runGrpcServer(config, store, taskDistributor)
 
 }

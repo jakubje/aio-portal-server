@@ -16,7 +16,6 @@ func (server *Server) GetRollUp(ctx context.Context, req *pb.RollUpRequest) (*pb
 	if err != nil {
 		return nil, unauthenticatedError(err)
 	}
-	req.Id = authPayload.AccountId
 	violations := validateRollUpRequest(req)
 	if violations != nil {
 		return nil, invalidArgumentError(violations)

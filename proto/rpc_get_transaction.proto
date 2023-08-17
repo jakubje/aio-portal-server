@@ -1,0 +1,15 @@
+syntax = "proto3";
+
+package pb;
+
+import "transaction.proto";
+
+option go_package = "github.com/jakub/aioportal/server/pb";
+
+message GetTransactionRequest {
+  string id = 1;
+}
+
+message GetTransactionResponse {
+  Transaction transaction = 1;
+}

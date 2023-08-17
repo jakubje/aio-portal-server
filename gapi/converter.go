@@ -28,9 +28,9 @@ func convertPortfolio(portfolio db.Portfolio) *pb.Portfolio {
 }
 func convertPortfolios(portfolios []db.Portfolio) []*pb.Portfolio {
 
-	var portfoliosArr []*pb.Portfolio
+	var portfoliosProtoArray []*pb.Portfolio
 	for _, portfolio := range portfolios {
-		portfoliosArr = append(portfoliosArr, &pb.Portfolio{
+		portfoliosProtoArray = append(portfoliosProtoArray, &pb.Portfolio{
 			Id:         portfolio.ID,
 			AccountId:  portfolio.AccountID,
 			Name:       portfolio.Name,
@@ -40,20 +40,57 @@ func convertPortfolios(portfolios []db.Portfolio) []*pb.Portfolio {
 		})
 	}
 
-	return portfoliosArr
+	return portfoliosProtoArray
 }
 
 func convertRollUp(rollUps []db.GetRollUpByCoinByPortfolioRow) []*pb.Roll_Up {
 
-	var rollUpArr []*pb.Roll_Up
+	var rollUpProtoArray []*pb.Roll_Up
 	for _, rollUp := range rollUps {
-		rollUpArr = append(rollUpArr, &pb.Roll_Up{
+		rollUpProtoArray = append(rollUpProtoArray, &pb.Roll_Up{
 			Symbol:       rollUp.Symbol,
 			Type:         rollUp.Type,
-			TotalCost:    float32(rollUp.TotalCost),
-			TotalCoins:   float32(rollUp.TotalCoins),
-			PricePerCoin: float32(rollUp.PricePerCoin),
+			TotalCost:    rollUp.TotalCost,
+			TotalCoins:   rollUp.TotalCoins,
+			PricePerCoin: rollUp.PricePerCoin,
 		})
 	}
-	return rollUpArr
+	return rollUpProtoArray
+}
+
+func convertTransaction(transaction db.Transaction) *pb.Transaction {
+	transactionId := transaction.ID.String()
+	return &pb.Transaction{
+		Id:           transactionId,
+		PortfolioId:  transaction.PortfolioID,
+		Symbol:       transaction.Symbol,
+		Type:         transaction.Type,
+		PricePerCoin: transaction.PricePerCoin,
+		Quantity:     transaction.Quantity,
+	}
+}
+
+func convertTransactions(transactions []db.Transaction) []*pb.Transaction {
+
+	var transactionsProtoArray []*pb.Transaction
+	for _, transaction := range transactions {
+		transactionId := transaction.ID.String()
+		transactionsProtoArray = append(transactionsProtoArray, &pb.Transaction{
+			Id:           transactionId,
+			PortfolioId:  transaction.PortfolioID,
+			Symbol:       transaction.Symbol,
+			Type:         transaction.Type,
+			PricePerCoin: transaction.PricePerCoin,
+			Quantity:     transaction.Quantity,
+		})
+	}
+
+	return transactionsProtoArray
+}
+
+func convertWatchlist(watchlist db.Watchlist) *pb.Watchlist {
+	return &pb.Watchlist{
+		Id:   watchlist.ID,
+		Name: watchlist.Name,
+	}
 }

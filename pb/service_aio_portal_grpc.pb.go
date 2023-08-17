@@ -19,15 +19,22 @@ import (
 const _ = grpc.SupportPackageIsVersion7
 
 const (
-	AioPortal_CreateUser_FullMethodName      = "/pb.AioPortal/CreateUser"
-	AioPortal_LoginUser_FullMethodName       = "/pb.AioPortal/LoginUser"
-	AioPortal_UpdateUser_FullMethodName      = "/pb.AioPortal/UpdateUser"
-	AioPortal_VerifyEmail_FullMethodName     = "/pb.AioPortal/VerifyEmail"
-	AioPortal_CreatePortfolio_FullMethodName = "/pb.AioPortal/CreatePortfolio"
-	AioPortal_UpdatePortfolio_FullMethodName = "/pb.AioPortal/UpdatePortfolio"
-	AioPortal_GetPortfolio_FullMethodName    = "/pb.AioPortal/GetPortfolio"
-	AioPortal_ListPortfolios_FullMethodName  = "/pb.AioPortal/ListPortfolios"
-	AioPortal_GetRollUp_FullMethodName       = "/pb.AioPortal/GetRollUp"
+	AioPortal_CreateUser_FullMethodName             = "/pb.AioPortal/CreateUser"
+	AioPortal_LoginUser_FullMethodName              = "/pb.AioPortal/LoginUser"
+	AioPortal_UpdateUser_FullMethodName             = "/pb.AioPortal/UpdateUser"
+	AioPortal_VerifyEmail_FullMethodName            = "/pb.AioPortal/VerifyEmail"
+	AioPortal_CreatePortfolio_FullMethodName        = "/pb.AioPortal/CreatePortfolio"
+	AioPortal_UpdatePortfolio_FullMethodName        = "/pb.AioPortal/UpdatePortfolio"
+	AioPortal_GetPortfolio_FullMethodName           = "/pb.AioPortal/GetPortfolio"
+	AioPortal_ListPortfolios_FullMethodName         = "/pb.AioPortal/ListPortfolios"
+	AioPortal_GetRollUp_FullMethodName              = "/pb.AioPortal/GetRollUp"
+	AioPortal_DeletePortfolio_FullMethodName        = "/pb.AioPortal/DeletePortfolio"
+	AioPortal_CreateTransaction_FullMethodName      = "/pb.AioPortal/CreateTransaction"
+	AioPortal_GetTransaction_FullMethodName         = "/pb.AioPortal/GetTransaction"
+	AioPortal_ListTransactions_FullMethodName       = "/pb.AioPortal/ListTransactions"
+	AioPortal_ListTransactionsByCoin_FullMethodName = "/pb.AioPortal/ListTransactionsByCoin"
+	AioPortal_CreateWatchlist_FullMethodName        = "/pb.AioPortal/CreateWatchlist"
+	AioPortal_UpdateWatchlist_FullMethodName        = "/pb.AioPortal/UpdateWatchlist"
 )
 
 // AioPortalClient is the client API for AioPortal service.
@@ -43,6 +50,13 @@ type AioPortalClient interface {
 	GetPortfolio(ctx context.Context, in *GetPortfolioRequest, opts ...grpc.CallOption) (*GetPortfolioResponse, error)
 	ListPortfolios(ctx context.Context, in *ListPortfoliosRequest, opts ...grpc.CallOption) (*ListPortfoliosResponse, error)
 	GetRollUp(ctx context.Context, in *RollUpRequest, opts ...grpc.CallOption) (*RollUpResponse, error)
+	DeletePortfolio(ctx context.Context, in *DeletePortfolioRequest, opts ...grpc.CallOption) (*DeletePortfolioResponse, error)
+	CreateTransaction(ctx context.Context, in *CreateTransactionRequest, opts ...grpc.CallOption) (*CreateTransactionResponse, error)
+	GetTransaction(ctx context.Context, in *GetTransactionRequest, opts ...grpc.CallOption) (*GetTransactionResponse, error)
+	ListTransactions(ctx context.Context, in *ListTransactionsRequest, opts ...grpc.CallOption) (*ListTransactionsResponse, error)
+	ListTransactionsByCoin(ctx context.Context, in *ListTransactionsByCoinRequest, opts ...grpc.CallOption) (*ListTransactionsResponse, error)
+	CreateWatchlist(ctx context.Context, in *CreateWatchlistRequest, opts ...grpc.CallOption) (*CreateWatchlistResponse, error)
+	UpdateWatchlist(ctx context.Context, in *UpdateWatchlistRequest, opts ...grpc.CallOption) (*UpdateWatchlistResponse, error)
 }
 
 type aioPortalClient struct {
@@ -134,6 +148,69 @@ func (c *aioPortalClient) GetRollUp(ctx context.Context, in *RollUpRequest, opts
 	return out, nil
 }
 
+func (c *aioPortalClient) DeletePortfolio(ctx context.Context, in *DeletePortfolioRequest, opts ...grpc.CallOption) (*DeletePortfolioResponse, error) {
+	out := new(DeletePortfolioResponse)
+	err := c.cc.Invoke(ctx, AioPortal_DeletePortfolio_FullMethodName, in, out, opts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
+func (c *aioPortalClient) CreateTransaction(ctx context.Context, in *CreateTransactionRequest, opts ...grpc.CallOption) (*CreateTransactionResponse, error) {
+	out := new(CreateTransactionResponse)
+	err := c.cc.Invoke(ctx, AioPortal_CreateTransaction_FullMethodName, in, out, opts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
+func (c *aioPortalClient) GetTransaction(ctx context.Context, in *GetTransactionRequest, opts ...grpc.CallOption) (*GetTransactionResponse, error) {
+	out := new(GetTransactionResponse)
+	err := c.cc.Invoke(ctx, AioPortal_GetTransaction_FullMethodName, in, out, opts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
+func (c *aioPortalClient) ListTransactions(ctx context.Context, in *ListTransactionsRequest, opts ...grpc.CallOption) (*ListTransactionsResponse, error) {
+	out := new(ListTransactionsResponse)
+	err := c.cc.Invoke(ctx, AioPortal_ListTransactions_FullMethodName, in, out, opts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
+func (c *aioPortalClient) ListTransactionsByCoin(ctx context.Context, in *ListTransactionsByCoinRequest, opts ...grpc.CallOption) (*ListTransactionsResponse, error) {
+	out := new(ListTransactionsResponse)
+	err := c.cc.Invoke(ctx, AioPortal_ListTransactionsByCoin_FullMethodName, in, out, opts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
+func (c *aioPortalClient) CreateWatchlist(ctx context.Context, in *CreateWatchlistRequest, opts ...grpc.CallOption) (*CreateWatchlistResponse, error) {
+	out := new(CreateWatchlistResponse)
+	err := c.cc.Invoke(ctx, AioPortal_CreateWatchlist_FullMethodName, in, out, opts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
+func (c *aioPortalClient) UpdateWatchlist(ctx context.Context, in *UpdateWatchlistRequest, opts ...grpc.CallOption) (*UpdateWatchlistResponse, error) {
+	out := new(UpdateWatchlistResponse)
+	err := c.cc.Invoke(ctx, AioPortal_UpdateWatchlist_FullMethodName, in, out, opts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
 // AioPortalServer is the server API for AioPortal service.
 // All implementations must embed UnimplementedAioPortalServer
 // for forward compatibility
@@ -147,6 +224,13 @@ type AioPortalServer interface {
 	GetPortfolio(context.Context, *GetPortfolioRequest) (*GetPortfolioResponse, error)
 	ListPortfolios(context.Context, *ListPortfoliosRequest) (*ListPortfoliosResponse, error)
 	GetRollUp(context.Context, *RollUpRequest) (*RollUpResponse, error)
+	DeletePortfolio(context.Context, *DeletePortfolioRequest) (*DeletePortfolioResponse, error)
+	CreateTransaction(context.Context, *CreateTransactionRequest) (*CreateTransactionResponse, error)
+	GetTransaction(context.Context, *GetTransactionRequest) (*GetTransactionResponse, error)
+	ListTransactions(context.Context, *ListTransactionsRequest) (*ListTransactionsResponse, error)
+	ListTransactionsByCoin(context.Context, *ListTransactionsByCoinRequest) (*ListTransactionsResponse, error)
+	CreateWatchlist(context.Context, *CreateWatchlistRequest) (*CreateWatchlistResponse, error)
+	UpdateWatchlist(context.Context, *UpdateWatchlistRequest) (*UpdateWatchlistResponse, error)
 	mustEmbedUnimplementedAioPortalServer()
 }
 
@@ -180,6 +264,27 @@ func (UnimplementedAioPortalServer) ListPortfolios(context.Context, *ListPortfol
 }
 func (UnimplementedAioPortalServer) GetRollUp(context.Context, *RollUpRequest) (*RollUpResponse, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method GetRollUp not implemented")
+}
+func (UnimplementedAioPortalServer) DeletePortfolio(context.Context, *DeletePortfolioRequest) (*DeletePortfolioResponse, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method DeletePortfolio not implemented")
+}
+func (UnimplementedAioPortalServer) CreateTransaction(context.Context, *CreateTransactionRequest) (*CreateTransactionResponse, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method CreateTransaction not implemented")
+}
+func (UnimplementedAioPortalServer) GetTransaction(context.Context, *GetTransactionRequest) (*GetTransactionResponse, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method GetTransaction not implemented")
+}
+func (UnimplementedAioPortalServer) ListTransactions(context.Context, *ListTransactionsRequest) (*ListTransactionsResponse, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method ListTransactions not implemented")
+}
+func (UnimplementedAioPortalServer) ListTransactionsByCoin(context.Context, *ListTransactionsByCoinRequest) (*ListTransactionsResponse, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method ListTransactionsByCoin not implemented")
+}
+func (UnimplementedAioPortalServer) CreateWatchlist(context.Context, *CreateWatchlistRequest) (*CreateWatchlistResponse, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method CreateWatchlist not implemented")
+}
+func (UnimplementedAioPortalServer) UpdateWatchlist(context.Context, *UpdateWatchlistRequest) (*UpdateWatchlistResponse, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method UpdateWatchlist not implemented")
 }
 func (UnimplementedAioPortalServer) mustEmbedUnimplementedAioPortalServer() {}
 
@@ -356,6 +461,132 @@ func _AioPortal_GetRollUp_Handler(srv interface{}, ctx context.Context, dec func
 	return interceptor(ctx, in, info, handler)
 }
 
+func _AioPortal_DeletePortfolio_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(DeletePortfolioRequest)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(AioPortalServer).DeletePortfolio(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: AioPortal_DeletePortfolio_FullMethodName,
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(AioPortalServer).DeletePortfolio(ctx, req.(*DeletePortfolioRequest))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
+func _AioPortal_CreateTransaction_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(CreateTransactionRequest)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(AioPortalServer).CreateTransaction(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: AioPortal_CreateTransaction_FullMethodName,
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(AioPortalServer).CreateTransaction(ctx, req.(*CreateTransactionRequest))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
+func _AioPortal_GetTransaction_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(GetTransactionRequest)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(AioPortalServer).GetTransaction(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: AioPortal_GetTransaction_FullMethodName,
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(AioPortalServer).GetTransaction(ctx, req.(*GetTransactionRequest))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
+func _AioPortal_ListTransactions_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(ListTransactionsRequest)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(AioPortalServer).ListTransactions(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: AioPortal_ListTransactions_FullMethodName,
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(AioPortalServer).ListTransactions(ctx, req.(*ListTransactionsRequest))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
+func _AioPortal_ListTransactionsByCoin_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(ListTransactionsByCoinRequest)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(AioPortalServer).ListTransactionsByCoin(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: AioPortal_ListTransactionsByCoin_FullMethodName,
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(AioPortalServer).ListTransactionsByCoin(ctx, req.(*ListTransactionsByCoinRequest))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
+func _AioPortal_CreateWatchlist_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(CreateWatchlistRequest)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(AioPortalServer).CreateWatchlist(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: AioPortal_CreateWatchlist_FullMethodName,
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(AioPortalServer).CreateWatchlist(ctx, req.(*CreateWatchlistRequest))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
+func _AioPortal_UpdateWatchlist_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(UpdateWatchlistRequest)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(AioPortalServer).UpdateWatchlist(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: AioPortal_UpdateWatchlist_FullMethodName,
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(AioPortalServer).UpdateWatchlist(ctx, req.(*UpdateWatchlistRequest))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
 // AioPortal_ServiceDesc is the grpc.ServiceDesc for AioPortal service.
 // It's only intended for direct use with grpc.RegisterService,
 // and not to be introspected or modified (even as a copy)
@@ -398,6 +629,34 @@ var AioPortal_ServiceDesc = grpc.ServiceDesc{
 		{
 			MethodName: "GetRollUp",
 			Handler:    _AioPortal_GetRollUp_Handler,
+		},
+		{
+			MethodName: "DeletePortfolio",
+			Handler:    _AioPortal_DeletePortfolio_Handler,
+		},
+		{
+			MethodName: "CreateTransaction",
+			Handler:    _AioPortal_CreateTransaction_Handler,
+		},
+		{
+			MethodName: "GetTransaction",
+			Handler:    _AioPortal_GetTransaction_Handler,
+		},
+		{
+			MethodName: "ListTransactions",
+			Handler:    _AioPortal_ListTransactions_Handler,
+		},
+		{
+			MethodName: "ListTransactionsByCoin",
+			Handler:    _AioPortal_ListTransactionsByCoin_Handler,
+		},
+		{
+			MethodName: "CreateWatchlist",
+			Handler:    _AioPortal_CreateWatchlist_Handler,
+		},
+		{
+			MethodName: "UpdateWatchlist",
+			Handler:    _AioPortal_UpdateWatchlist_Handler,
 		},
 	},
 	Streams:  []grpc.StreamDesc{},
