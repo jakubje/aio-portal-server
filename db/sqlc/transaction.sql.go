@@ -9,7 +9,7 @@ import (
 	"context"
 	"time"
 
-	"github.com/google/uuid"
+	"github.com/jackc/pgx/v5/pgtype"
 )
 
 const createTransaction = `-- name: CreateTransaction :one
@@ -64,8 +64,8 @@ WHERE id = $1 and account_id = $2
 `
 
 type DeleteTransactionParams struct {
-	ID        uuid.UUID `json:"id"`
-	AccountID int64     `json:"account_id"`
+	ID        pgtype.UUID `json:"id"`
+	AccountID int64       `json:"account_id"`
 }
 
 func (q *Queries) DeleteTransaction(ctx context.Context, arg DeleteTransactionParams) error {
@@ -130,8 +130,8 @@ LIMIT 1
 `
 
 type GetTransactionParams struct {
-	ID        uuid.UUID `json:"id"`
-	AccountID int64     `json:"account_id"`
+	ID        pgtype.UUID `json:"id"`
+	AccountID int64       `json:"account_id"`
 }
 
 func (q *Queries) GetTransaction(ctx context.Context, arg GetTransactionParams) (Transaction, error) {

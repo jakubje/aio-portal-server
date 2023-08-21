@@ -9,5 +9,5 @@ message DeletePortfolioRequest {
 }
 
 message DeletePortfolioResponse {
-  string message = 2;
+  string message = 1;
 }

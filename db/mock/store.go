@@ -36,6 +36,36 @@ func (m *MockStore) EXPECT() *MockStoreMockRecorder {
 	return m.recorder
 }
 
+// AddWatchlistCoin mocks base method.
+func (m *MockStore) AddWatchlistCoin(arg0 context.Context, arg1 db.AddWatchlistCoinParams) (db.WatchlistCoin, error) {
+	m.ctrl.T.Helper()
+	ret := m.ctrl.Call(m, "AddWatchlistCoin", arg0, arg1)
+	ret0, _ := ret[0].(db.WatchlistCoin)
+	ret1, _ := ret[1].(error)
+	return ret0, ret1
+}
+
+// AddWatchlistCoin indicates an expected call of AddWatchlistCoin.
+func (mr *MockStoreMockRecorder) AddWatchlistCoin(arg0, arg1 interface{}) *gomock.Call {
+	mr.mock.ctrl.T.Helper()
+	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "AddWatchlistCoin", reflect.TypeOf((*MockStore)(nil).AddWatchlistCoin), arg0, arg1)
+}
+
+// CreateCoin mocks base method.
+func (m *MockStore) CreateCoin(arg0 context.Context, arg1 db.CreateCoinParams) (db.Coin, error) {
+	m.ctrl.T.Helper()
+	ret := m.ctrl.Call(m, "CreateCoin", arg0, arg1)
+	ret0, _ := ret[0].(db.Coin)
+	ret1, _ := ret[1].(error)
+	return ret0, ret1
+}
+
+// CreateCoin indicates an expected call of CreateCoin.
+func (mr *MockStoreMockRecorder) CreateCoin(arg0, arg1 interface{}) *gomock.Call {
+	mr.mock.ctrl.T.Helper()
+	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "CreateCoin", reflect.TypeOf((*MockStore)(nil).CreateCoin), arg0, arg1)
+}
+
 // CreateFootball mocks base method.
 func (m *MockStore) CreateFootball(arg0 context.Context, arg1 db.CreateFootballParams) (db.Football, error) {
 	m.ctrl.T.Helper()
@@ -156,21 +186,6 @@ func (mr *MockStoreMockRecorder) CreateWatchlist(arg0, arg1 interface{}) *gomock
 	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "CreateWatchlist", reflect.TypeOf((*MockStore)(nil).CreateWatchlist), arg0, arg1)
 }
 
-// CreateWatchlistCoins mocks base method.
-func (m *MockStore) CreateWatchlistCoins(arg0 context.Context, arg1 db.CreateWatchlistCoinsParams) (db.WatchlistCoin, error) {
-	m.ctrl.T.Helper()
-	ret := m.ctrl.Call(m, "CreateWatchlistCoins", arg0, arg1)
-	ret0, _ := ret[0].(db.WatchlistCoin)
-	ret1, _ := ret[1].(error)
-	return ret0, ret1
-}
-
-// CreateWatchlistCoins indicates an expected call of CreateWatchlistCoins.
-func (mr *MockStoreMockRecorder) CreateWatchlistCoins(arg0, arg1 interface{}) *gomock.Call {
-	mr.mock.ctrl.T.Helper()
-	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "CreateWatchlistCoins", reflect.TypeOf((*MockStore)(nil).CreateWatchlistCoins), arg0, arg1)
-}
-
 // DeletePortfolio mocks base method.
 func (m *MockStore) DeletePortfolio(arg0 context.Context, arg1 db.DeletePortfolioParams) error {
 	m.ctrl.T.Helper()
@@ -227,18 +242,19 @@ func (mr *MockStoreMockRecorder) DeleteWatchlist(arg0, arg1 interface{}) *gomock
 	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "DeleteWatchlist", reflect.TypeOf((*MockStore)(nil).DeleteWatchlist), arg0, arg1)
 }
 
-// DeleteWatchlistCoin mocks base method.
-func (m *MockStore) DeleteWatchlistCoin(arg0 context.Context, arg1 int64) error {
+// GetCoin mocks base method.
+func (m *MockStore) GetCoin(arg0 context.Context, arg1 string) (db.Coin, error) {
 	m.ctrl.T.Helper()
-	ret := m.ctrl.Call(m, "DeleteWatchlistCoin", arg0, arg1)
-	ret0, _ := ret[0].(error)
-	return ret0
+	ret := m.ctrl.Call(m, "GetCoin", arg0, arg1)
+	ret0, _ := ret[0].(db.Coin)
+	ret1, _ := ret[1].(error)
+	return ret0, ret1
 }
 
-// DeleteWatchlistCoin indicates an expected call of DeleteWatchlistCoin.
-func (mr *MockStoreMockRecorder) DeleteWatchlistCoin(arg0, arg1 interface{}) *gomock.Call {
+// GetCoin indicates an expected call of GetCoin.
+func (mr *MockStoreMockRecorder) GetCoin(arg0, arg1 interface{}) *gomock.Call {
 	mr.mock.ctrl.T.Helper()
-	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "DeleteWatchlistCoin", reflect.TypeOf((*MockStore)(nil).DeleteWatchlistCoin), arg0, arg1)
+	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "GetCoin", reflect.TypeOf((*MockStore)(nil).GetCoin), arg0, arg1)
 }
 
 // GetFootball mocks base method.
@@ -346,19 +362,19 @@ func (mr *MockStoreMockRecorder) GetWatchlist(arg0, arg1 interface{}) *gomock.Ca
 	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "GetWatchlist", reflect.TypeOf((*MockStore)(nil).GetWatchlist), arg0, arg1)
 }
 
-// GetWatchlistCoin mocks base method.
-func (m *MockStore) GetWatchlistCoin(arg0 context.Context, arg1 int64) (db.WatchlistCoin, error) {
+// ListCoins mocks base method.
+func (m *MockStore) ListCoins(arg0 context.Context, arg1 db.ListCoinsParams) ([]db.Coin, error) {
 	m.ctrl.T.Helper()
-	ret := m.ctrl.Call(m, "GetWatchlistCoin", arg0, arg1)
-	ret0, _ := ret[0].(db.WatchlistCoin)
+	ret := m.ctrl.Call(m, "ListCoins", arg0, arg1)
+	ret0, _ := ret[0].([]db.Coin)
 	ret1, _ := ret[1].(error)
 	return ret0, ret1
 }
 
-// GetWatchlistCoin indicates an expected call of GetWatchlistCoin.
-func (mr *MockStoreMockRecorder) GetWatchlistCoin(arg0, arg1 interface{}) *gomock.Call {
+// ListCoins indicates an expected call of ListCoins.
+func (mr *MockStoreMockRecorder) ListCoins(arg0, arg1 interface{}) *gomock.Call {
 	mr.mock.ctrl.T.Helper()
-	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "GetWatchlistCoin", reflect.TypeOf((*MockStore)(nil).GetWatchlistCoin), arg0, arg1)
+	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "ListCoins", reflect.TypeOf((*MockStore)(nil).ListCoins), arg0, arg1)
 }
 
 // ListPortforlios mocks base method.
@@ -436,6 +452,21 @@ func (mr *MockStoreMockRecorder) ListUsers(arg0, arg1 interface{}) *gomock.Call 
 	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "ListUsers", reflect.TypeOf((*MockStore)(nil).ListUsers), arg0, arg1)
 }
 
+// ListWatchlistCoins mocks base method.
+func (m *MockStore) ListWatchlistCoins(arg0 context.Context, arg1 int64) ([]db.Coin, error) {
+	m.ctrl.T.Helper()
+	ret := m.ctrl.Call(m, "ListWatchlistCoins", arg0, arg1)
+	ret0, _ := ret[0].([]db.Coin)
+	ret1, _ := ret[1].(error)
+	return ret0, ret1
+}
+
+// ListWatchlistCoins indicates an expected call of ListWatchlistCoins.
+func (mr *MockStoreMockRecorder) ListWatchlistCoins(arg0, arg1 interface{}) *gomock.Call {
+	mr.mock.ctrl.T.Helper()
+	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "ListWatchlistCoins", reflect.TypeOf((*MockStore)(nil).ListWatchlistCoins), arg0, arg1)
+}
+
 // ListWatchlists mocks base method.
 func (m *MockStore) ListWatchlists(arg0 context.Context, arg1 int64) ([]db.Watchlist, error) {
 	m.ctrl.T.Helper()
@@ -451,19 +482,18 @@ func (mr *MockStoreMockRecorder) ListWatchlists(arg0, arg1 interface{}) *gomock.
 	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "ListWatchlists", reflect.TypeOf((*MockStore)(nil).ListWatchlists), arg0, arg1)
 }
 
-// ListWatchlistsCoins mocks base method.
-func (m *MockStore) ListWatchlistsCoins(arg0 context.Context, arg1 int64) ([]db.WatchlistCoin, error) {
+// RemoveWatchlistCoin mocks base method.
+func (m *MockStore) RemoveWatchlistCoin(arg0 context.Context, arg1 db.RemoveWatchlistCoinParams) error {
 	m.ctrl.T.Helper()
-	ret := m.ctrl.Call(m, "ListWatchlistsCoins", arg0, arg1)
-	ret0, _ := ret[0].([]db.WatchlistCoin)
-	ret1, _ := ret[1].(error)
-	return ret0, ret1
+	ret := m.ctrl.Call(m, "RemoveWatchlistCoin", arg0, arg1)
+	ret0, _ := ret[0].(error)
+	return ret0
 }
 
-// ListWatchlistsCoins indicates an expected call of ListWatchlistsCoins.
-func (mr *MockStoreMockRecorder) ListWatchlistsCoins(arg0, arg1 interface{}) *gomock.Call {
+// RemoveWatchlistCoin indicates an expected call of RemoveWatchlistCoin.
+func (mr *MockStoreMockRecorder) RemoveWatchlistCoin(arg0, arg1 interface{}) *gomock.Call {
 	mr.mock.ctrl.T.Helper()
-	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "ListWatchlistsCoins", reflect.TypeOf((*MockStore)(nil).ListWatchlistsCoins), arg0, arg1)
+	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "RemoveWatchlistCoin", reflect.TypeOf((*MockStore)(nil).RemoveWatchlistCoin), arg0, arg1)
 }
 
 // UpdateFootball mocks base method.

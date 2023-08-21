@@ -4,24 +4,18 @@ import (
 	"context"
 	"github.com/jackc/pgx/v5"
 	"github.com/jakub/aioportal/server/pb"
-	"github.com/jakub/aioportal/server/val"
-	"google.golang.org/genproto/googleapis/rpc/errdetails"
 	"google.golang.org/grpc/codes"
 	"google.golang.org/grpc/status"
+	"google.golang.org/protobuf/types/known/emptypb"
 )
 
-func (server *Server) ListPortfolios(ctx context.Context, req *pb.ListPortfoliosRequest) (*pb.ListPortfoliosResponse, error) {
+func (server *Server) ListPortfolios(ctx context.Context, _ *emptypb.Empty) (*pb.ListPortfoliosResponse, error) {
 	authPayload, err := server.authorizeUser(ctx)
 	if err != nil {
 		return nil, unauthenticatedError(err)
 	}
-	req.Id = authPayload.AccountId
-	violations := validateListPortfoliosRequest(req)
-	if violations != nil {
-		return nil, invalidArgumentError(violations)
-	}
 
-	portfolios, err := server.store.ListPortforlios(ctx, req.GetId())
+	portfolios, err := server.store.ListPortforlios(ctx, authPayload.AccountId)
 	if err != nil {
 		if err == pgx.ErrNoRows {
 			return nil, status.Errorf(codes.NotFound, "no portfolios found")
@@ -33,12 +27,4 @@ func (server *Server) ListPortfolios(ctx context.Context, req *pb.ListPortfolios
 		Portfolios: convertPortfolios(portfolios),
 	}
 	return rsp, nil
-}
-
-func validateListPortfoliosRequest(req *pb.ListPortfoliosRequest) (violations []*errdetails.BadRequest_FieldViolation) {
-	if err := val.ValidateID(req.GetId()); err != nil {
-		violations = append(violations, fieldViolation("portfolio_id", err))
-	}
-
-	return violations
 }

@@ -8,7 +8,26 @@ import (
 	"time"
 
 	"github.com/google/uuid"
+	"github.com/jackc/pgx/v5/pgtype"
 )
+
+type Coin struct {
+	CoinID            string    `json:"coin_id"`
+	Name              string    `json:"name"`
+	Price             float64   `json:"price"`
+	MarketCap         int64     `json:"market_cap"`
+	CirculationSupply int64     `json:"circulation_supply"`
+	TotalSupply       int64     `json:"total_supply"`
+	MaxSupply         int64     `json:"max_supply"`
+	Rank              int32     `json:"rank"`
+	Volume            int64     `json:"volume"`
+	ImageUrl          string    `json:"image_url"`
+	Description       string    `json:"description"`
+	Website           string    `json:"website"`
+	SocialMediaLinks  []string  `json:"social_media_links"`
+	CreatedAt         time.Time `json:"created_at"`
+	UpdatedAt         time.Time `json:"updated_at"`
+}
 
 type Football struct {
 	ID        int64  `json:"id"`
@@ -39,15 +58,15 @@ type Session struct {
 }
 
 type Transaction struct {
-	ID             uuid.UUID `json:"id"`
-	AccountID      int64     `json:"account_id"`
-	PortfolioID    int64     `json:"portfolio_id"`
-	Type           int32     `json:"type"`
-	Symbol         string    `json:"symbol"`
-	PricePerCoin   float64   `json:"price_per_coin"`
-	Quantity       float64   `json:"quantity"`
-	TimeTransacted time.Time `json:"time_transacted"`
-	TimeCreated    time.Time `json:"time_created"`
+	ID             pgtype.UUID `json:"id"`
+	AccountID      int64       `json:"account_id"`
+	PortfolioID    int64       `json:"portfolio_id"`
+	Type           int32       `json:"type"`
+	Symbol         string      `json:"symbol"`
+	PricePerCoin   float64     `json:"price_per_coin"`
+	Quantity       float64     `json:"quantity"`
+	TimeTransacted time.Time   `json:"time_transacted"`
+	TimeCreated    time.Time   `json:"time_created"`
 }
 
 type User struct {
@@ -78,9 +97,6 @@ type Watchlist struct {
 }
 
 type WatchlistCoin struct {
-	ID          int64  `json:"id"`
 	WatchlistID int64  `json:"watchlist_id"`
-	Name        string `json:"name"`
-	Symbol      string `json:"symbol"`
-	Rank        int16  `json:"rank"`
+	CoinID      string `json:"coin_id"`
 }

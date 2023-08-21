@@ -1,19 +1,17 @@
--- name: CreateWatchlistCoins :one
+-- name: AddWatchlistCoin :one
 INSERT INTO watchlist_coins (
-    watchlist_id, name, symbol, rank
+    watchlist_id, coin_id
 ) VALUES (
-             $1, $2, $3, $4
+             $1, $2
          )
 RETURNING *;
 
--- name: GetWatchlistCoin :one
-SELECT * FROM watchlist_coins
-WHERE id = $1 LIMIT 1;
-
--- name: ListWatchlistsCoins :many
-SELECT * FROM watchlist_coins
-WHERE watchlist_id = $1;
-
--- name: DeleteWatchlistCoin :exec
+-- name: RemoveWatchlistCoin :exec
 DELETE FROM watchlist_coins
-WHERE id = $1;
+WHERE watchlist_id = $1 and coin_id = $2;
+
+-- name: ListWatchlistCoins :many
+SELECT c.*
+FROM coins c
+INNER JOIN watchlist_coins wc ON c.coin_id = wc.coin_id
+WHERE wc.watchlist_id = $1;

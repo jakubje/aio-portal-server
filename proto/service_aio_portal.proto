@@ -2,6 +2,7 @@ syntax = "proto3";
 
 package pb;
 
+import "google/protobuf/empty.proto";
 import "google/api/annotations.proto";
 import "rpc_create_user.proto";
 import "rpc_login_user.proto";
@@ -19,6 +20,9 @@ import "rpc_list_transactions.proto";
 import "rpc_list_transactions_by_coin.proto";
 import "rpc_create_watchlist.proto";
 import "rpc_update_watchlist.proto";
+import "rpc_get_watchlist.proto";
+import "rpc_list_watchlists.proto";
+import "rpc_delete_watchlist.proto";
 import "protoc-gen-openapiv2/options/annotations.proto";
 
 option go_package = "github.com/jakub/aioportal/server/pb";
@@ -104,7 +108,7 @@ service AioPortal {
       summary: "Get a portfolio";
     };
   }
-  rpc ListPortfolios (ListPortfoliosRequest) returns (ListPortfoliosResponse) {
+  rpc ListPortfolios (google.protobuf.Empty) returns (ListPortfoliosResponse) {
     option (google.api.http) = {
       get: "/v1/get_portfolios"
     };
@@ -186,6 +190,33 @@ service AioPortal {
     option (grpc.gateway.protoc_gen_openapiv2.options.openapiv2_operation) = {
       description: "Use this API to update a watchlist";
       summary: "Update a watchlist";
+    };
+  }
+  rpc GetWatchlist (GetWatchlistRequest) returns (GetWatchlistResponse) {
+    option (google.api.http) = {
+      get: "/v1/get_watchlist"
+    };
+    option (grpc.gateway.protoc_gen_openapiv2.options.openapiv2_operation) = {
+      description: "Use this API to get a watchlist";
+      summary: "Get a watchlist";
+    };
+  }
+  rpc ListWatchlists (google.protobuf.Empty) returns (GetWatchlistsResponse) {
+    option (google.api.http) = {
+      get: "/v1/get_watchlists"
+    };
+    option (grpc.gateway.protoc_gen_openapiv2.options.openapiv2_operation) = {
+      description: "Use this API to get a list of watchlists";
+      summary: "Get a list of watchlists";
+    };
+  }
+  rpc DeleteWatchlist (DeleteWatchlistRequest) returns (DeleteWatchlistResponse) {
+    option (google.api.http) = {
+      delete: "/v1/delete_watchlist"
+    };
+    option (grpc.gateway.protoc_gen_openapiv2.options.openapiv2_operation) = {
+      description: "Use this API to remove a watchlist";
+      summary: "Remove a watchlist";
     };
   }
 }

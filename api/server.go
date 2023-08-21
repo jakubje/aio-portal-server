@@ -81,10 +81,8 @@ func (server *Server) setupRouter() {
 	authRoutes.DELETE("/watchlist/:id", server.deleteWatchlist)
 
 	// watchlistcoin routes
-	authRoutes.POST("/watchlist/coin", server.createWatchlistCoin)
-	authRoutes.GET("/watchlist/coin/:id", server.getWatchlistCoin)
-	authRoutes.GET("/watchlist/coins/:watchlist_id", server.listWatchlistCoins)
-	authRoutes.DELETE("//watchlist/coin/:id", server.deleteWachlistCoin)
+	authRoutes.POST("/watchlist/coin", server.addWatchlistCoin)
+	authRoutes.DELETE("/watchlist/coin/:coin_id/:watchlist_id ", server.removeWatchlistCoin)
 
 	// football routes
 	authRoutes.POST("/football", server.addFootball)

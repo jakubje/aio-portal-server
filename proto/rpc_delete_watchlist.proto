@@ -1,0 +1,13 @@
+syntax = "proto3";
+
+package pb;
+
+option go_package = "github.com/jakub/aioportal/server/pb";
+
+message DeleteWatchlistRequest {
+  int64 id = 1;
+}
+
+message DeleteWatchlistResponse {
+  string message = 1;
+}

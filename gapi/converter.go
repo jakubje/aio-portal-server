@@ -94,3 +94,15 @@ func convertWatchlist(watchlist db.Watchlist) *pb.Watchlist {
 		Name: watchlist.Name,
 	}
 }
+
+func convertWatchlists(watchlists []db.Watchlist) []*pb.Watchlist {
+
+	var watchlistsProtoArray []*pb.Watchlist
+	for _, watchlist := range watchlists {
+		watchlistsProtoArray = append(watchlistsProtoArray, &pb.Watchlist{
+			Id:   watchlist.ID,
+			Name: watchlist.Name,
+		})
+	}
+	return watchlistsProtoArray
+}

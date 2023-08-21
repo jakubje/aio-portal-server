@@ -9,88 +9,59 @@ import (
 	"context"
 )
 
-const createWatchlistCoins = `-- name: CreateWatchlistCoins :one
+const addWatchlistCoin = `-- name: AddWatchlistCoin :one
 INSERT INTO watchlist_coins (
-    watchlist_id, name, symbol, rank
+    watchlist_id, coin_id
 ) VALUES (
-             $1, $2, $3, $4
+             $1, $2
          )
-RETURNING id, watchlist_id, name, symbol, rank
+RETURNING watchlist_id, coin_id
 `
 
-type CreateWatchlistCoinsParams struct {
+type AddWatchlistCoinParams struct {
 	WatchlistID int64  `json:"watchlist_id"`
-	Name        string `json:"name"`
-	Symbol      string `json:"symbol"`
-	Rank        int16  `json:"rank"`
+	CoinID      string `json:"coin_id"`
 }
 
-func (q *Queries) CreateWatchlistCoins(ctx context.Context, arg CreateWatchlistCoinsParams) (WatchlistCoin, error) {
-	row := q.db.QueryRow(ctx, createWatchlistCoins,
-		arg.WatchlistID,
-		arg.Name,
-		arg.Symbol,
-		arg.Rank,
-	)
+func (q *Queries) AddWatchlistCoin(ctx context.Context, arg AddWatchlistCoinParams) (WatchlistCoin, error) {
+	row := q.db.QueryRow(ctx, addWatchlistCoin, arg.WatchlistID, arg.CoinID)
 	var i WatchlistCoin
-	err := row.Scan(
-		&i.ID,
-		&i.WatchlistID,
-		&i.Name,
-		&i.Symbol,
-		&i.Rank,
-	)
+	err := row.Scan(&i.WatchlistID, &i.CoinID)
 	return i, err
 }
 
-const deleteWatchlistCoin = `-- name: DeleteWatchlistCoin :exec
-DELETE FROM watchlist_coins
-WHERE id = $1
+const listWatchlistCoins = `-- name: ListWatchlistCoins :many
+SELECT c.coin_id, c.name, c.price, c.market_cap, c.circulation_supply, c.total_supply, c.max_supply, c.rank, c.volume, c.image_url, c.description, c.website, c.social_media_links, c.created_at, c.updated_at
+FROM coins c
+INNER JOIN watchlist_coins wc ON c.coin_id = wc.coin_id
+WHERE wc.watchlist_id = $1
 `
 
-func (q *Queries) DeleteWatchlistCoin(ctx context.Context, id int64) error {
-	_, err := q.db.Exec(ctx, deleteWatchlistCoin, id)
-	return err
-}
-
-const getWatchlistCoin = `-- name: GetWatchlistCoin :one
-SELECT id, watchlist_id, name, symbol, rank FROM watchlist_coins
-WHERE id = $1 LIMIT 1
-`
-
-func (q *Queries) GetWatchlistCoin(ctx context.Context, id int64) (WatchlistCoin, error) {
-	row := q.db.QueryRow(ctx, getWatchlistCoin, id)
-	var i WatchlistCoin
-	err := row.Scan(
-		&i.ID,
-		&i.WatchlistID,
-		&i.Name,
-		&i.Symbol,
-		&i.Rank,
-	)
-	return i, err
-}
-
-const listWatchlistsCoins = `-- name: ListWatchlistsCoins :many
-SELECT id, watchlist_id, name, symbol, rank FROM watchlist_coins
-WHERE watchlist_id = $1
-`
-
-func (q *Queries) ListWatchlistsCoins(ctx context.Context, watchlistID int64) ([]WatchlistCoin, error) {
-	rows, err := q.db.Query(ctx, listWatchlistsCoins, watchlistID)
+func (q *Queries) ListWatchlistCoins(ctx context.Context, watchlistID int64) ([]Coin, error) {
+	rows, err := q.db.Query(ctx, listWatchlistCoins, watchlistID)
 	if err != nil {
 		return nil, err
 	}
 	defer rows.Close()
-	items := []WatchlistCoin{}
+	items := []Coin{}
 	for rows.Next() {
-		var i WatchlistCoin
+		var i Coin
 		if err := rows.Scan(
-			&i.ID,
-			&i.WatchlistID,
+			&i.CoinID,
 			&i.Name,
-			&i.Symbol,
+			&i.Price,
+			&i.MarketCap,
+			&i.CirculationSupply,
+			&i.TotalSupply,
+			&i.MaxSupply,
 			&i.Rank,
+			&i.Volume,
+			&i.ImageUrl,
+			&i.Description,
+			&i.Website,
+			&i.SocialMediaLinks,
+			&i.CreatedAt,
+			&i.UpdatedAt,
 		); err != nil {
 			return nil, err
 		}
@@ -100,4 +71,19 @@ func (q *Queries) ListWatchlistsCoins(ctx context.Context, watchlistID int64) ([
 		return nil, err
 	}
 	return items, nil
+}
+
+const removeWatchlistCoin = `-- name: RemoveWatchlistCoin :exec
+DELETE FROM watchlist_coins
+WHERE watchlist_id = $1 and coin_id = $2
+`
+
+type RemoveWatchlistCoinParams struct {
+	WatchlistID int64  `json:"watchlist_id"`
+	CoinID      string `json:"coin_id"`
+}
+
+func (q *Queries) RemoveWatchlistCoin(ctx context.Context, arg RemoveWatchlistCoinParams) error {
+	_, err := q.db.Exec(ctx, removeWatchlistCoin, arg.WatchlistID, arg.CoinID)
+	return err
 }

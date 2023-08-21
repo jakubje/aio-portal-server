@@ -190,6 +190,39 @@
         ]
       }
     },
+    "/v1/delete_watchlist": {
+      "delete": {
+        "summary": "Remove a watchlist",
+        "description": "Use this API to remove a watchlist",
+        "operationId": "AioPortal_DeleteWatchlist",
+        "responses": {
+          "200": {
+            "description": "A successful response.",
+            "schema": {
+              "$ref": "#/definitions/pbDeleteWatchlistResponse"
+            }
+          },
+          "default": {
+            "description": "An unexpected error response.",
+            "schema": {
+              "$ref": "#/definitions/rpcStatus"
+            }
+          }
+        },
+        "parameters": [
+          {
+            "name": "id",
+            "in": "query",
+            "required": false,
+            "type": "string",
+            "format": "int64"
+          }
+        ],
+        "tags": [
+          "AioPortal"
+        ]
+      }
+    },
     "/v1/get_portfolio": {
       "get": {
         "summary": "Get a portfolio",
@@ -242,15 +275,6 @@
             }
           }
         },
-        "parameters": [
-          {
-            "name": "id",
-            "in": "query",
-            "required": false,
-            "type": "string",
-            "format": "int64"
-          }
-        ],
         "tags": [
           "AioPortal"
         ]
@@ -316,6 +340,63 @@
             "type": "string"
           }
         ],
+        "tags": [
+          "AioPortal"
+        ]
+      }
+    },
+    "/v1/get_watchlist": {
+      "get": {
+        "summary": "Get a watchlist",
+        "description": "Use this API to get a watchlist",
+        "operationId": "AioPortal_GetWatchlist",
+        "responses": {
+          "200": {
+            "description": "A successful response.",
+            "schema": {
+              "$ref": "#/definitions/pbGetWatchlistResponse"
+            }
+          },
+          "default": {
+            "description": "An unexpected error response.",
+            "schema": {
+              "$ref": "#/definitions/rpcStatus"
+            }
+          }
+        },
+        "parameters": [
+          {
+            "name": "id",
+            "in": "query",
+            "required": false,
+            "type": "string",
+            "format": "int64"
+          }
+        ],
+        "tags": [
+          "AioPortal"
+        ]
+      }
+    },
+    "/v1/get_watchlists": {
+      "get": {
+        "summary": "Get a list of watchlists",
+        "description": "Use this API to get a list of watchlists",
+        "operationId": "AioPortal_ListWatchlists",
+        "responses": {
+          "200": {
+            "description": "A successful response.",
+            "schema": {
+              "$ref": "#/definitions/pbGetWatchlistsResponse"
+            }
+          },
+          "default": {
+            "description": "An unexpected error response.",
+            "schema": {
+              "$ref": "#/definitions/rpcStatus"
+            }
+          }
+        },
         "tags": [
           "AioPortal"
         ]
@@ -681,6 +762,14 @@
         }
       }
     },
+    "pbDeleteWatchlistResponse": {
+      "type": "object",
+      "properties": {
+        "message": {
+          "type": "string"
+        }
+      }
+    },
     "pbGetPortfolioResponse": {
       "type": "object",
       "properties": {
@@ -694,6 +783,26 @@
       "properties": {
         "transaction": {
           "$ref": "#/definitions/pbTransaction"
+        }
+      }
+    },
+    "pbGetWatchlistResponse": {
+      "type": "object",
+      "properties": {
+        "Watchlist": {
+          "$ref": "#/definitions/pbWatchlist"
+        }
+      }
+    },
+    "pbGetWatchlistsResponse": {
+      "type": "object",
+      "properties": {
+        "Watchlists": {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "$ref": "#/definitions/pbWatchlist"
+          }
         }
       }
     },

@@ -11,6 +11,7 @@ import (
 	grpc "google.golang.org/grpc"
 	codes "google.golang.org/grpc/codes"
 	status "google.golang.org/grpc/status"
+	emptypb "google.golang.org/protobuf/types/known/emptypb"
 )
 
 // This is a compile-time assertion to ensure that this generated file
@@ -35,6 +36,9 @@ const (
 	AioPortal_ListTransactionsByCoin_FullMethodName = "/pb.AioPortal/ListTransactionsByCoin"
 	AioPortal_CreateWatchlist_FullMethodName        = "/pb.AioPortal/CreateWatchlist"
 	AioPortal_UpdateWatchlist_FullMethodName        = "/pb.AioPortal/UpdateWatchlist"
+	AioPortal_GetWatchlist_FullMethodName           = "/pb.AioPortal/GetWatchlist"
+	AioPortal_ListWatchlists_FullMethodName         = "/pb.AioPortal/ListWatchlists"
+	AioPortal_DeleteWatchlist_FullMethodName        = "/pb.AioPortal/DeleteWatchlist"
 )
 
 // AioPortalClient is the client API for AioPortal service.
@@ -48,7 +52,7 @@ type AioPortalClient interface {
 	CreatePortfolio(ctx context.Context, in *CreatePortfolioRequest, opts ...grpc.CallOption) (*CreatePortfolioResponse, error)
 	UpdatePortfolio(ctx context.Context, in *UpdatePortfolioRequest, opts ...grpc.CallOption) (*UpdatePortfolioResponse, error)
 	GetPortfolio(ctx context.Context, in *GetPortfolioRequest, opts ...grpc.CallOption) (*GetPortfolioResponse, error)
-	ListPortfolios(ctx context.Context, in *ListPortfoliosRequest, opts ...grpc.CallOption) (*ListPortfoliosResponse, error)
+	ListPortfolios(ctx context.Context, in *emptypb.Empty, opts ...grpc.CallOption) (*ListPortfoliosResponse, error)
 	GetRollUp(ctx context.Context, in *RollUpRequest, opts ...grpc.CallOption) (*RollUpResponse, error)
 	DeletePortfolio(ctx context.Context, in *DeletePortfolioRequest, opts ...grpc.CallOption) (*DeletePortfolioResponse, error)
 	CreateTransaction(ctx context.Context, in *CreateTransactionRequest, opts ...grpc.CallOption) (*CreateTransactionResponse, error)
@@ -57,6 +61,9 @@ type AioPortalClient interface {
 	ListTransactionsByCoin(ctx context.Context, in *ListTransactionsByCoinRequest, opts ...grpc.CallOption) (*ListTransactionsResponse, error)
 	CreateWatchlist(ctx context.Context, in *CreateWatchlistRequest, opts ...grpc.CallOption) (*CreateWatchlistResponse, error)
 	UpdateWatchlist(ctx context.Context, in *UpdateWatchlistRequest, opts ...grpc.CallOption) (*UpdateWatchlistResponse, error)
+	GetWatchlist(ctx context.Context, in *GetWatchlistRequest, opts ...grpc.CallOption) (*GetWatchlistResponse, error)
+	ListWatchlists(ctx context.Context, in *emptypb.Empty, opts ...grpc.CallOption) (*GetWatchlistsResponse, error)
+	DeleteWatchlist(ctx context.Context, in *DeleteWatchlistRequest, opts ...grpc.CallOption) (*DeleteWatchlistResponse, error)
 }
 
 type aioPortalClient struct {
@@ -130,7 +137,7 @@ func (c *aioPortalClient) GetPortfolio(ctx context.Context, in *GetPortfolioRequ
 	return out, nil
 }
 
-func (c *aioPortalClient) ListPortfolios(ctx context.Context, in *ListPortfoliosRequest, opts ...grpc.CallOption) (*ListPortfoliosResponse, error) {
+func (c *aioPortalClient) ListPortfolios(ctx context.Context, in *emptypb.Empty, opts ...grpc.CallOption) (*ListPortfoliosResponse, error) {
 	out := new(ListPortfoliosResponse)
 	err := c.cc.Invoke(ctx, AioPortal_ListPortfolios_FullMethodName, in, out, opts...)
 	if err != nil {
@@ -211,6 +218,33 @@ func (c *aioPortalClient) UpdateWatchlist(ctx context.Context, in *UpdateWatchli
 	return out, nil
 }
 
+func (c *aioPortalClient) GetWatchlist(ctx context.Context, in *GetWatchlistRequest, opts ...grpc.CallOption) (*GetWatchlistResponse, error) {
+	out := new(GetWatchlistResponse)
+	err := c.cc.Invoke(ctx, AioPortal_GetWatchlist_FullMethodName, in, out, opts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
+func (c *aioPortalClient) ListWatchlists(ctx context.Context, in *emptypb.Empty, opts ...grpc.CallOption) (*GetWatchlistsResponse, error) {
+	out := new(GetWatchlistsResponse)
+	err := c.cc.Invoke(ctx, AioPortal_ListWatchlists_FullMethodName, in, out, opts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
+func (c *aioPortalClient) DeleteWatchlist(ctx context.Context, in *DeleteWatchlistRequest, opts ...grpc.CallOption) (*DeleteWatchlistResponse, error) {
+	out := new(DeleteWatchlistResponse)
+	err := c.cc.Invoke(ctx, AioPortal_DeleteWatchlist_FullMethodName, in, out, opts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
 // AioPortalServer is the server API for AioPortal service.
 // All implementations must embed UnimplementedAioPortalServer
 // for forward compatibility
@@ -222,7 +256,7 @@ type AioPortalServer interface {
 	CreatePortfolio(context.Context, *CreatePortfolioRequest) (*CreatePortfolioResponse, error)
 	UpdatePortfolio(context.Context, *UpdatePortfolioRequest) (*UpdatePortfolioResponse, error)
 	GetPortfolio(context.Context, *GetPortfolioRequest) (*GetPortfolioResponse, error)
-	ListPortfolios(context.Context, *ListPortfoliosRequest) (*ListPortfoliosResponse, error)
+	ListPortfolios(context.Context, *emptypb.Empty) (*ListPortfoliosResponse, error)
 	GetRollUp(context.Context, *RollUpRequest) (*RollUpResponse, error)
 	DeletePortfolio(context.Context, *DeletePortfolioRequest) (*DeletePortfolioResponse, error)
 	CreateTransaction(context.Context, *CreateTransactionRequest) (*CreateTransactionResponse, error)
@@ -231,6 +265,9 @@ type AioPortalServer interface {
 	ListTransactionsByCoin(context.Context, *ListTransactionsByCoinRequest) (*ListTransactionsResponse, error)
 	CreateWatchlist(context.Context, *CreateWatchlistRequest) (*CreateWatchlistResponse, error)
 	UpdateWatchlist(context.Context, *UpdateWatchlistRequest) (*UpdateWatchlistResponse, error)
+	GetWatchlist(context.Context, *GetWatchlistRequest) (*GetWatchlistResponse, error)
+	ListWatchlists(context.Context, *emptypb.Empty) (*GetWatchlistsResponse, error)
+	DeleteWatchlist(context.Context, *DeleteWatchlistRequest) (*DeleteWatchlistResponse, error)
 	mustEmbedUnimplementedAioPortalServer()
 }
 
@@ -259,7 +296,7 @@ func (UnimplementedAioPortalServer) UpdatePortfolio(context.Context, *UpdatePort
 func (UnimplementedAioPortalServer) GetPortfolio(context.Context, *GetPortfolioRequest) (*GetPortfolioResponse, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method GetPortfolio not implemented")
 }
-func (UnimplementedAioPortalServer) ListPortfolios(context.Context, *ListPortfoliosRequest) (*ListPortfoliosResponse, error) {
+func (UnimplementedAioPortalServer) ListPortfolios(context.Context, *emptypb.Empty) (*ListPortfoliosResponse, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method ListPortfolios not implemented")
 }
 func (UnimplementedAioPortalServer) GetRollUp(context.Context, *RollUpRequest) (*RollUpResponse, error) {
@@ -285,6 +322,15 @@ func (UnimplementedAioPortalServer) CreateWatchlist(context.Context, *CreateWatc
 }
 func (UnimplementedAioPortalServer) UpdateWatchlist(context.Context, *UpdateWatchlistRequest) (*UpdateWatchlistResponse, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method UpdateWatchlist not implemented")
+}
+func (UnimplementedAioPortalServer) GetWatchlist(context.Context, *GetWatchlistRequest) (*GetWatchlistResponse, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method GetWatchlist not implemented")
+}
+func (UnimplementedAioPortalServer) ListWatchlists(context.Context, *emptypb.Empty) (*GetWatchlistsResponse, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method ListWatchlists not implemented")
+}
+func (UnimplementedAioPortalServer) DeleteWatchlist(context.Context, *DeleteWatchlistRequest) (*DeleteWatchlistResponse, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method DeleteWatchlist not implemented")
 }
 func (UnimplementedAioPortalServer) mustEmbedUnimplementedAioPortalServer() {}
 
@@ -426,7 +472,7 @@ func _AioPortal_GetPortfolio_Handler(srv interface{}, ctx context.Context, dec f
 }
 
 func _AioPortal_ListPortfolios_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
-	in := new(ListPortfoliosRequest)
+	in := new(emptypb.Empty)
 	if err := dec(in); err != nil {
 		return nil, err
 	}
@@ -438,7 +484,7 @@ func _AioPortal_ListPortfolios_Handler(srv interface{}, ctx context.Context, dec
 		FullMethod: AioPortal_ListPortfolios_FullMethodName,
 	}
 	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
-		return srv.(AioPortalServer).ListPortfolios(ctx, req.(*ListPortfoliosRequest))
+		return srv.(AioPortalServer).ListPortfolios(ctx, req.(*emptypb.Empty))
 	}
 	return interceptor(ctx, in, info, handler)
 }
@@ -587,6 +633,60 @@ func _AioPortal_UpdateWatchlist_Handler(srv interface{}, ctx context.Context, de
 	return interceptor(ctx, in, info, handler)
 }
 
+func _AioPortal_GetWatchlist_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(GetWatchlistRequest)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(AioPortalServer).GetWatchlist(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: AioPortal_GetWatchlist_FullMethodName,
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(AioPortalServer).GetWatchlist(ctx, req.(*GetWatchlistRequest))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
+func _AioPortal_ListWatchlists_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(emptypb.Empty)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(AioPortalServer).ListWatchlists(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: AioPortal_ListWatchlists_FullMethodName,
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(AioPortalServer).ListWatchlists(ctx, req.(*emptypb.Empty))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
+func _AioPortal_DeleteWatchlist_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(DeleteWatchlistRequest)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(AioPortalServer).DeleteWatchlist(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: AioPortal_DeleteWatchlist_FullMethodName,
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(AioPortalServer).DeleteWatchlist(ctx, req.(*DeleteWatchlistRequest))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
 // AioPortal_ServiceDesc is the grpc.ServiceDesc for AioPortal service.
 // It's only intended for direct use with grpc.RegisterService,
 // and not to be introspected or modified (even as a copy)
@@ -657,6 +757,18 @@ var AioPortal_ServiceDesc = grpc.ServiceDesc{
 		{
 			MethodName: "UpdateWatchlist",
 			Handler:    _AioPortal_UpdateWatchlist_Handler,
+		},
+		{
+			MethodName: "GetWatchlist",
+			Handler:    _AioPortal_GetWatchlist_Handler,
+		},
+		{
+			MethodName: "ListWatchlists",
+			Handler:    _AioPortal_ListWatchlists_Handler,
+		},
+		{
+			MethodName: "DeleteWatchlist",
+			Handler:    _AioPortal_DeleteWatchlist_Handler,
 		},
 	},
 	Streams:  []grpc.StreamDesc{},
