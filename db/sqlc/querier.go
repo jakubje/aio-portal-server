@@ -38,9 +38,10 @@ type Querier interface {
 	ListTransactionsByAccountByCoin(ctx context.Context, arg ListTransactionsByAccountByCoinParams) ([]Transaction, error)
 	ListTransactionsByPortfolio(ctx context.Context, arg ListTransactionsByPortfolioParams) ([]Transaction, error)
 	ListUsers(ctx context.Context, arg ListUsersParams) ([]User, error)
-	ListWatchlistCoins(ctx context.Context, watchlistID int64) ([]Coin, error)
+	ListWatchlistCoins(ctx context.Context, arg ListWatchlistCoinsParams) ([]Coin, error)
 	ListWatchlists(ctx context.Context, accountID int64) ([]Watchlist, error)
 	RemoveWatchlistCoin(ctx context.Context, arg RemoveWatchlistCoinParams) error
+	UpdateCoin(ctx context.Context, arg UpdateCoinParams) (Coin, error)
 	UpdateFootball(ctx context.Context, arg UpdateFootballParams) (Football, error)
 	UpdatePortfolio(ctx context.Context, arg UpdatePortfolioParams) (Portfolio, error)
 	UpdateUser(ctx context.Context, arg UpdateUserParams) (User, error)

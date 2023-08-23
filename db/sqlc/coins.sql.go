@@ -8,15 +8,17 @@ package db
 import (
 	"context"
 	"time"
+
+	"github.com/jackc/pgx/v5/pgtype"
 )
 
 const createCoin = `-- name: CreateCoin :one
 INSERT INTO coins (
-    coin_id, name, price, market_cap, circulation_supply, total_supply, max_supply, rank, volume, image_url, description, website, social_media_links, created_at, updated_at
+    coin_id, name, price, market_cap, circulating_supply, total_supply, max_supply, rank, volume, image_url, description, website, social_media_links, created_at, updated_at
 ) VALUES (
              $1, $2, $3, $4, $5, $6, $7, $8 ,$9 ,$10 ,$11 ,$12 ,$13 ,$14 ,$15
          )
-RETURNING coin_id, name, price, market_cap, circulation_supply, total_supply, max_supply, rank, volume, image_url, description, website, social_media_links, created_at, updated_at
+RETURNING coin_id, name, price, market_cap, circulating_supply, total_supply, max_supply, rank, volume, image_url, description, website, social_media_links, created_at, updated_at
 `
 
 type CreateCoinParams struct {
@@ -24,7 +26,7 @@ type CreateCoinParams struct {
 	Name              string    `json:"name"`
 	Price             float64   `json:"price"`
 	MarketCap         int64     `json:"market_cap"`
-	CirculationSupply int64     `json:"circulation_supply"`
+	CirculatingSupply int64     `json:"circulating_supply"`
 	TotalSupply       int64     `json:"total_supply"`
 	MaxSupply         int64     `json:"max_supply"`
 	Rank              int32     `json:"rank"`
@@ -43,7 +45,7 @@ func (q *Queries) CreateCoin(ctx context.Context, arg CreateCoinParams) (Coin, e
 		arg.Name,
 		arg.Price,
 		arg.MarketCap,
-		arg.CirculationSupply,
+		arg.CirculatingSupply,
 		arg.TotalSupply,
 		arg.MaxSupply,
 		arg.Rank,
@@ -61,7 +63,7 @@ func (q *Queries) CreateCoin(ctx context.Context, arg CreateCoinParams) (Coin, e
 		&i.Name,
 		&i.Price,
 		&i.MarketCap,
-		&i.CirculationSupply,
+		&i.CirculatingSupply,
 		&i.TotalSupply,
 		&i.MaxSupply,
 		&i.Rank,
@@ -77,7 +79,7 @@ func (q *Queries) CreateCoin(ctx context.Context, arg CreateCoinParams) (Coin, e
 }
 
 const getCoin = `-- name: GetCoin :one
-SELECT coin_id, name, price, market_cap, circulation_supply, total_supply, max_supply, rank, volume, image_url, description, website, social_media_links, created_at, updated_at FROM coins
+SELECT coin_id, name, price, market_cap, circulating_supply, total_supply, max_supply, rank, volume, image_url, description, website, social_media_links, created_at, updated_at FROM coins
 WHERE coin_id = $1
 LIMIT 1
 `
@@ -90,7 +92,7 @@ func (q *Queries) GetCoin(ctx context.Context, coinID string) (Coin, error) {
 		&i.Name,
 		&i.Price,
 		&i.MarketCap,
-		&i.CirculationSupply,
+		&i.CirculatingSupply,
 		&i.TotalSupply,
 		&i.MaxSupply,
 		&i.Rank,
@@ -106,7 +108,7 @@ func (q *Queries) GetCoin(ctx context.Context, coinID string) (Coin, error) {
 }
 
 const listCoins = `-- name: ListCoins :many
-SELECT coin_id, name, price, market_cap, circulation_supply, total_supply, max_supply, rank, volume, image_url, description, website, social_media_links, created_at, updated_at FROM coins
+SELECT coin_id, name, price, market_cap, circulating_supply, total_supply, max_supply, rank, volume, image_url, description, website, social_media_links, created_at, updated_at FROM coins
 ORDER BY rank
 LIMIT $1
 OFFSET $2
@@ -131,7 +133,7 @@ func (q *Queries) ListCoins(ctx context.Context, arg ListCoinsParams) ([]Coin, e
 			&i.Name,
 			&i.Price,
 			&i.MarketCap,
-			&i.CirculationSupply,
+			&i.CirculatingSupply,
 			&i.TotalSupply,
 			&i.MaxSupply,
 			&i.Rank,
@@ -151,4 +153,78 @@ func (q *Queries) ListCoins(ctx context.Context, arg ListCoinsParams) ([]Coin, e
 		return nil, err
 	}
 	return items, nil
+}
+
+const updateCoin = `-- name: UpdateCoin :one
+UPDATE coins
+SET
+    name = COALESCE($1, name),
+    price = COALESCE($2, price),
+    market_cap = COALESCE($3, market_cap),
+    circulating_supply = COALESCE($4, circulating_supply),
+    total_supply = COALESCE($5, total_supply),
+    max_supply = COALESCE($6, max_supply),
+    rank = COALESCE($7, rank),
+    volume = COALESCE($8, volume),
+    image_url = COALESCE($9, image_url),
+    description = COALESCE($10, description),
+    website = COALESCE($11, website),
+    social_media_links = COALESCE($12, social_media_links),
+    updated_at = now()
+
+WHERE coin_id = $13
+RETURNING coin_id, name, price, market_cap, circulating_supply, total_supply, max_supply, rank, volume, image_url, description, website, social_media_links, created_at, updated_at
+`
+
+type UpdateCoinParams struct {
+	Name              pgtype.Text   `json:"name"`
+	Price             pgtype.Float8 `json:"price"`
+	MarketCap         pgtype.Int8   `json:"market_cap"`
+	CirculatingSupply pgtype.Int8   `json:"circulating_supply"`
+	TotalSupply       pgtype.Int8   `json:"total_supply"`
+	MaxSupply         pgtype.Int8   `json:"max_supply"`
+	Rank              pgtype.Int4   `json:"rank"`
+	Volume            pgtype.Int8   `json:"volume"`
+	ImageUrl          pgtype.Text   `json:"image_url"`
+	Description       pgtype.Text   `json:"description"`
+	Website           pgtype.Text   `json:"website"`
+	SocialMediaLinks  []string      `json:"social_media_links"`
+	CoinID            string        `json:"coin_id"`
+}
+
+func (q *Queries) UpdateCoin(ctx context.Context, arg UpdateCoinParams) (Coin, error) {
+	row := q.db.QueryRow(ctx, updateCoin,
+		arg.Name,
+		arg.Price,
+		arg.MarketCap,
+		arg.CirculatingSupply,
+		arg.TotalSupply,
+		arg.MaxSupply,
+		arg.Rank,
+		arg.Volume,
+		arg.ImageUrl,
+		arg.Description,
+		arg.Website,
+		arg.SocialMediaLinks,
+		arg.CoinID,
+	)
+	var i Coin
+	err := row.Scan(
+		&i.CoinID,
+		&i.Name,
+		&i.Price,
+		&i.MarketCap,
+		&i.CirculatingSupply,
+		&i.TotalSupply,
+		&i.MaxSupply,
+		&i.Rank,
+		&i.Volume,
+		&i.ImageUrl,
+		&i.Description,
+		&i.Website,
+		&i.SocialMediaLinks,
+		&i.CreatedAt,
+		&i.UpdatedAt,
+	)
+	return i, err
 }

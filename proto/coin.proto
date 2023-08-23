@@ -1,0 +1,25 @@
+syntax = "proto3";
+
+package pb;
+
+import "google/protobuf/timestamp.proto";
+
+option go_package = "github.com/jakub/aioportal/server/pb";
+
+message Coin {
+  string coin_id = 1;
+  string name = 2;
+  double price = 3;
+  int64 market_cap = 4;
+  int64 circulating_supply = 5;
+  int64 total_supply = 6;
+  int64 max_supply = 7;
+  int32 rank = 8;
+  int64 volume = 9;
+  string image_url = 10;
+  string description = 11;
+  string website = 12;
+  repeated string social_media_links = 13;
+  google.protobuf.Timestamp updated_At = 14;
+  google.protobuf.Timestamp created_at = 15;
+}

@@ -3,6 +3,7 @@ package api
 import (
 	"errors"
 	db "github.com/jakub/aioportal/server/db/sqlc"
+	"github.com/jakub/aioportal/server/token"
 	"net/http"
 
 	"github.com/gin-gonic/gin"
@@ -30,7 +31,7 @@ func (server *Server) addWatchlistCoin(ctx *gin.Context) {
 		return
 	}
 
-	ctx.JSON(http.StatusOK, gin.H{"message": " coin added"})
+	ctx.JSON(http.StatusOK, gin.H{"message": "coin added"})
 }
 
 type removeWatchlistCoin struct {
@@ -61,4 +62,35 @@ func (server *Server) removeWatchlistCoin(ctx *gin.Context) {
 	}
 
 	ctx.JSON(http.StatusOK, gin.H{"message": "watchlist coin deleted"})
+}
+
+type listWatchlistCoinsRequest struct {
+	WatchlistID int64 `uri:"watchlist_id" binding:"required,min=1"`
+}
+
+func (server *Server) listWatchlistCoins(ctx *gin.Context) {
+	var req listWatchlistCoinsRequest
+	if err := ctx.ShouldBindUri(&req); err != nil {
+		ctx.JSON(http.StatusBadRequest, errorResponse(err))
+		return
+	}
+	authPayload := ctx.MustGet(authorizationPayloadKey).(*token.Payload)
+
+	arg := db.ListWatchlistCoinsParams{
+		WatchlistID: req.WatchlistID,
+		AccountID:   authPayload.AccountId,
+	}
+
+	coins, err := server.store.ListWatchlistCoins(ctx, arg)
+
+	if err != nil {
+		if errors.Is(err, db.ErrRecordNotFound) {
+			ctx.JSON(http.StatusNotFound, errorResponse(err))
+			return
+		}
+		ctx.JSON(http.StatusInternalServerError, errorResponse(err))
+		return
+	}
+
+	ctx.JSON(http.StatusOK, coins)
 }

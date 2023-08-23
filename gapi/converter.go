@@ -106,3 +106,46 @@ func convertWatchlists(watchlists []db.Watchlist) []*pb.Watchlist {
 	}
 	return watchlistsProtoArray
 }
+
+func convertCoin(coin db.Coin) *pb.Coin {
+	return &pb.Coin{
+		CoinId:            coin.CoinID,
+		Name:              coin.Name,
+		Price:             coin.Price,
+		MarketCap:         coin.MarketCap,
+		CirculatingSupply: coin.CirculatingSupply,
+		TotalSupply:       coin.TotalSupply,
+		MaxSupply:         coin.MaxSupply,
+		Rank:              coin.Rank,
+		Volume:            coin.Volume,
+		ImageUrl:          coin.ImageUrl,
+		Description:       coin.Description,
+		Website:           coin.Website,
+		SocialMediaLinks:  coin.SocialMediaLinks,
+		Updated_At:        timestamppb.New(coin.UpdatedAt),
+		CreatedAt:         timestamppb.New(coin.CreatedAt),
+	}
+}
+
+func convertCoins(coins []db.Coin) []*pb.Coin {
+
+	var coinsProtoArray []*pb.Coin
+	for _, coin := range coins {
+		coinsProtoArray = append(coinsProtoArray, &pb.Coin{
+			CoinId:            coin.CoinID,
+			Name:              coin.Name,
+			Price:             coin.Price,
+			MarketCap:         coin.MarketCap,
+			CirculatingSupply: coin.CirculatingSupply,
+			TotalSupply:       coin.TotalSupply,
+			MaxSupply:         coin.MaxSupply,
+			Rank:              coin.Rank,
+			Volume:            coin.Volume,
+			ImageUrl:          coin.ImageUrl,
+			Description:       coin.Description,
+			Website:           coin.Website,
+			SocialMediaLinks:  coin.SocialMediaLinks,
+		})
+	}
+	return coinsProtoArray
+}

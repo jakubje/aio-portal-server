@@ -16,7 +16,7 @@ type Coin struct {
 	Name              string    `json:"name"`
 	Price             float64   `json:"price"`
 	MarketCap         int64     `json:"market_cap"`
-	CirculationSupply int64     `json:"circulation_supply"`
+	CirculatingSupply int64     `json:"circulating_supply"`
 	TotalSupply       int64     `json:"total_supply"`
 	MaxSupply         int64     `json:"max_supply"`
 	Rank              int32     `json:"rank"`

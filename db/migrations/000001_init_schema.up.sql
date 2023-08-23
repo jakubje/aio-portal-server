@@ -1,4 +1,5 @@
 CREATE EXTENSION IF NOT EXISTS "uuid-ossp";
+
 CREATE TABLE "users" (
                          "id" bigserial PRIMARY KEY,
                          "email" varchar UNIQUE NOT NULL,
@@ -20,7 +21,7 @@ CREATE TABLE "coins" (
                          "name" varchar NOT NULL,
                          "price" float NOT NULL,
                          "market_cap" bigint NOT NULL,
-                         "circulation_supply" bigint NOT NULL,
+                         "circulating_supply" bigint NOT NULL,
                          "total_supply" bigint NOT NULL,
                          "max_supply" bigint NOT NULL,
                          "rank" int NOT NULL,

@@ -27,18 +27,42 @@ func ValidateString(value string, minLength int, maxLength int) error {
 }
 
 func ValidateNumberLimit[T Numeric](value T, minLength T, maxLength T) error {
-	//if value == nil {
-	//	return fmt.Errorf("value is required")
-	//}
 	if value < minLength || value > maxLength {
 		return fmt.Errorf("must be in the range %d-%d", minLength, maxLength)
 	}
 	return nil
 }
 
+func ValidateSocialMediaLinks(links []string) error {
+	// Check if the array is empty
+	if len(links) == 0 {
+		return fmt.Errorf("at least one social media link is required")
+	}
+
+	// Regular expression pattern to match valid URLs
+	urlPattern := `^(https?|ftp)://[^\s/$.?#].[^\s]*$`
+	regex := regexp.MustCompile(urlPattern)
+
+	// Validate each link in the array
+	for _, link := range links {
+		if !regex.MatchString(link) {
+			return fmt.Errorf("invalid social media link: %s", link)
+		}
+	}
+
+	return nil
+}
+
 func ValidateID(value int64) error {
 	if value <= 0 {
 		return fmt.Errorf("invalid user id")
+	}
+	return nil
+}
+
+func ValidateInt[T Numeric](value T) error {
+	if value <= 0 {
+		return fmt.Errorf("invalid input, must be an integer")
 	}
 	return nil
 }

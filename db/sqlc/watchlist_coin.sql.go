@@ -31,14 +31,20 @@ func (q *Queries) AddWatchlistCoin(ctx context.Context, arg AddWatchlistCoinPara
 }
 
 const listWatchlistCoins = `-- name: ListWatchlistCoins :many
-SELECT c.coin_id, c.name, c.price, c.market_cap, c.circulation_supply, c.total_supply, c.max_supply, c.rank, c.volume, c.image_url, c.description, c.website, c.social_media_links, c.created_at, c.updated_at
+SELECT c.coin_id, c.name, c.price, c.market_cap, c.circulating_supply, c.total_supply, c.max_supply, c.rank, c.volume, c.image_url, c.description, c.website, c.social_media_links, c.created_at, c.updated_at
 FROM coins c
 INNER JOIN watchlist_coins wc ON c.coin_id = wc.coin_id
-WHERE wc.watchlist_id = $1
+INNER JOIN watchlists watchlist ON wc.watchlist_id = watchlist.id
+WHERE wc.watchlist_id = $1 AND watchlist.account_id = $2
 `
 
-func (q *Queries) ListWatchlistCoins(ctx context.Context, watchlistID int64) ([]Coin, error) {
-	rows, err := q.db.Query(ctx, listWatchlistCoins, watchlistID)
+type ListWatchlistCoinsParams struct {
+	WatchlistID int64 `json:"watchlist_id"`
+	AccountID   int64 `json:"account_id"`
+}
+
+func (q *Queries) ListWatchlistCoins(ctx context.Context, arg ListWatchlistCoinsParams) ([]Coin, error) {
+	rows, err := q.db.Query(ctx, listWatchlistCoins, arg.WatchlistID, arg.AccountID)
 	if err != nil {
 		return nil, err
 	}
@@ -51,7 +57,7 @@ func (q *Queries) ListWatchlistCoins(ctx context.Context, watchlistID int64) ([]
 			&i.Name,
 			&i.Price,
 			&i.MarketCap,
-			&i.CirculationSupply,
+			&i.CirculatingSupply,
 			&i.TotalSupply,
 			&i.MaxSupply,
 			&i.Rank,

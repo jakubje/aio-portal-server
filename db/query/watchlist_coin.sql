@@ -14,4 +14,5 @@ WHERE watchlist_id = $1 and coin_id = $2;
 SELECT c.*
 FROM coins c
 INNER JOIN watchlist_coins wc ON c.coin_id = wc.coin_id
-WHERE wc.watchlist_id = $1;
+INNER JOIN watchlists watchlist ON wc.watchlist_id = watchlist.id
+WHERE wc.watchlist_id = $1 AND watchlist.account_id = $2;

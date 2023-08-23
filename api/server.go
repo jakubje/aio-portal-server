@@ -60,8 +60,8 @@ func (server *Server) setupRouter() {
 
 	// coint routes
 	//// need a generic coins database and one for portfolio
-	//router.POST("/coin", server.addCoin)
-	//router.POST("/coin/update", server.updateCoin)
+	router.POST("/coin", server.createCoin)
+	router.POST("/coin/update", server.updateCoin)
 	//router.GET("/coin/:id", server.getCoin)
 	//router.GET("/coins", server.listCoins)
 	//router.DELETE("/coin/:id", server.deleteCoin)
@@ -77,7 +77,9 @@ func (server *Server) setupRouter() {
 	authRoutes.POST("/watchlist", server.createWatchlist)
 	authRoutes.POST("/watchlist/update", server.updateWatchlist)
 	authRoutes.GET("/watchlist/:id", server.getWatchlist)
+
 	authRoutes.GET("/watchlists", server.listWatchlists)
+	authRoutes.GET("/watchlist/coins/:watchlist_id", server.listWatchlistCoins)
 	authRoutes.DELETE("/watchlist/:id", server.deleteWatchlist)
 
 	// watchlistcoin routes
