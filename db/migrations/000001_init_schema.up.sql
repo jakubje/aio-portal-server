@@ -1,30 +1,45 @@
 CREATE EXTENSION IF NOT EXISTS "uuid-ossp";
 CREATE TABLE "users" (
-     "id" bigserial PRIMARY KEY,
-     "email" varchar UNIQUE NOT NULL,
-     "name" varchar NOT NULL,
-     "last_name" varchar NOT NULL,
-     "password" varchar NOT NULL,
-     "password_changed_at" timestamptz NOT NULL DEFAULT('0001-01-01 00:00:00Z'),
-     "created_at" timestamptz NOT NULL DEFAULT (now())
+                         "id" bigserial PRIMARY KEY,
+                         "email" varchar UNIQUE NOT NULL,
+                         "name" varchar NOT NULL,
+                         "last_name" varchar NOT NULL,
+                         "password" varchar NOT NULL,
+                         "password_changed_at" timestamptz NOT NULL DEFAULT('0001-01-01 00:00:00Z'),
+                         "created_at" timestamptz NOT NULL DEFAULT (now())
 );
 
 CREATE TABLE "watchlists" (
-                              "id" bigserial PRIMARY KEY,
+                              "id" BIGSERIAL PRIMARY KEY,
                               "name" varchar NOT NULL,
                               "account_id" bigint NOT NULL
 );
 
+CREATE TABLE "coins" (
+                         "coin_id" varchar(10) PRIMARY KEY NOT NULL,
+                         "name" varchar NOT NULL,
+                         "price" varchar NOT NULL,
+                         "market_cap" varchar NOT NULL,
+                         "circulating_supply" varchar NOT NULL,
+                         "total_supply" varchar NOT NULL,
+                         "max_supply" varchar NOT NULL,
+                         "rank" varchar NOT NULL,
+                         "volume" varchar NOT NULL,
+                         "image_url" varchar NOT NULL,
+                         "description" varchar NOT NULL,
+                         "website" varchar NOT NULL,
+                         "social_media_links" varchar [],
+                         "created_at" timestamptz NOT NULL DEFAULT (now()),
+                         "updated_at" timestamptz NOT NULL DEFAULT ('0001-01-01 00:00:00Z')
+);
+
 CREATE TABLE "watchlist_coins" (
-                                   "id" bigserial PRIMARY KEY,
                                    "watchlist_id" bigint NOT NULL,
-                                   "name" varchar NOT NULL,
-                                   "symbol" varchar NOT NULL,
-                                   "rank" smallint NOT NULL
+                                   "coin_id" varchar NOT NULL
 );
 
 CREATE TABLE "portfolios" (
-                              "id" bigserial PRIMARY KEY,
+                              "id" BIGSERIAL PRIMARY KEY,
                               "account_id" bigint NOT NULL,
                               "name" varchar NOT NULL,
                               "holdings" integer NOT NULL DEFAULT 0,
@@ -40,13 +55,12 @@ CREATE TABLE "transactions" (
                                 "symbol" varchar NOT NULL,
                                 "price_per_coin" float NOT NULL,
                                 "quantity" float NOT NULL,
-                                "time_transacted" timestamp NOT NULL,
-                                "time_created" timestamptz NOT NULL DEFAULT (now()),
-                                PRIMARY KEY ("id")
+                                "time_transacted" timestamptz NOT NULL,
+                                "time_created" timestamptz NOT NULL DEFAULT (now())
 );
 
 CREATE TABLE "football" (
-                            "id" bigserial PRIMARY KEY,
+                            "id" BIGSERIAL PRIMARY KEY,
                             "account_id" bigint NOT NULL,
                             "team" varchar NOT NULL,
                             "league" varchar NOT NULL,
@@ -57,8 +71,6 @@ CREATE INDEX ON "users" ("email");
 
 CREATE INDEX ON "watchlists" ("account_id");
 
-CREATE INDEX ON "watchlist_coins" ("symbol");
-
 CREATE INDEX ON "portfolios" ("account_id");
 
 CREATE INDEX ON "transactions" ("type");
@@ -66,6 +78,8 @@ CREATE INDEX ON "transactions" ("type");
 ALTER TABLE "watchlists" ADD FOREIGN KEY ("account_id") REFERENCES "users" ("id");
 
 ALTER TABLE "watchlist_coins" ADD FOREIGN KEY ("watchlist_id") REFERENCES "watchlists" ("id");
+
+ALTER TABLE "watchlist_coins" ADD FOREIGN KEY ("coin_id") REFERENCES "coins" ("coin_id");
 
 ALTER TABLE "portfolios" ADD FOREIGN KEY ("account_id") REFERENCES "users" ("id");
 

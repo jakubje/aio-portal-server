@@ -1,0 +1,13 @@
+syntax = "proto3";
+
+package pb;
+
+option go_package = "github.com/jakub/aioportal/server/pb";
+
+message DeletePortfolioRequest {
+  int64 id = 1;
+}
+
+message DeletePortfolioResponse {
+  string message = 1;
+}

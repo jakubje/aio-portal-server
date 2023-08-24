@@ -1,0 +1,11 @@
+syntax = "proto3";
+
+package pb;
+
+option go_package = "github.com/jakub/aioportal/server/pb";
+
+message Football {
+  string team = 1;
+  string league = 2;
+  string country = 3;
+}

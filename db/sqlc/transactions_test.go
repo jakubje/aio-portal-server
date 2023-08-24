@@ -2,29 +2,28 @@ package db
 
 import (
 	"context"
-	"database/sql"
+
 	"testing"
 	"time"
 
-	"github.com/jakub/aioportal/server/internal/utils"
-
+	"github.com/jakub/aioportal/server/util"
 	"github.com/stretchr/testify/require"
 )
 
 func createRandomTransaction(t *testing.T) (User, Transaction) {
 	user, portfolio := createUserAndPortfolio(t)
-	coin := utils.RandomString(3)
+	coin := util.RandomString(3)
 	arg := CreateTransactionParams{
 		AccountID:      user.ID,
 		PortfolioID:    portfolio.ID,
 		Symbol:         coin,
 		Type:           0,
-		Quantity:       float64(utils.RandomInt()),
-		PricePerCoin:   float64(utils.RandomInt()),
+		Quantity:       float64(util.RandomInt()),
+		PricePerCoin:   float64(util.RandomInt()),
 		TimeTransacted: time.Time{},
 	}
 
-	transaction, err := testQueries.CreateTransaction(context.Background(), arg)
+	transaction, err := testStore.CreateTransaction(context.Background(), arg)
 	require.NoError(t, err)
 	require.NotEmpty(t, transaction)
 
@@ -49,7 +48,7 @@ func TestGetTransaction(t *testing.T) {
 		ID:        transaction1.ID,
 		AccountID: user.ID,
 	}
-	transaction2, err := testQueries.GetTransaction(context.Background(), arg)
+	transaction2, err := testStore.GetTransaction(context.Background(), arg)
 	require.NoError(t, err)
 	require.NotEmpty(t, transaction2)
 
@@ -69,29 +68,29 @@ func TestDeleteTransaction(t *testing.T) {
 		ID:        transaction1.ID,
 		AccountID: user.ID,
 	}
-	err := testQueries.DeleteTransaction(context.Background(), arg)
+	err := testStore.DeleteTransaction(context.Background(), arg)
 	require.NoError(t, err)
 
-	transaction2, err := testQueries.GetTransaction(context.Background(), GetTransactionParams(arg))
+	transaction2, err := testStore.GetTransaction(context.Background(), GetTransactionParams(arg))
 	require.Error(t, err)
-	require.EqualError(t, err, sql.ErrNoRows.Error())
+	require.EqualError(t, err, ErrRecordNotFound.Error())
 	require.Empty(t, transaction2)
 }
 
 func createTransactionsForAccount(t *testing.T, user *User, portfolio *Portfolio) Transaction {
-	coin := utils.RandomString(3)
+	coin := util.RandomString(3)
 
 	arg := CreateTransactionParams{
 		PortfolioID:    portfolio.ID,
 		AccountID:      user.ID,
 		Symbol:         coin,
 		Type:           0,
-		Quantity:       float64(utils.RandomInt()),
-		PricePerCoin:   float64(utils.RandomInt()),
+		Quantity:       float64(util.RandomInt()),
+		PricePerCoin:   float64(util.RandomInt()),
 		TimeTransacted: time.Time{},
 	}
 
-	transaction, err := testQueries.CreateTransaction(context.Background(), arg)
+	transaction, err := testStore.CreateTransaction(context.Background(), arg)
 	require.NoError(t, err)
 	require.NotEmpty(t, transaction)
 
@@ -118,7 +117,7 @@ func TestListTransactionsByAccount(t *testing.T) {
 		Limit:     10,
 		Offset:    0,
 	}
-	userTransactions, err := testQueries.ListTransactionsByAccount(context.Background(), arg)
+	userTransactions, err := testStore.ListTransactionsByAccount(context.Background(), arg)
 	require.NoError(t, err)
 	require.Len(t, userTransactions, 10)
 
@@ -135,12 +134,12 @@ func createTransactionsForAccountForCoin(t *testing.T, user *User, portfolio *Po
 		PortfolioID:    portfolio.ID,
 		Symbol:         coin,
 		Type:           1,
-		Quantity:       float64(utils.RandomInt()),
-		PricePerCoin:   float64(utils.RandomInt()),
+		Quantity:       float64(util.RandomInt()),
+		PricePerCoin:   float64(util.RandomInt()),
 		TimeTransacted: time.Time{},
 	}
 
-	transaction, err := testQueries.CreateTransaction(context.Background(), arg)
+	transaction, err := testStore.CreateTransaction(context.Background(), arg)
 	require.NoError(t, err)
 	require.NotEmpty(t, transaction)
 
@@ -157,7 +156,7 @@ func createTransactionsForAccountForCoin(t *testing.T, user *User, portfolio *Po
 
 func TestListTransactionsByAccountByCoin(t *testing.T) {
 	user, portfolio := createUserAndPortfolio(t)
-	coin := utils.RandomString(3)
+	coin := util.RandomString(3)
 
 	arg := ListTransactionsByAccountByCoinParams{
 		AccountID: user.ID,
@@ -170,7 +169,7 @@ func TestListTransactionsByAccountByCoin(t *testing.T) {
 		createTransactionsForAccountForCoin(t, &user, &portfolio, coin)
 	}
 
-	userTransactions, err := testQueries.ListTransactionsByAccountByCoin(context.Background(), arg)
+	userTransactions, err := testStore.ListTransactionsByAccountByCoin(context.Background(), arg)
 	require.NoError(t, err)
 	require.Len(t, userTransactions, 10)
 
@@ -183,14 +182,14 @@ func TestGetRollUpByCoinByPortfolio(t *testing.T) {
 	user, portfolio := createUserAndPortfolio(t)
 
 	for i := 0; i < 10; i++ {
-		coin := utils.RandomString(3)
+		coin := util.RandomString(3)
 		createTransactionsForAccountForCoin(t, &user, &portfolio, coin)
 	}
 	arg := GetRollUpByCoinByPortfolioParams{
 		PortfolioID: portfolio.ID,
 		AccountID:   user.ID,
 	}
-	rollUp, err := testQueries.GetRollUpByCoinByPortfolio(context.Background(), arg)
+	rollUp, err := testStore.GetRollUpByCoinByPortfolio(context.Background(), arg)
 
 	require.NoError(t, err)
 	require.Len(t, rollUp, 10)

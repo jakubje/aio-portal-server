@@ -1,0 +1,15 @@
+syntax = "proto3";
+
+package pb;
+
+import "watchlist.proto";
+
+option go_package = "github.com/jakub/aioportal/server/pb";
+
+message CreateWatchlistRequest {
+  string name = 1;
+}
+
+message CreateWatchlistResponse {
+  Watchlist watchlist = 1;
+}

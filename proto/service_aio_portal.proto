@@ -1,0 +1,265 @@
+syntax = "proto3";
+
+package pb;
+
+import "google/protobuf/empty.proto";
+import "google/api/annotations.proto";
+import "rpc_create_user.proto";
+import "rpc_login_user.proto";
+import "rpc_update_user.proto";
+import "rpc_verify_email.proto";
+import "rpc_create_portfolio.proto";
+import "rpc_update_portfolio.proto";
+import "rpc_get_portfolio.proto";
+import "rpc_list_portfolios.proto";
+import "rpc_portfolio_roll_up.proto";
+import "rpc_delete_portfolio.proto";
+import "rpc_create_transaction.proto";
+import "rpc_get_transaction.proto";
+import "rpc_list_transactions.proto";
+import "rpc_list_transactions_by_coin.proto";
+import "rpc_create_watchlist.proto";
+import "rpc_update_watchlist.proto";
+import "rpc_get_watchlist.proto";
+import "rpc_list_watchlists.proto";
+import "rpc_delete_watchlist.proto";
+import "rpc_create_coin.proto";
+import "rpc_update_coin.proto";
+import "rpc_list_watchlist_coins.proto";
+import "rpc_add_watchlist_coin.proto";
+import "protoc-gen-openapiv2/options/annotations.proto";
+
+option go_package = "github.com/jakub/aioportal/server/pb";
+
+option (grpc.gateway.protoc_gen_openapiv2.options.openapiv2_swagger) = {
+  info: {
+    title: "AIO Portal API";
+    version: "1.1";
+    contact: {
+      name: "Jake";
+      url: "https://github.com/jakubje";
+      email: "jakethedev@gmail.com";
+    };
+  };
+};
+
+service AioPortal {
+  rpc CreateUser (CreateUserRequest) returns (CreateUserResponse) {
+    option (google.api.http) = {
+      post: "/v1/create_user"
+      body: "*"
+    };
+    option (grpc.gateway.protoc_gen_openapiv2.options.openapiv2_operation) = {
+      description: "Use this API to create a new user";
+      summary: "Create new user";
+      };
+  }
+  rpc LoginUser (LoginUserRequest) returns (LoginUserResponse) {
+    option (google.api.http) = {
+      post: "/v1/login_user"
+      body: "*"
+    };
+    option (grpc.gateway.protoc_gen_openapiv2.options.openapiv2_operation) = {
+      description: "Use this API to login user and get an access token & refresh token";
+      summary: "Login user";
+    };
+  }
+  rpc UpdateUser (UpdateUserRequest) returns (UpdateUserResponse) {
+    option (google.api.http) = {
+      patch: "/v1/update_user"
+      body: "*"
+    };
+    option (grpc.gateway.protoc_gen_openapiv2.options.openapiv2_operation) = {
+      description: "Use this API to update user";
+      summary: "Update user";
+    };
+  }
+  rpc VerifyEmail (VerifyEmailRequest) returns (VerifyEmailResponse) {
+    option (google.api.http) = {
+      get: "/v1/verify_email"
+    };
+    option (grpc.gateway.protoc_gen_openapiv2.options.openapiv2_operation) = {
+      description: "Use this API to verify user email";
+      summary: "Verify email";
+    };
+  }
+  rpc CreatePortfolio (CreatePortfolioRequest) returns (CreatePortfolioResponse) {
+    option (google.api.http) = {
+      post: "/v1/create_portfolio"
+      body: "*"
+    };
+    option (grpc.gateway.protoc_gen_openapiv2.options.openapiv2_operation) = {
+      description: "Use this API to create a new portfolio";
+      summary: "Create new portfolio";
+    };
+  }
+  rpc UpdatePortfolio (UpdatePortfolioRequest) returns (UpdatePortfolioResponse) {
+    option (google.api.http) = {
+      post: "/v1/update_portfolio"
+      body: "*"
+    };
+    option (grpc.gateway.protoc_gen_openapiv2.options.openapiv2_operation) = {
+      description: "Use this API to update a portfolio";
+      summary: "Update a portfolio";
+    };
+  }
+  rpc GetPortfolio (GetPortfolioRequest) returns (GetPortfolioResponse) {
+    option (google.api.http) = {
+      get: "/v1/get_portfolio"
+    };
+    option (grpc.gateway.protoc_gen_openapiv2.options.openapiv2_operation) = {
+      description: "Use this API to get a portfolio";
+      summary: "Get a portfolio";
+    };
+  }
+  rpc ListPortfolios (google.protobuf.Empty) returns (ListPortfoliosResponse) {
+    option (google.api.http) = {
+      get: "/v1/get_portfolios"
+    };
+    option (grpc.gateway.protoc_gen_openapiv2.options.openapiv2_operation) = {
+      description: "Use this API to get a list of user portfolios";
+      summary: "Get a list of user portfolios";
+    };
+  }
+  rpc GetRollUp (RollUpRequest) returns (RollUpResponse) {
+    option (google.api.http) = {
+      get: "/v1/get_rollup"
+    };
+    option (grpc.gateway.protoc_gen_openapiv2.options.openapiv2_operation) = {
+      description: "Use this API to get a summary of account holdings";
+      summary: "Get a list of user currency holdings";
+    };
+  }
+  rpc DeletePortfolio (DeletePortfolioRequest) returns (DeletePortfolioResponse) {
+    option (google.api.http) = {
+      delete: "/v1/delete_portfolio"
+    };
+    option (grpc.gateway.protoc_gen_openapiv2.options.openapiv2_operation) = {
+      description: "Use this API to remove a portfolio";
+      summary: "Remove a portfolio";
+    };
+  }
+  rpc CreateTransaction (CreateTransactionRequest) returns (CreateTransactionResponse) {
+    option (google.api.http) = {
+      post: "/v1/create_transaction"
+      body: "*"
+    };
+    option (grpc.gateway.protoc_gen_openapiv2.options.openapiv2_operation) = {
+      description: "Use this API to create a transaction";
+      summary: "Create a transaction";
+    };
+  }
+  rpc GetTransaction (GetTransactionRequest) returns (GetTransactionResponse) {
+    option (google.api.http) = {
+      get: "/v1/get_transaction"
+    };
+    option (grpc.gateway.protoc_gen_openapiv2.options.openapiv2_operation) = {
+      description: "Use this API to get a transaction";
+      summary: "Get a transaction";
+    };
+  }
+  rpc ListTransactions (ListTransactionsRequest) returns (ListTransactionsResponse) {
+    option (google.api.http) = {
+      get: "/v1/list_transactions"
+    };
+    option (grpc.gateway.protoc_gen_openapiv2.options.openapiv2_operation) = {
+      description: "Use this API to get a list of user transaction";
+      summary: "Get a list of transaction";
+    };
+  }
+  rpc ListTransactionsByCoin (ListTransactionsByCoinRequest) returns (ListTransactionsResponse) {
+    option (google.api.http) = {
+      get: "/v1/list_transactions/coin"
+    };
+    option (grpc.gateway.protoc_gen_openapiv2.options.openapiv2_operation) = {
+      description: "Use this API to get a list of coin transaction";
+      summary: "Get a list of coin transaction";
+    };
+  }
+  rpc CreateWatchlist (CreateWatchlistRequest) returns (CreateWatchlistResponse) {
+    option (google.api.http) = {
+      post: "/v1/create_watchlist"
+      body: "*"
+    };
+    option (grpc.gateway.protoc_gen_openapiv2.options.openapiv2_operation) = {
+      description: "Use this API to get a create a watchlist";
+      summary: "Create a watchlist";
+    };
+  }
+  rpc UpdateWatchlist (UpdateWatchlistRequest) returns (UpdateWatchlistResponse) {
+    option (google.api.http) = {
+      post: "/v1/update_watchlist"
+      body: "*"
+    };
+    option (grpc.gateway.protoc_gen_openapiv2.options.openapiv2_operation) = {
+      description: "Use this API to update a watchlist";
+      summary: "Update a watchlist";
+    };
+  }
+  rpc GetWatchlist (GetWatchlistRequest) returns (GetWatchlistResponse) {
+    option (google.api.http) = {
+      get: "/v1/get_watchlist"
+    };
+    option (grpc.gateway.protoc_gen_openapiv2.options.openapiv2_operation) = {
+      description: "Use this API to get a watchlist";
+      summary: "Get a watchlist";
+    };
+  }
+  rpc ListWatchlists (google.protobuf.Empty) returns (GetWatchlistsResponse) {
+    option (google.api.http) = {
+      get: "/v1/get_watchlists"
+    };
+    option (grpc.gateway.protoc_gen_openapiv2.options.openapiv2_operation) = {
+      description: "Use this API to get a list of watchlists";
+      summary: "Get a list of watchlists";
+    };
+  }
+  rpc DeleteWatchlist (DeleteWatchlistRequest) returns (DeleteWatchlistResponse) {
+    option (google.api.http) = {
+      delete: "/v1/delete_watchlist"
+    };
+    option (grpc.gateway.protoc_gen_openapiv2.options.openapiv2_operation) = {
+      description: "Use this API to remove a watchlist";
+      summary: "Remove a watchlist";
+    };
+  }
+  rpc CreateCoin (CreateCoinRequest) returns (CreateCoinResponse) {
+    option (google.api.http) = {
+      post: "/v1/create_coin"
+      body: "*"
+    };
+    option (grpc.gateway.protoc_gen_openapiv2.options.openapiv2_operation) = {
+      description: "Use this API to create a new coin";
+      summary: "Create new coin";
+    };
+  }
+  rpc AddWatchlistCoin (AddWatchlistCoinRequest) returns (AddWatchlistCoinResponse) {
+    option (google.api.http) = {
+      post: "/v1/watchlist/add_coin"
+      body: "*"
+    };
+    option (grpc.gateway.protoc_gen_openapiv2.options.openapiv2_operation) = {
+      description: "Use this API to list add a coin to a watchlist";
+      summary: "Add a coin to a watchlist";
+    };
+  }
+  rpc UpdateCoin (UpdateCoinRequest) returns (UpdateCoinResponse) {
+    option (google.api.http) = {
+      post: "/v1/update_coin"
+      body: "*"
+    };
+    option (grpc.gateway.protoc_gen_openapiv2.options.openapiv2_operation) = {
+      description: "Use this API to update a coin";
+      summary: "Update a coin";
+    };
+  }
+  rpc ListWatchlistCoins (ListWatchlistCoinsRequest) returns (ListWatchlistCoinsResponse) {
+    option (google.api.http) = {
+      get: "/v1/list_watchlist_coins"
+    };
+    option (grpc.gateway.protoc_gen_openapiv2.options.openapiv2_operation) = {
+      description: "Use this API to list watchlist coins";
+      summary: "List watchlist coins";
+    };
+  }
+}

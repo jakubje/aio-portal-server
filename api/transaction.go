@@ -2,13 +2,14 @@ package api
 
 import (
 	"database/sql"
-	db "github.com/jakub/aioportal/server/db/sqlc"
-	"github.com/jakub/aioportal/server/token"
 	"net/http"
 	"time"
 
-	"github.com/gin-gonic/gin"
 	"github.com/google/uuid"
+	db "github.com/jakub/aioportal/server/db/sqlc"
+	"github.com/jakub/aioportal/server/token"
+
+	"github.com/gin-gonic/gin"
 )
 
 type createTransactionRequest struct {

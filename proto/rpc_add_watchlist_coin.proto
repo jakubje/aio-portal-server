@@ -1,0 +1,14 @@
+syntax = "proto3";
+
+package pb;
+
+option go_package = "github.com/jakub/aioportal/server/pb";
+
+message AddWatchlistCoinRequest {
+  int64 watchlist_id = 1;
+  string coin_id = 2;
+}
+
+message AddWatchlistCoinResponse {
+  string message = 1;
+}

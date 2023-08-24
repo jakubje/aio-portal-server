@@ -1,0 +1,12 @@
+syntax = "proto3";
+
+package pb;
+
+import "portfolio.proto";
+
+option go_package = "github.com/jakub/aioportal/server/pb";
+
+
+message ListPortfoliosResponse {
+    repeated Portfolio portfolios = 1;
+}

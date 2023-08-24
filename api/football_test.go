@@ -3,11 +3,12 @@ package api
 import (
 	"bytes"
 	"encoding/json"
-	db "github.com/jakub/aioportal/server/db/sqlc"
-	"github.com/jakub/aioportal/server/internal/utils"
-	"github.com/stretchr/testify/require"
 	"io"
 	"testing"
+
+	db "github.com/jakub/aioportal/server/db/sqlc"
+	"github.com/jakub/aioportal/server/util"
+	"github.com/stretchr/testify/require"
 )
 
 //
@@ -79,9 +80,9 @@ import (
 //}
 
 func createRandomFootball(user db.User) (football db.Football) {
-	team := utils.RandomString(6)
-	league := utils.RandomString(6)
-	country := utils.RandomString(6)
+	team := util.RandomString(6)
+	league := util.RandomString(6)
+	country := util.RandomString(6)
 
 	football = db.Football{
 		AccountID: user.ID,

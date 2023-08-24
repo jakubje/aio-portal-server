@@ -129,7 +129,7 @@ Want to use an existing database client?
 
 ```go
 import (
-    "database/sql"
+    
     _ "github.com/lib/pq"
     "github.com/golang-migrate/migrate/v4"
     "github.com/golang-migrate/migrate/v4/database/postgres"

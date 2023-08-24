@@ -1,0 +1,1448 @@
+{
+  "swagger": "2.0",
+  "info": {
+    "title": "AIO Portal API",
+    "version": "1.1",
+    "contact": {
+      "name": "Jake",
+      "url": "https://github.com/jakubje",
+      "email": "jakethedev@gmail.com"
+    }
+  },
+  "tags": [
+    {
+      "name": "AioPortal"
+    }
+  ],
+  "consumes": [
+    "application/json"
+  ],
+  "produces": [
+    "application/json"
+  ],
+  "paths": {
+    "/v1/create_coin": {
+      "post": {
+        "summary": "Create new coin",
+        "description": "Use this API to create a new coin",
+        "operationId": "AioPortal_CreateCoin",
+        "responses": {
+          "200": {
+            "description": "A successful response.",
+            "schema": {
+              "$ref": "#/definitions/pbCreateCoinResponse"
+            }
+          },
+          "default": {
+            "description": "An unexpected error response.",
+            "schema": {
+              "$ref": "#/definitions/rpcStatus"
+            }
+          }
+        },
+        "parameters": [
+          {
+            "name": "body",
+            "in": "body",
+            "required": true,
+            "schema": {
+              "$ref": "#/definitions/pbCreateCoinRequest"
+            }
+          }
+        ],
+        "tags": [
+          "AioPortal"
+        ]
+      }
+    },
+    "/v1/create_portfolio": {
+      "post": {
+        "summary": "Create new portfolio",
+        "description": "Use this API to create a new portfolio",
+        "operationId": "AioPortal_CreatePortfolio",
+        "responses": {
+          "200": {
+            "description": "A successful response.",
+            "schema": {
+              "$ref": "#/definitions/pbCreatePortfolioResponse"
+            }
+          },
+          "default": {
+            "description": "An unexpected error response.",
+            "schema": {
+              "$ref": "#/definitions/rpcStatus"
+            }
+          }
+        },
+        "parameters": [
+          {
+            "name": "body",
+            "in": "body",
+            "required": true,
+            "schema": {
+              "$ref": "#/definitions/pbCreatePortfolioRequest"
+            }
+          }
+        ],
+        "tags": [
+          "AioPortal"
+        ]
+      }
+    },
+    "/v1/create_transaction": {
+      "post": {
+        "summary": "Create a transaction",
+        "description": "Use this API to create a transaction",
+        "operationId": "AioPortal_CreateTransaction",
+        "responses": {
+          "200": {
+            "description": "A successful response.",
+            "schema": {
+              "$ref": "#/definitions/pbCreateTransactionResponse"
+            }
+          },
+          "default": {
+            "description": "An unexpected error response.",
+            "schema": {
+              "$ref": "#/definitions/rpcStatus"
+            }
+          }
+        },
+        "parameters": [
+          {
+            "name": "body",
+            "in": "body",
+            "required": true,
+            "schema": {
+              "$ref": "#/definitions/pbCreateTransactionRequest"
+            }
+          }
+        ],
+        "tags": [
+          "AioPortal"
+        ]
+      }
+    },
+    "/v1/create_user": {
+      "post": {
+        "summary": "Create new user",
+        "description": "Use this API to create a new user",
+        "operationId": "AioPortal_CreateUser",
+        "responses": {
+          "200": {
+            "description": "A successful response.",
+            "schema": {
+              "$ref": "#/definitions/pbCreateUserResponse"
+            }
+          },
+          "default": {
+            "description": "An unexpected error response.",
+            "schema": {
+              "$ref": "#/definitions/rpcStatus"
+            }
+          }
+        },
+        "parameters": [
+          {
+            "name": "body",
+            "in": "body",
+            "required": true,
+            "schema": {
+              "$ref": "#/definitions/pbCreateUserRequest"
+            }
+          }
+        ],
+        "tags": [
+          "AioPortal"
+        ]
+      }
+    },
+    "/v1/create_watchlist": {
+      "post": {
+        "summary": "Create a watchlist",
+        "description": "Use this API to get a create a watchlist",
+        "operationId": "AioPortal_CreateWatchlist",
+        "responses": {
+          "200": {
+            "description": "A successful response.",
+            "schema": {
+              "$ref": "#/definitions/pbCreateWatchlistResponse"
+            }
+          },
+          "default": {
+            "description": "An unexpected error response.",
+            "schema": {
+              "$ref": "#/definitions/rpcStatus"
+            }
+          }
+        },
+        "parameters": [
+          {
+            "name": "body",
+            "in": "body",
+            "required": true,
+            "schema": {
+              "$ref": "#/definitions/pbCreateWatchlistRequest"
+            }
+          }
+        ],
+        "tags": [
+          "AioPortal"
+        ]
+      }
+    },
+    "/v1/delete_portfolio": {
+      "delete": {
+        "summary": "Remove a portfolio",
+        "description": "Use this API to remove a portfolio",
+        "operationId": "AioPortal_DeletePortfolio",
+        "responses": {
+          "200": {
+            "description": "A successful response.",
+            "schema": {
+              "$ref": "#/definitions/pbDeletePortfolioResponse"
+            }
+          },
+          "default": {
+            "description": "An unexpected error response.",
+            "schema": {
+              "$ref": "#/definitions/rpcStatus"
+            }
+          }
+        },
+        "parameters": [
+          {
+            "name": "id",
+            "in": "query",
+            "required": false,
+            "type": "string",
+            "format": "int64"
+          }
+        ],
+        "tags": [
+          "AioPortal"
+        ]
+      }
+    },
+    "/v1/delete_watchlist": {
+      "delete": {
+        "summary": "Remove a watchlist",
+        "description": "Use this API to remove a watchlist",
+        "operationId": "AioPortal_DeleteWatchlist",
+        "responses": {
+          "200": {
+            "description": "A successful response.",
+            "schema": {
+              "$ref": "#/definitions/pbDeleteWatchlistResponse"
+            }
+          },
+          "default": {
+            "description": "An unexpected error response.",
+            "schema": {
+              "$ref": "#/definitions/rpcStatus"
+            }
+          }
+        },
+        "parameters": [
+          {
+            "name": "id",
+            "in": "query",
+            "required": false,
+            "type": "string",
+            "format": "int64"
+          }
+        ],
+        "tags": [
+          "AioPortal"
+        ]
+      }
+    },
+    "/v1/get_portfolio": {
+      "get": {
+        "summary": "Get a portfolio",
+        "description": "Use this API to get a portfolio",
+        "operationId": "AioPortal_GetPortfolio",
+        "responses": {
+          "200": {
+            "description": "A successful response.",
+            "schema": {
+              "$ref": "#/definitions/pbGetPortfolioResponse"
+            }
+          },
+          "default": {
+            "description": "An unexpected error response.",
+            "schema": {
+              "$ref": "#/definitions/rpcStatus"
+            }
+          }
+        },
+        "parameters": [
+          {
+            "name": "id",
+            "in": "query",
+            "required": false,
+            "type": "string",
+            "format": "int64"
+          }
+        ],
+        "tags": [
+          "AioPortal"
+        ]
+      }
+    },
+    "/v1/get_portfolios": {
+      "get": {
+        "summary": "Get a list of user portfolios",
+        "description": "Use this API to get a list of user portfolios",
+        "operationId": "AioPortal_ListPortfolios",
+        "responses": {
+          "200": {
+            "description": "A successful response.",
+            "schema": {
+              "$ref": "#/definitions/pbListPortfoliosResponse"
+            }
+          },
+          "default": {
+            "description": "An unexpected error response.",
+            "schema": {
+              "$ref": "#/definitions/rpcStatus"
+            }
+          }
+        },
+        "tags": [
+          "AioPortal"
+        ]
+      }
+    },
+    "/v1/get_rollup": {
+      "get": {
+        "summary": "Get a list of user currency holdings",
+        "description": "Use this API to get a summary of account holdings",
+        "operationId": "AioPortal_GetRollUp",
+        "responses": {
+          "200": {
+            "description": "A successful response.",
+            "schema": {
+              "$ref": "#/definitions/pbRollUpResponse"
+            }
+          },
+          "default": {
+            "description": "An unexpected error response.",
+            "schema": {
+              "$ref": "#/definitions/rpcStatus"
+            }
+          }
+        },
+        "parameters": [
+          {
+            "name": "id",
+            "in": "query",
+            "required": false,
+            "type": "string",
+            "format": "int64"
+          }
+        ],
+        "tags": [
+          "AioPortal"
+        ]
+      }
+    },
+    "/v1/get_transaction": {
+      "get": {
+        "summary": "Get a transaction",
+        "description": "Use this API to get a transaction",
+        "operationId": "AioPortal_GetTransaction",
+        "responses": {
+          "200": {
+            "description": "A successful response.",
+            "schema": {
+              "$ref": "#/definitions/pbGetTransactionResponse"
+            }
+          },
+          "default": {
+            "description": "An unexpected error response.",
+            "schema": {
+              "$ref": "#/definitions/rpcStatus"
+            }
+          }
+        },
+        "parameters": [
+          {
+            "name": "id",
+            "in": "query",
+            "required": false,
+            "type": "string"
+          }
+        ],
+        "tags": [
+          "AioPortal"
+        ]
+      }
+    },
+    "/v1/get_watchlist": {
+      "get": {
+        "summary": "Get a watchlist",
+        "description": "Use this API to get a watchlist",
+        "operationId": "AioPortal_GetWatchlist",
+        "responses": {
+          "200": {
+            "description": "A successful response.",
+            "schema": {
+              "$ref": "#/definitions/pbGetWatchlistResponse"
+            }
+          },
+          "default": {
+            "description": "An unexpected error response.",
+            "schema": {
+              "$ref": "#/definitions/rpcStatus"
+            }
+          }
+        },
+        "parameters": [
+          {
+            "name": "id",
+            "in": "query",
+            "required": false,
+            "type": "string",
+            "format": "int64"
+          }
+        ],
+        "tags": [
+          "AioPortal"
+        ]
+      }
+    },
+    "/v1/get_watchlists": {
+      "get": {
+        "summary": "Get a list of watchlists",
+        "description": "Use this API to get a list of watchlists",
+        "operationId": "AioPortal_ListWatchlists",
+        "responses": {
+          "200": {
+            "description": "A successful response.",
+            "schema": {
+              "$ref": "#/definitions/pbGetWatchlistsResponse"
+            }
+          },
+          "default": {
+            "description": "An unexpected error response.",
+            "schema": {
+              "$ref": "#/definitions/rpcStatus"
+            }
+          }
+        },
+        "tags": [
+          "AioPortal"
+        ]
+      }
+    },
+    "/v1/list_transactions": {
+      "get": {
+        "summary": "Get a list of transaction",
+        "description": "Use this API to get a list of user transaction",
+        "operationId": "AioPortal_ListTransactions",
+        "responses": {
+          "200": {
+            "description": "A successful response.",
+            "schema": {
+              "$ref": "#/definitions/pbListTransactionsResponse"
+            }
+          },
+          "default": {
+            "description": "An unexpected error response.",
+            "schema": {
+              "$ref": "#/definitions/rpcStatus"
+            }
+          }
+        },
+        "parameters": [
+          {
+            "name": "limit",
+            "in": "query",
+            "required": false,
+            "type": "integer",
+            "format": "int32"
+          },
+          {
+            "name": "offset",
+            "in": "query",
+            "required": false,
+            "type": "integer",
+            "format": "int32"
+          }
+        ],
+        "tags": [
+          "AioPortal"
+        ]
+      }
+    },
+    "/v1/list_transactions/coin": {
+      "get": {
+        "summary": "Get a list of coin transaction",
+        "description": "Use this API to get a list of coin transaction",
+        "operationId": "AioPortal_ListTransactionsByCoin",
+        "responses": {
+          "200": {
+            "description": "A successful response.",
+            "schema": {
+              "$ref": "#/definitions/pbListTransactionsResponse"
+            }
+          },
+          "default": {
+            "description": "An unexpected error response.",
+            "schema": {
+              "$ref": "#/definitions/rpcStatus"
+            }
+          }
+        },
+        "parameters": [
+          {
+            "name": "symbol",
+            "in": "query",
+            "required": false,
+            "type": "string"
+          },
+          {
+            "name": "limit",
+            "in": "query",
+            "required": false,
+            "type": "integer",
+            "format": "int32"
+          },
+          {
+            "name": "offset",
+            "in": "query",
+            "required": false,
+            "type": "integer",
+            "format": "int32"
+          }
+        ],
+        "tags": [
+          "AioPortal"
+        ]
+      }
+    },
+    "/v1/list_watchlist_coins": {
+      "get": {
+        "summary": "List watchlist coins",
+        "description": "Use this API to list watchlist coins",
+        "operationId": "AioPortal_ListWatchlistCoins",
+        "responses": {
+          "200": {
+            "description": "A successful response.",
+            "schema": {
+              "$ref": "#/definitions/pbListWatchlistCoinsResponse"
+            }
+          },
+          "default": {
+            "description": "An unexpected error response.",
+            "schema": {
+              "$ref": "#/definitions/rpcStatus"
+            }
+          }
+        },
+        "parameters": [
+          {
+            "name": "watchlistId",
+            "in": "query",
+            "required": false,
+            "type": "string",
+            "format": "int64"
+          }
+        ],
+        "tags": [
+          "AioPortal"
+        ]
+      }
+    },
+    "/v1/login_user": {
+      "post": {
+        "summary": "Login user",
+        "description": "Use this API to login user and get an access token \u0026 refresh token",
+        "operationId": "AioPortal_LoginUser",
+        "responses": {
+          "200": {
+            "description": "A successful response.",
+            "schema": {
+              "$ref": "#/definitions/pbLoginUserResponse"
+            }
+          },
+          "default": {
+            "description": "An unexpected error response.",
+            "schema": {
+              "$ref": "#/definitions/rpcStatus"
+            }
+          }
+        },
+        "parameters": [
+          {
+            "name": "body",
+            "in": "body",
+            "required": true,
+            "schema": {
+              "$ref": "#/definitions/pbLoginUserRequest"
+            }
+          }
+        ],
+        "tags": [
+          "AioPortal"
+        ]
+      }
+    },
+    "/v1/update_coin": {
+      "post": {
+        "summary": "Update a coin",
+        "description": "Use this API to update a coin",
+        "operationId": "AioPortal_UpdateCoin",
+        "responses": {
+          "200": {
+            "description": "A successful response.",
+            "schema": {
+              "$ref": "#/definitions/pbUpdateCoinResponse"
+            }
+          },
+          "default": {
+            "description": "An unexpected error response.",
+            "schema": {
+              "$ref": "#/definitions/rpcStatus"
+            }
+          }
+        },
+        "parameters": [
+          {
+            "name": "body",
+            "in": "body",
+            "required": true,
+            "schema": {
+              "$ref": "#/definitions/pbUpdateCoinRequest"
+            }
+          }
+        ],
+        "tags": [
+          "AioPortal"
+        ]
+      }
+    },
+    "/v1/update_portfolio": {
+      "post": {
+        "summary": "Update a portfolio",
+        "description": "Use this API to update a portfolio",
+        "operationId": "AioPortal_UpdatePortfolio",
+        "responses": {
+          "200": {
+            "description": "A successful response.",
+            "schema": {
+              "$ref": "#/definitions/pbUpdatePortfolioResponse"
+            }
+          },
+          "default": {
+            "description": "An unexpected error response.",
+            "schema": {
+              "$ref": "#/definitions/rpcStatus"
+            }
+          }
+        },
+        "parameters": [
+          {
+            "name": "body",
+            "in": "body",
+            "required": true,
+            "schema": {
+              "$ref": "#/definitions/pbUpdatePortfolioRequest"
+            }
+          }
+        ],
+        "tags": [
+          "AioPortal"
+        ]
+      }
+    },
+    "/v1/update_user": {
+      "patch": {
+        "summary": "Update user",
+        "description": "Use this API to update user",
+        "operationId": "AioPortal_UpdateUser",
+        "responses": {
+          "200": {
+            "description": "A successful response.",
+            "schema": {
+              "$ref": "#/definitions/pbUpdateUserResponse"
+            }
+          },
+          "default": {
+            "description": "An unexpected error response.",
+            "schema": {
+              "$ref": "#/definitions/rpcStatus"
+            }
+          }
+        },
+        "parameters": [
+          {
+            "name": "body",
+            "in": "body",
+            "required": true,
+            "schema": {
+              "$ref": "#/definitions/pbUpdateUserRequest"
+            }
+          }
+        ],
+        "tags": [
+          "AioPortal"
+        ]
+      }
+    },
+    "/v1/update_watchlist": {
+      "post": {
+        "summary": "Update a watchlist",
+        "description": "Use this API to update a watchlist",
+        "operationId": "AioPortal_UpdateWatchlist",
+        "responses": {
+          "200": {
+            "description": "A successful response.",
+            "schema": {
+              "$ref": "#/definitions/pbUpdateWatchlistResponse"
+            }
+          },
+          "default": {
+            "description": "An unexpected error response.",
+            "schema": {
+              "$ref": "#/definitions/rpcStatus"
+            }
+          }
+        },
+        "parameters": [
+          {
+            "name": "body",
+            "in": "body",
+            "required": true,
+            "schema": {
+              "$ref": "#/definitions/pbUpdateWatchlistRequest"
+            }
+          }
+        ],
+        "tags": [
+          "AioPortal"
+        ]
+      }
+    },
+    "/v1/verify_email": {
+      "get": {
+        "summary": "Verify email",
+        "description": "Use this API to verify user email",
+        "operationId": "AioPortal_VerifyEmail",
+        "responses": {
+          "200": {
+            "description": "A successful response.",
+            "schema": {
+              "$ref": "#/definitions/pbVerifyEmailResponse"
+            }
+          },
+          "default": {
+            "description": "An unexpected error response.",
+            "schema": {
+              "$ref": "#/definitions/rpcStatus"
+            }
+          }
+        },
+        "parameters": [
+          {
+            "name": "emailId",
+            "in": "query",
+            "required": false,
+            "type": "string",
+            "format": "int64"
+          },
+          {
+            "name": "secretCode",
+            "in": "query",
+            "required": false,
+            "type": "string"
+          }
+        ],
+        "tags": [
+          "AioPortal"
+        ]
+      }
+    },
+    "/v1/watchlist/add_coin": {
+      "post": {
+        "summary": "Add a coin to a watchlist",
+        "description": "Use this API to list add a coin to a watchlist",
+        "operationId": "AioPortal_AddWatchlistCoin",
+        "responses": {
+          "200": {
+            "description": "A successful response.",
+            "schema": {
+              "$ref": "#/definitions/pbAddWatchlistCoinResponse"
+            }
+          },
+          "default": {
+            "description": "An unexpected error response.",
+            "schema": {
+              "$ref": "#/definitions/rpcStatus"
+            }
+          }
+        },
+        "parameters": [
+          {
+            "name": "body",
+            "in": "body",
+            "required": true,
+            "schema": {
+              "$ref": "#/definitions/pbAddWatchlistCoinRequest"
+            }
+          }
+        ],
+        "tags": [
+          "AioPortal"
+        ]
+      }
+    }
+  },
+  "definitions": {
+    "pbAddWatchlistCoinRequest": {
+      "type": "object",
+      "properties": {
+        "watchlistId": {
+          "type": "string",
+          "format": "int64"
+        },
+        "coinId": {
+          "type": "string"
+        }
+      }
+    },
+    "pbAddWatchlistCoinResponse": {
+      "type": "object",
+      "properties": {
+        "message": {
+          "type": "string"
+        }
+      }
+    },
+    "pbCoin": {
+      "type": "object",
+      "properties": {
+        "coinId": {
+          "type": "string"
+        },
+        "name": {
+          "type": "string"
+        },
+        "price": {
+          "type": "string"
+        },
+        "marketCap": {
+          "type": "string"
+        },
+        "circulatingSupply": {
+          "type": "string"
+        },
+        "totalSupply": {
+          "type": "string"
+        },
+        "maxSupply": {
+          "type": "string"
+        },
+        "rank": {
+          "type": "string"
+        },
+        "volume": {
+          "type": "string"
+        },
+        "imageUrl": {
+          "type": "string"
+        },
+        "description": {
+          "type": "string"
+        },
+        "website": {
+          "type": "string"
+        },
+        "socialMediaLinks": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          }
+        },
+        "updatedAt": {
+          "type": "string",
+          "format": "date-time"
+        },
+        "createdAt": {
+          "type": "string",
+          "format": "date-time"
+        }
+      }
+    },
+    "pbCreateCoinRequest": {
+      "type": "object",
+      "properties": {
+        "coinId": {
+          "type": "string"
+        },
+        "name": {
+          "type": "string"
+        },
+        "price": {
+          "type": "string"
+        },
+        "marketCap": {
+          "type": "string"
+        },
+        "circulatingSupply": {
+          "type": "string"
+        },
+        "totalSupply": {
+          "type": "string"
+        },
+        "maxSupply": {
+          "type": "string"
+        },
+        "rank": {
+          "type": "string"
+        },
+        "volume": {
+          "type": "string"
+        },
+        "imageUrl": {
+          "type": "string"
+        },
+        "description": {
+          "type": "string"
+        },
+        "website": {
+          "type": "string"
+        },
+        "socialMediaLinks": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          }
+        }
+      }
+    },
+    "pbCreateCoinResponse": {
+      "type": "object",
+      "properties": {
+        "coin": {
+          "$ref": "#/definitions/pbCoin"
+        }
+      }
+    },
+    "pbCreatePortfolioRequest": {
+      "type": "object",
+      "properties": {
+        "name": {
+          "type": "string"
+        }
+      }
+    },
+    "pbCreatePortfolioResponse": {
+      "type": "object",
+      "properties": {
+        "portfolio": {
+          "$ref": "#/definitions/pbPortfolio"
+        }
+      }
+    },
+    "pbCreateTransactionRequest": {
+      "type": "object",
+      "properties": {
+        "portfolioId": {
+          "type": "string",
+          "format": "int64"
+        },
+        "symbol": {
+          "type": "string"
+        },
+        "type": {
+          "type": "integer",
+          "format": "int32"
+        },
+        "pricePerCoin": {
+          "type": "number",
+          "format": "double"
+        },
+        "quantity": {
+          "type": "number",
+          "format": "double"
+        }
+      }
+    },
+    "pbCreateTransactionResponse": {
+      "type": "object",
+      "properties": {
+        "transaction": {
+          "$ref": "#/definitions/pbTransaction"
+        }
+      }
+    },
+    "pbCreateUserRequest": {
+      "type": "object",
+      "properties": {
+        "email": {
+          "type": "string"
+        },
+        "name": {
+          "type": "string"
+        },
+        "lastName": {
+          "type": "string"
+        },
+        "password": {
+          "type": "string"
+        }
+      }
+    },
+    "pbCreateUserResponse": {
+      "type": "object",
+      "properties": {
+        "user": {
+          "$ref": "#/definitions/pbUser"
+        }
+      }
+    },
+    "pbCreateWatchlistRequest": {
+      "type": "object",
+      "properties": {
+        "name": {
+          "type": "string"
+        }
+      }
+    },
+    "pbCreateWatchlistResponse": {
+      "type": "object",
+      "properties": {
+        "watchlist": {
+          "$ref": "#/definitions/pbWatchlist"
+        }
+      }
+    },
+    "pbDeletePortfolioResponse": {
+      "type": "object",
+      "properties": {
+        "message": {
+          "type": "string"
+        }
+      }
+    },
+    "pbDeleteWatchlistResponse": {
+      "type": "object",
+      "properties": {
+        "message": {
+          "type": "string"
+        }
+      }
+    },
+    "pbGetPortfolioResponse": {
+      "type": "object",
+      "properties": {
+        "portfolio": {
+          "$ref": "#/definitions/pbPortfolio"
+        }
+      }
+    },
+    "pbGetTransactionResponse": {
+      "type": "object",
+      "properties": {
+        "transaction": {
+          "$ref": "#/definitions/pbTransaction"
+        }
+      }
+    },
+    "pbGetWatchlistResponse": {
+      "type": "object",
+      "properties": {
+        "Watchlist": {
+          "$ref": "#/definitions/pbWatchlist"
+        }
+      }
+    },
+    "pbGetWatchlistsResponse": {
+      "type": "object",
+      "properties": {
+        "Watchlists": {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "$ref": "#/definitions/pbWatchlist"
+          }
+        }
+      }
+    },
+    "pbListPortfoliosResponse": {
+      "type": "object",
+      "properties": {
+        "portfolios": {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "$ref": "#/definitions/pbPortfolio"
+          }
+        }
+      }
+    },
+    "pbListTransactionsResponse": {
+      "type": "object",
+      "properties": {
+        "total": {
+          "type": "string",
+          "format": "int64"
+        },
+        "transactions": {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "$ref": "#/definitions/pbTransaction"
+          }
+        }
+      }
+    },
+    "pbListWatchlistCoinsResponse": {
+      "type": "object",
+      "properties": {
+        "total": {
+          "type": "string",
+          "format": "int64"
+        },
+        "coins": {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "$ref": "#/definitions/pbCoin"
+          }
+        }
+      }
+    },
+    "pbLoginUserRequest": {
+      "type": "object",
+      "properties": {
+        "email": {
+          "type": "string"
+        },
+        "password": {
+          "type": "string"
+        }
+      }
+    },
+    "pbLoginUserResponse": {
+      "type": "object",
+      "properties": {
+        "user": {
+          "$ref": "#/definitions/pbUser"
+        },
+        "sessionId": {
+          "type": "string"
+        },
+        "accessToken": {
+          "type": "string"
+        },
+        "refreshToken": {
+          "type": "string"
+        },
+        "accessTokenExpiresAt": {
+          "type": "string",
+          "format": "date-time"
+        },
+        "refreshTokenExpiresAt": {
+          "type": "string",
+          "format": "date-time"
+        }
+      }
+    },
+    "pbPortfolio": {
+      "type": "object",
+      "properties": {
+        "id": {
+          "type": "string",
+          "format": "int64"
+        },
+        "accountId": {
+          "type": "string",
+          "format": "int64"
+        },
+        "name": {
+          "type": "string"
+        },
+        "holdings": {
+          "type": "integer",
+          "format": "int32"
+        },
+        "change24h": {
+          "type": "integer",
+          "format": "int32"
+        },
+        "profitLoss": {
+          "type": "integer",
+          "format": "int32"
+        }
+      }
+    },
+    "pbRollUpResponse": {
+      "type": "object",
+      "properties": {
+        "summary": {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "$ref": "#/definitions/pbRoll_Up"
+          }
+        }
+      }
+    },
+    "pbRoll_Up": {
+      "type": "object",
+      "properties": {
+        "symbol": {
+          "type": "string"
+        },
+        "type": {
+          "type": "integer",
+          "format": "int32"
+        },
+        "totalCost": {
+          "type": "number",
+          "format": "double"
+        },
+        "totalCoins": {
+          "type": "number",
+          "format": "double"
+        },
+        "pricePerCoin": {
+          "type": "number",
+          "format": "double"
+        }
+      }
+    },
+    "pbTransaction": {
+      "type": "object",
+      "properties": {
+        "id": {
+          "type": "string"
+        },
+        "portfolioId": {
+          "type": "string",
+          "format": "int64"
+        },
+        "symbol": {
+          "type": "string"
+        },
+        "type": {
+          "type": "integer",
+          "format": "int32"
+        },
+        "pricePerCoin": {
+          "type": "number",
+          "format": "double"
+        },
+        "quantity": {
+          "type": "number",
+          "format": "double"
+        }
+      }
+    },
+    "pbUpdateCoinRequest": {
+      "type": "object",
+      "properties": {
+        "coinId": {
+          "type": "string"
+        },
+        "name": {
+          "type": "string"
+        },
+        "price": {
+          "type": "string"
+        },
+        "marketCap": {
+          "type": "string"
+        },
+        "circulatingSupply": {
+          "type": "string"
+        },
+        "totalSupply": {
+          "type": "string"
+        },
+        "maxSupply": {
+          "type": "string"
+        },
+        "rank": {
+          "type": "string"
+        },
+        "volume": {
+          "type": "string"
+        },
+        "imageUrl": {
+          "type": "string"
+        },
+        "description": {
+          "type": "string"
+        },
+        "website": {
+          "type": "string"
+        },
+        "socialMediaLinks": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          }
+        },
+        "updatedAt": {
+          "type": "string",
+          "format": "date-time"
+        }
+      }
+    },
+    "pbUpdateCoinResponse": {
+      "type": "object",
+      "properties": {
+        "coin": {
+          "$ref": "#/definitions/pbCoin"
+        }
+      }
+    },
+    "pbUpdatePortfolioRequest": {
+      "type": "object",
+      "properties": {
+        "id": {
+          "type": "string",
+          "format": "int64"
+        },
+        "name": {
+          "type": "string"
+        }
+      }
+    },
+    "pbUpdatePortfolioResponse": {
+      "type": "object",
+      "properties": {
+        "portfolio": {
+          "$ref": "#/definitions/pbPortfolio"
+        }
+      }
+    },
+    "pbUpdateUserRequest": {
+      "type": "object",
+      "properties": {
+        "id": {
+          "type": "string",
+          "format": "int64"
+        },
+        "email": {
+          "type": "string"
+        },
+        "name": {
+          "type": "string"
+        },
+        "lastName": {
+          "type": "string"
+        },
+        "password": {
+          "type": "string"
+        }
+      }
+    },
+    "pbUpdateUserResponse": {
+      "type": "object",
+      "properties": {
+        "user": {
+          "$ref": "#/definitions/pbUser"
+        }
+      }
+    },
+    "pbUpdateWatchlistRequest": {
+      "type": "object",
+      "properties": {
+        "id": {
+          "type": "string",
+          "format": "int64"
+        },
+        "name": {
+          "type": "string"
+        }
+      }
+    },
+    "pbUpdateWatchlistResponse": {
+      "type": "object",
+      "properties": {
+        "watchlist": {
+          "$ref": "#/definitions/pbWatchlist"
+        }
+      }
+    },
+    "pbUser": {
+      "type": "object",
+      "properties": {
+        "ID": {
+          "type": "string",
+          "format": "int64"
+        },
+        "email": {
+          "type": "string"
+        },
+        "name": {
+          "type": "string"
+        },
+        "lastName": {
+          "type": "string"
+        },
+        "passwordChangedAt": {
+          "type": "string",
+          "format": "date-time"
+        },
+        "createdAt": {
+          "type": "string",
+          "format": "date-time"
+        }
+      }
+    },
+    "pbVerifyEmailResponse": {
+      "type": "object",
+      "properties": {
+        "isVerified": {
+          "type": "boolean"
+        }
+      }
+    },
+    "pbWatchlist": {
+      "type": "object",
+      "properties": {
+        "id": {
+          "type": "string",
+          "format": "int64"
+        },
+        "name": {
+          "type": "string"
+        }
+      }
+    },
+    "protobufAny": {
+      "type": "object",
+      "properties": {
+        "@type": {
+          "type": "string"
+        }
+      },
+      "additionalProperties": {}
+    },
+    "rpcStatus": {
+      "type": "object",
+      "properties": {
+        "code": {
+          "type": "integer",
+          "format": "int32"
+        },
+        "message": {
+          "type": "string"
+        },
+        "details": {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "$ref": "#/definitions/protobufAny"
+          }
+        }
+      }
+    }
+  }
+}

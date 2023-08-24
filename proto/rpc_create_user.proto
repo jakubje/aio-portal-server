@@ -1,0 +1,18 @@
+syntax = "proto3";
+
+package pb;
+
+import "user.proto";
+
+option go_package = "github.com/jakub/aioportal/server/pb";
+
+message CreateUserRequest {
+  string email = 1;
+  string name = 2;
+  string last_name = 3;
+  string password = 4;
+}
+
+message CreateUserResponse {
+  User user = 1;
+}

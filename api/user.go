@@ -3,15 +3,16 @@ package api
 import (
 	"database/sql"
 	"errors"
-	"github.com/google/uuid"
-	"github.com/jakub/aioportal/server/token"
+	"github.com/jackc/pgx/v5/pgtype"
 	"net/http"
 	"time"
+
+	"github.com/google/uuid"
+	"github.com/jakub/aioportal/server/token"
 
 	"github.com/gin-gonic/gin"
 	db "github.com/jakub/aioportal/server/db/sqlc"
 	"github.com/jakub/aioportal/server/util"
-	"github.com/lib/pq"
 )
 
 type createUserRequest struct {
@@ -46,7 +47,6 @@ func newUserResponse(user db.User) userResponse {
 
 func (server *Server) createUser(ctx *gin.Context) {
 	var req createUserRequest
-
 	if err := ctx.ShouldBindJSON(&req); err != nil {
 		ctx.JSON(http.StatusBadRequest, errorResponse(err))
 		return
@@ -67,16 +67,14 @@ func (server *Server) createUser(ctx *gin.Context) {
 
 	user, err := server.store.CreateUser(ctx, arg)
 	if err != nil {
-		if pqErr, ok := err.(*pq.Error); ok {
-			switch pqErr.Code.Name() {
-			case "foreign_key_violation", "unique_violation":
-				ctx.JSON(http.StatusForbidden, errorResponse(err))
-				return
-			}
+		if db.ErrorCode(err) == db.UniqueViolation {
+			ctx.JSON(http.StatusForbidden, errorResponse(err))
+			return
 		}
 		ctx.JSON(http.StatusInternalServerError, errorResponse(err))
 		return
 	}
+
 	rsp := userResponse{
 		Email:             user.Email,
 		Name:              user.Name,
@@ -199,15 +197,26 @@ func (server *Server) updateUser(ctx *gin.Context) {
 		ctx.JSON(http.StatusInternalServerError, errorResponse(err))
 		return
 	}
-	t := time.Now().UTC()
+	//t := time.Now().UTC()
 
 	arg := db.UpdateUserParams{
-		ID:                authPayload.AccountId,
-		Email:             req.Email,
-		Name:              req.Name,
-		LastName:          req.LastName,
-		Password:          hashedPassword,
-		PasswordChangedAt: t,
+		ID: authPayload.AccountId,
+		Email: pgtype.Text{
+			String: req.Email,
+			Valid:  true,
+		},
+		Name: pgtype.Text{
+			String: req.Name,
+			Valid:  true,
+		},
+		LastName: pgtype.Text{
+			String: req.LastName,
+			Valid:  true,
+		},
+		Password: pgtype.Text{
+			String: hashedPassword,
+			Valid:  true,
+		},
 	}
 	user, err := server.store.UpdateUser(ctx, arg)
 	if err != nil {

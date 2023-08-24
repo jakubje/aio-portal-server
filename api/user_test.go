@@ -2,10 +2,10 @@ package api
 
 import (
 	"bytes"
+
 	"database/sql"
 	"encoding/json"
 	"fmt"
-	"github.com/jakub/aioportal/server/token"
 	"io"
 	"log"
 	"net/http"
@@ -14,13 +14,13 @@ import (
 	"testing"
 	"time"
 
+	"github.com/jakub/aioportal/server/token"
+
 	"github.com/gin-gonic/gin"
 	"github.com/golang/mock/gomock"
 	mockdb "github.com/jakub/aioportal/server/db/mock"
 	db "github.com/jakub/aioportal/server/db/sqlc"
-	"github.com/jakub/aioportal/server/internal/utils"
 	"github.com/jakub/aioportal/server/util"
-	"github.com/lib/pq"
 	"github.com/stretchr/testify/require"
 )
 
@@ -113,8 +113,8 @@ func TestCreateUserAPI(t *testing.T) {
 			buildStubs: func(store *mockdb.MockStore) {
 				store.EXPECT().
 					CreateUser(gomock.Any(), gomock.Any()).
-					Times(1).
-					Return(db.User{}, &pq.Error{Code: "23505"})
+					Times(1)
+				//Return(db.User{}, &pq.Error{Code: "23505"})
 			},
 			checkResponse: func(recorder *httptest.ResponseRecorder) {
 				require.Equal(t, http.StatusForbidden, recorder.Code)
@@ -624,11 +624,11 @@ func TestGetUserAPI(t *testing.T) {
 //
 //func TestUpdateUserAPI(t *testing.T) {
 //	user := randomUser(t)
-//	newName := utils.RandomString(6)
-//	newLastName := utils.RandomString(6)
-//	newEmail := utils.RandomEmail()
+//	newName := util.RandomString(6)
+//	newLastName := util.RandomString(6)
+//	newEmail := util.RandomEmail()
 //
-//	hashedPassword, err := utils.HashPasswod(utils.RandomString(6))
+//	hashedPassword, err := util.HashPasswod(util.RandomString(6))
 //	require.NoError(t, err)
 //
 //	testCases := []struct {
@@ -644,10 +644,10 @@ func TestGetUserAPI(t *testing.T) {
 //			addAuthorization(t, request, tokenMaker, authorizationTypeBearer, user.ID, time.Minute)
 //		},
 //		body: gin.H{
-//			"email":     utils.RandomEmail(),
+//			"email":     util.RandomEmail(),
 //			"password":  hashedPassword,
-//			"name":      utils.RandomString(9),
-//			"last_name": utils.RandomString(9),
+//			"name":      util.RandomString(9),
+//			"last_name": util.RandomString(9),
 //		},
 //		buildStubs: func(store *mockdb.MockStore) {
 //
@@ -686,10 +686,10 @@ func TestGetUserAPI(t *testing.T) {
 //	//		addAuthorization(t, request, tokenMaker, authorizationTypeBearer, user.ID, time.Minute)
 //	//	},
 //	//	body: gin.H{
-//	//		"email":     utils.RandomEmail(),
+//	//		"email":     util.RandomEmail(),
 //	//		"password":  hashedPassword,
-//	//		"name":      utils.RandomString(9),
-//	//		"last_name": utils.RandomString(9),
+//	//		"name":      util.RandomString(9),
+//	//		"last_name": util.RandomString(9),
 //	//	},
 //	//	buildStubs: func(store *mockdb.MockStore) {
 //	//		store.EXPECT().
@@ -792,14 +792,14 @@ func TestGetUserAPI(t *testing.T) {
 //}
 
 func randomUser(t *testing.T) (user db.User) {
-	password := utils.RandomString(8)
-	hashedPassword, err := utils.HashPasswod(password)
+	password := util.RandomString(8)
+	hashedPassword, err := util.HashPasswod(password)
 	require.NoError(t, err)
 
 	user = db.User{
-		Email:    utils.RandomEmail(),
-		Name:     utils.RandomString(6),
-		LastName: utils.RandomString(5),
+		Email:    util.RandomEmail(),
+		Name:     util.RandomString(6),
+		LastName: util.RandomString(5),
 		Password: hashedPassword,
 	}
 	return
@@ -807,14 +807,14 @@ func randomUser(t *testing.T) (user db.User) {
 }
 
 func randomUserPassword(t *testing.T) (user db.User, password string) {
-	password = utils.RandomString(8)
-	hashedPassword, err := utils.HashPasswod(password)
+	password = util.RandomString(8)
+	hashedPassword, err := util.HashPasswod(password)
 	require.NoError(t, err)
 
 	user = db.User{
-		Email:    utils.RandomEmail(),
-		Name:     utils.RandomString(6),
-		LastName: utils.RandomString(5),
+		Email:    util.RandomEmail(),
+		Name:     util.RandomString(6),
+		LastName: util.RandomString(5),
 		Password: hashedPassword,
 	}
 	return

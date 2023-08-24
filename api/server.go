@@ -60,8 +60,8 @@ func (server *Server) setupRouter() {
 
 	// coint routes
 	//// need a generic coins database and one for portfolio
-	//router.POST("/coin", server.addCoin)
-	//router.POST("/coin/update", server.updateCoin)
+	router.POST("/coin", server.createCoin)
+	router.POST("/coin/update", server.updateCoin)
 	//router.GET("/coin/:id", server.getCoin)
 	//router.GET("/coins", server.listCoins)
 	//router.DELETE("/coin/:id", server.deleteCoin)
@@ -77,14 +77,14 @@ func (server *Server) setupRouter() {
 	authRoutes.POST("/watchlist", server.createWatchlist)
 	authRoutes.POST("/watchlist/update", server.updateWatchlist)
 	authRoutes.GET("/watchlist/:id", server.getWatchlist)
+
 	authRoutes.GET("/watchlists", server.listWatchlists)
+	authRoutes.GET("/watchlist/coins/:watchlist_id", server.listWatchlistCoins)
 	authRoutes.DELETE("/watchlist/:id", server.deleteWatchlist)
 
 	// watchlistcoin routes
-	authRoutes.POST("/watchlist/coin", server.createWatchlistCoin)
-	authRoutes.GET("/watchlist/coin/:id", server.getWatchlistCoin)
-	authRoutes.GET("/watchlist/coins/:watchlist_id", server.listWatchlistCoins)
-	authRoutes.DELETE("//watchlist/coin/:id", server.deleteWachlistCoin)
+	authRoutes.POST("/watchlist/coin", server.addWatchlistCoin)
+	authRoutes.DELETE("/watchlist/coin/:coin_id/:watchlist_id ", server.removeWatchlistCoin)
 
 	// football routes
 	authRoutes.POST("/football", server.addFootball)
