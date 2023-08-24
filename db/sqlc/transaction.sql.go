@@ -7,9 +7,9 @@ package db
 
 import (
 	"context"
+	"github.com/google/uuid"
 	"time"
 
-	"github.com/jackc/pgx/v5/pgtype"
 )
 
 const createTransaction = `-- name: CreateTransaction :one
@@ -64,7 +64,7 @@ WHERE id = $1 and account_id = $2
 `
 
 type DeleteTransactionParams struct {
-	ID        pgtype.UUID `json:"id"`
+	ID        uuid.UUID `json:"id"`
 	AccountID int64       `json:"account_id"`
 }
 
@@ -130,7 +130,7 @@ LIMIT 1
 `
 
 type GetTransactionParams struct {
-	ID        pgtype.UUID `json:"id"`
+	ID        uuid.UUID `json:"id"`
 	AccountID int64       `json:"account_id"`
 }
 

@@ -52,41 +52,41 @@ func validateAddCoinRequest(req *pb.CreateCoinRequest) (violations []*errdetails
 	if err := val.ValidateString(req.GetCoinId(), 1, 20); err != nil {
 		violations = append(violations, fieldViolation("coin_id", err))
 	}
-	if err := val.ValidateString(req.GetName(), 1, 20); err != nil {
-		violations = append(violations, fieldViolation("name", err))
-	}
-	if err := val.ValidateFloat(req.GetPrice()); err != nil {
-		violations = append(violations, fieldViolation("price", err))
-	}
-	if err := val.ValidateInt(req.GetMarketCap()); err != nil {
-		violations = append(violations, fieldViolation("market_cap", err))
-	}
-	if err := val.ValidateInt(req.GetCirculatingSupply()); err != nil {
-		violations = append(violations, fieldViolation("circulating_supply", err))
-	}
-	if err := val.ValidateInt(req.GetTotalSupply()); err != nil {
-		violations = append(violations, fieldViolation("total_supply", err))
-	}
-	if err := val.ValidateInt(req.GetMaxSupply()); err != nil {
-		violations = append(violations, fieldViolation("max_supply", err))
-	}
-	if err := val.ValidateInt(req.GetRank()); err != nil {
-		violations = append(violations, fieldViolation("rank", err))
-	}
-	if err := val.ValidateInt(req.GetVolume()); err != nil {
-		violations = append(violations, fieldViolation("volume", err))
-	}
-	if err := val.ValidateString(req.GetImageUrl(), 1, 20); err != nil {
-		violations = append(violations, fieldViolation("image_url", err))
-	}
-	if err := val.ValidateString(req.GetDescription(), 1, 20); err != nil {
-		violations = append(violations, fieldViolation("description", err))
-	}
-	if err := val.ValidateString(req.GetWebsite(), 1, 20); err != nil {
-		violations = append(violations, fieldViolation("website", err))
-	}
-	if err := val.ValidateSocialMediaLinks(req.GetSocialMediaLinks()); err != nil {
-		violations = append(violations, fieldViolation("social_media_links", err))
-	}
+	//if err := val.ValidateString(req.GetName(), 1, 20); err != nil {
+	//	violations = append(violations, fieldViolation("name", err))
+	//}
+	//if err := val.ValidateFloat(req.GetPrice()); err != nil {
+	//	violations = append(violations, fieldViolation("price", err))
+	//}
+	//if err := val.ValidateInt(req.GetMarketCap()); err != nil {
+	//	violations = append(violations, fieldViolation("market_cap", err))
+	//}
+	//if err := val.ValidateInt(req.GetCirculatingSupply()); err != nil {
+	//	violations = append(violations, fieldViolation("circulating_supply", err))
+	//}
+	//if err := val.ValidateInt(req.GetTotalSupply()); err != nil {
+	//	violations = append(violations, fieldViolation("total_supply", err))
+	//}
+	//if err := val.ValidateInt(req.GetMaxSupply()); err != nil {
+	//	violations = append(violations, fieldViolation("max_supply", err))
+	//}
+	//if err := val.ValidateInt(req.GetRank()); err != nil {
+	//	violations = append(violations, fieldViolation("rank", err))
+	//}
+	//if err := val.ValidateInt(req.GetVolume()); err != nil {
+	//	violations = append(violations, fieldViolation("volume", err))
+	//}
+	//if err := val.ValidateString(req.GetImageUrl(), 1, 20); err != nil {
+	//	violations = append(violations, fieldViolation("image_url", err))
+	//}
+	//if err := val.ValidateString(req.GetDescription(), 1, 20); err != nil {
+	//	violations = append(violations, fieldViolation("description", err))
+	//}
+	//if err := val.ValidateString(req.GetWebsite(), 1, 20); err != nil {
+	//	violations = append(violations, fieldViolation("website", err))
+	//}
+	//if err := val.ValidateSocialMediaLinks(req.GetSocialMediaLinks()); err != nil {
+	//	violations = append(violations, fieldViolation("social_media_links", err))
+	//}
 	return violations
 }

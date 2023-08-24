@@ -1,8 +1,8 @@
 -- name: CreateCoin :one
 INSERT INTO coins (
-    coin_id, name, price, market_cap, circulating_supply, total_supply, max_supply, rank, volume, image_url, description, website, social_media_links, created_at, updated_at
+    coin_id, name, price, market_cap, circulating_supply, total_supply, max_supply, rank, volume, image_url, description, website, social_media_links, updated_at
 ) VALUES (
-             $1, $2, $3, $4, $5, $6, $7, $8 ,$9 ,$10 ,$11 ,$12 ,$13 ,$14 ,$15
+             $1, $2, $3, $4, $5, $6, $7, $8 ,$9 ,$10 ,$11 ,$12 ,$13 ,$14
          )
 RETURNING *;
 
@@ -32,7 +32,7 @@ SET
     description = COALESCE(sqlc.narg(description), description),
     website = COALESCE(sqlc.narg(website), website),
     social_media_links = COALESCE(sqlc.narg(social_media_links), social_media_links),
-    updated_at = now()
+    updated_at = COALESCE(sqlc.narg(updated_at), updated_at)
 
 WHERE coin_id = sqlc.arg(coin_id)
 RETURNING *;

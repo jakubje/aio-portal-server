@@ -11,13 +11,13 @@ import (
 type createCoinRequest struct {
 	CoinID            string   `json:"coin_id"`
 	Name              string   `json:"name"`
-	Price             float64  `json:"price"`
-	MarketCap         int64    `json:"market_cap"`
-	CirculatingSupply int64    `json:"circulating_supply"`
-	TotalSupply       int64    `json:"total_supply"`
-	MaxSupply         int64    `json:"max_supply"`
-	Rank              int32    `json:"rank"`
-	Volume            int64    `json:"volume"`
+	Price             string   `json:"price"`
+	MarketCap         string   `json:"market_cap"`
+	CirculatingSupply string   `json:"circulating_supply"`
+	TotalSupply       string   `json:"total_supply"`
+	MaxSupply         string   `json:"max_supply"`
+	Rank              string   `json:"rank"`
+	Volume            string   `json:"volume"`
 	ImageUrl          string   `json:"image_url"`
 	Description       string   `json:"description"`
 	Website           string   `json:"website"`
@@ -59,13 +59,13 @@ func (server *Server) createCoin(ctx *gin.Context) {
 type updateCoinRequest struct {
 	CoinID            string   `json:"coin_id"`
 	Name              string   `json:"name"`
-	Price             float64  `json:"price"`
-	MarketCap         int64    `json:"market_cap"`
-	CirculatingSupply int64    `json:"circulating_supply"`
-	TotalSupply       int64    `json:"total_supply"`
-	MaxSupply         int64    `json:"max_supply"`
-	Rank              int32    `json:"rank"`
-	Volume            int64    `json:"volume"`
+	Price             string   `json:"price"`
+	MarketCap         string   `json:"market_cap"`
+	CirculatingSupply string   `json:"circulating_supply"`
+	TotalSupply       string   `json:"total_supply"`
+	MaxSupply         string   `json:"max_supply"`
+	Rank              string   `json:"rank"`
+	Volume            string   `json:"volume"`
 	ImageUrl          string   `json:"image_url"`
 	Description       string   `json:"description"`
 	Website           string   `json:"website"`
@@ -84,33 +84,33 @@ func (server *Server) updateCoin(ctx *gin.Context) {
 			String: req.Name,
 			Valid:  true,
 		},
-		Price: pgtype.Float8{
-			Float64: req.Price,
-			Valid:   true,
+		Price: pgtype.Text{
+			String: req.Price,
+			Valid:  true,
 		},
-		MarketCap: pgtype.Int8{
-			Int64: req.MarketCap,
-			Valid: true,
+		MarketCap: pgtype.Text{
+			String: req.MarketCap,
+			Valid:  true,
 		},
-		CirculatingSupply: pgtype.Int8{
-			Int64: req.CirculatingSupply,
-			Valid: true,
+		CirculatingSupply: pgtype.Text{
+			String: req.CirculatingSupply,
+			Valid:  true,
 		},
-		TotalSupply: pgtype.Int8{
-			Int64: req.TotalSupply,
-			Valid: true,
+		TotalSupply: pgtype.Text{
+			String: req.TotalSupply,
+			Valid:  true,
 		},
-		MaxSupply: pgtype.Int8{
-			Int64: req.MaxSupply,
-			Valid: true,
+		MaxSupply: pgtype.Text{
+			String: req.MaxSupply,
+			Valid:  true,
 		},
-		Rank: pgtype.Int4{
-			Int32: req.Rank,
-			Valid: true,
+		Rank: pgtype.Text{
+			String: req.Rank,
+			Valid:  true,
 		},
-		Volume: pgtype.Int8{
-			Int64: req.Volume,
-			Valid: true,
+		Volume: pgtype.Text{
+			String: req.Volume,
+			Valid:  true,
 		},
 		ImageUrl: pgtype.Text{
 			String: req.ImageUrl,

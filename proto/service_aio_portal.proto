@@ -23,6 +23,10 @@ import "rpc_update_watchlist.proto";
 import "rpc_get_watchlist.proto";
 import "rpc_list_watchlists.proto";
 import "rpc_delete_watchlist.proto";
+import "rpc_create_coin.proto";
+import "rpc_update_coin.proto";
+import "rpc_list_watchlist_coins.proto";
+import "rpc_add_watchlist_coin.proto";
 import "protoc-gen-openapiv2/options/annotations.proto";
 
 option go_package = "github.com/jakub/aioportal/server/pb";
@@ -217,6 +221,45 @@ service AioPortal {
     option (grpc.gateway.protoc_gen_openapiv2.options.openapiv2_operation) = {
       description: "Use this API to remove a watchlist";
       summary: "Remove a watchlist";
+    };
+  }
+  rpc CreateCoin (CreateCoinRequest) returns (CreateCoinResponse) {
+    option (google.api.http) = {
+      post: "/v1/create_coin"
+      body: "*"
+    };
+    option (grpc.gateway.protoc_gen_openapiv2.options.openapiv2_operation) = {
+      description: "Use this API to create a new coin";
+      summary: "Create new coin";
+    };
+  }
+  rpc AddWatchlistCoin (AddWatchlistCoinRequest) returns (AddWatchlistCoinResponse) {
+    option (google.api.http) = {
+      post: "/v1/watchlist/add_coin"
+      body: "*"
+    };
+    option (grpc.gateway.protoc_gen_openapiv2.options.openapiv2_operation) = {
+      description: "Use this API to list add a coin to a watchlist";
+      summary: "Add a coin to a watchlist";
+    };
+  }
+  rpc UpdateCoin (UpdateCoinRequest) returns (UpdateCoinResponse) {
+    option (google.api.http) = {
+      post: "/v1/update_coin"
+      body: "*"
+    };
+    option (grpc.gateway.protoc_gen_openapiv2.options.openapiv2_operation) = {
+      description: "Use this API to update a coin";
+      summary: "Update a coin";
+    };
+  }
+  rpc ListWatchlistCoins (ListWatchlistCoinsRequest) returns (ListWatchlistCoinsResponse) {
+    option (google.api.http) = {
+      get: "/v1/list_watchlist_coins"
+    };
+    option (grpc.gateway.protoc_gen_openapiv2.options.openapiv2_operation) = {
+      description: "Use this API to list watchlist coins";
+      summary: "List watchlist coins";
     };
   }
 }

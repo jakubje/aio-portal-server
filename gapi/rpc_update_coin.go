@@ -4,6 +4,7 @@ import (
 	"context"
 	"github.com/jackc/pgx/v5"
 	"github.com/jackc/pgx/v5/pgtype"
+	"time"
 
 	db "github.com/jakub/aioportal/server/db/sqlc"
 	"github.com/jakub/aioportal/server/pb"
@@ -29,33 +30,33 @@ func (server *Server) UpdateCoin(ctx context.Context, req *pb.UpdateCoinRequest)
 			String: req.GetName(),
 			Valid:  true,
 		},
-		Price: pgtype.Float8{
-			Float64: req.GetPrice(),
-			Valid:   true,
+		Price: pgtype.Text{
+			String: req.GetPrice(),
+			Valid:  true,
 		},
-		MarketCap: pgtype.Int8{
-			Int64: req.GetMarketCap(),
-			Valid: true,
+		MarketCap: pgtype.Text{
+			String: req.GetMarketCap(),
+			Valid:  true,
 		},
-		CirculatingSupply: pgtype.Int8{
-			Int64: req.GetCirculatingSupply(),
-			Valid: true,
+		CirculatingSupply: pgtype.Text{
+			String: req.GetCirculatingSupply(),
+			Valid:  true,
 		},
-		TotalSupply: pgtype.Int8{
-			Int64: req.GetTotalSupply(),
-			Valid: true,
+		TotalSupply: pgtype.Text{
+			String: req.GetTotalSupply(),
+			Valid:  true,
 		},
-		MaxSupply: pgtype.Int8{
-			Int64: req.GetMaxSupply(),
-			Valid: true,
+		MaxSupply: pgtype.Text{
+			String: req.GetMaxSupply(),
+			Valid:  true,
 		},
-		Rank: pgtype.Int4{
-			Int32: req.GetRank(),
-			Valid: true,
+		Rank: pgtype.Text{
+			String: req.GetRank(),
+			Valid:  true,
 		},
-		Volume: pgtype.Int8{
-			Int64: req.GetVolume(),
-			Valid: true,
+		Volume: pgtype.Text{
+			String: req.GetVolume(),
+			Valid:  true,
 		},
 		ImageUrl: pgtype.Text{
 			String: req.GetImageUrl(),
@@ -71,6 +72,10 @@ func (server *Server) UpdateCoin(ctx context.Context, req *pb.UpdateCoinRequest)
 		},
 		SocialMediaLinks: req.GetSocialMediaLinks(),
 		CoinID:           req.GetCoinId(),
+		UpdatedAt: pgtype.Timestamptz{
+			Time:  time.Now(),
+			Valid: true,
+		},
 	}
 
 	updatedCoin, err := server.store.UpdateCoin(ctx, arg)

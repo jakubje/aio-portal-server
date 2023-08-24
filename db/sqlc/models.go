@@ -8,19 +8,18 @@ import (
 	"time"
 
 	"github.com/google/uuid"
-	"github.com/jackc/pgx/v5/pgtype"
 )
 
 type Coin struct {
 	CoinID            string    `json:"coin_id"`
 	Name              string    `json:"name"`
-	Price             float64   `json:"price"`
-	MarketCap         int64     `json:"market_cap"`
-	CirculatingSupply int64     `json:"circulating_supply"`
-	TotalSupply       int64     `json:"total_supply"`
-	MaxSupply         int64     `json:"max_supply"`
-	Rank              int32     `json:"rank"`
-	Volume            int64     `json:"volume"`
+	Price             string    `json:"price"`
+	MarketCap         string    `json:"market_cap"`
+	CirculatingSupply string    `json:"circulating_supply"`
+	TotalSupply       string    `json:"total_supply"`
+	MaxSupply         string    `json:"max_supply"`
+	Rank              string    `json:"rank"`
+	Volume            string    `json:"volume"`
 	ImageUrl          string    `json:"image_url"`
 	Description       string    `json:"description"`
 	Website           string    `json:"website"`
@@ -58,7 +57,7 @@ type Session struct {
 }
 
 type Transaction struct {
-	ID             pgtype.UUID `json:"id"`
+	ID             uuid.UUID `json:"id"`
 	AccountID      int64       `json:"account_id"`
 	PortfolioID    int64       `json:"portfolio_id"`
 	Type           int32       `json:"type"`

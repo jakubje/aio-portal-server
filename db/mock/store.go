@@ -453,7 +453,7 @@ func (mr *MockStoreMockRecorder) ListUsers(arg0, arg1 interface{}) *gomock.Call 
 }
 
 // ListWatchlistCoins mocks base method.
-func (m *MockStore) ListWatchlistCoins(arg0 context.Context, arg1 int64) ([]db.Coin, error) {
+func (m *MockStore) ListWatchlistCoins(arg0 context.Context, arg1 db.ListWatchlistCoinsParams) ([]db.Coin, error) {
 	m.ctrl.T.Helper()
 	ret := m.ctrl.Call(m, "ListWatchlistCoins", arg0, arg1)
 	ret0, _ := ret[0].([]db.Coin)
@@ -494,6 +494,21 @@ func (m *MockStore) RemoveWatchlistCoin(arg0 context.Context, arg1 db.RemoveWatc
 func (mr *MockStoreMockRecorder) RemoveWatchlistCoin(arg0, arg1 interface{}) *gomock.Call {
 	mr.mock.ctrl.T.Helper()
 	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "RemoveWatchlistCoin", reflect.TypeOf((*MockStore)(nil).RemoveWatchlistCoin), arg0, arg1)
+}
+
+// UpdateCoin mocks base method.
+func (m *MockStore) UpdateCoin(arg0 context.Context, arg1 db.UpdateCoinParams) (db.Coin, error) {
+	m.ctrl.T.Helper()
+	ret := m.ctrl.Call(m, "UpdateCoin", arg0, arg1)
+	ret0, _ := ret[0].(db.Coin)
+	ret1, _ := ret[1].(error)
+	return ret0, ret1
+}
+
+// UpdateCoin indicates an expected call of UpdateCoin.
+func (mr *MockStoreMockRecorder) UpdateCoin(arg0, arg1 interface{}) *gomock.Call {
+	mr.mock.ctrl.T.Helper()
+	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "UpdateCoin", reflect.TypeOf((*MockStore)(nil).UpdateCoin), arg0, arg1)
 }
 
 // UpdateFootball mocks base method.

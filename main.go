@@ -15,6 +15,7 @@ import (
 	"github.com/jakub/aioportal/server/gapi"
 	"github.com/jakub/aioportal/server/mail"
 	"github.com/jakub/aioportal/server/pb"
+	"github.com/jakub/aioportal/server/rapidapi/crypto"
 	"github.com/jakub/aioportal/server/util"
 	"github.com/jakub/aioportal/server/worker"
 	fs2 "github.com/rakyll/statik/fs"
@@ -38,6 +39,7 @@ func main() {
 		log.Fatal().Err(err).Msg("cannot load config:")
 
 	}
+	client := &http.Client{}
 
 	if config.Environment == "development" {
 		log.Logger = log.Output(zerolog.ConsoleWriter{Out: os.Stderr})
@@ -57,10 +59,11 @@ func main() {
 	}
 
 	taskDistributor := worker.NewRedisTaskDistributor(redisOpt)
+	go runRapidAPIProcessor(client, config, store)
 	go runTaskProcessor(config, redisOpt, store)
 
-	//go runGatewayServer(config, store, taskDistributor)
-	go runGinServer(config, store)
+	go runGatewayServer(config, store, taskDistributor)
+	//go runGinServer(config, store)
 	runGrpcServer(config, store, taskDistributor)
 
 }
@@ -72,6 +75,15 @@ func runTaskProcessor(config util.Config, redisOpt asynq.RedisClientOpt, store d
 	err := taskProcessor.Start()
 	if err != nil {
 		log.Fatal().Err(err).Msg("failed to start task processor")
+	}
+}
+
+func runRapidAPIProcessor(client *http.Client, config util.Config, store db.Store) {
+	cryptoProcessor := crypto.NewCryptoProcessor(client, config, store)
+	log.Info().Msg("start crypto processor")
+	err := cryptoProcessor.Start()
+	if err != nil {
+		log.Fatal().Err(err).Msg("failed to start crypto processor")
 	}
 }
 

@@ -21,6 +21,40 @@
     "application/json"
   ],
   "paths": {
+    "/v1/create_coin": {
+      "post": {
+        "summary": "Create new coin",
+        "description": "Use this API to create a new coin",
+        "operationId": "AioPortal_CreateCoin",
+        "responses": {
+          "200": {
+            "description": "A successful response.",
+            "schema": {
+              "$ref": "#/definitions/pbCreateCoinResponse"
+            }
+          },
+          "default": {
+            "description": "An unexpected error response.",
+            "schema": {
+              "$ref": "#/definitions/rpcStatus"
+            }
+          }
+        },
+        "parameters": [
+          {
+            "name": "body",
+            "in": "body",
+            "required": true,
+            "schema": {
+              "$ref": "#/definitions/pbCreateCoinRequest"
+            }
+          }
+        ],
+        "tags": [
+          "AioPortal"
+        ]
+      }
+    },
     "/v1/create_portfolio": {
       "post": {
         "summary": "Create new portfolio",
@@ -488,6 +522,39 @@
         ]
       }
     },
+    "/v1/list_watchlist_coins": {
+      "get": {
+        "summary": "List watchlist coins",
+        "description": "Use this API to list watchlist coins",
+        "operationId": "AioPortal_ListWatchlistCoins",
+        "responses": {
+          "200": {
+            "description": "A successful response.",
+            "schema": {
+              "$ref": "#/definitions/pbListWatchlistCoinsResponse"
+            }
+          },
+          "default": {
+            "description": "An unexpected error response.",
+            "schema": {
+              "$ref": "#/definitions/rpcStatus"
+            }
+          }
+        },
+        "parameters": [
+          {
+            "name": "watchlistId",
+            "in": "query",
+            "required": false,
+            "type": "string",
+            "format": "int64"
+          }
+        ],
+        "tags": [
+          "AioPortal"
+        ]
+      }
+    },
     "/v1/login_user": {
       "post": {
         "summary": "Login user",
@@ -514,6 +581,40 @@
             "required": true,
             "schema": {
               "$ref": "#/definitions/pbLoginUserRequest"
+            }
+          }
+        ],
+        "tags": [
+          "AioPortal"
+        ]
+      }
+    },
+    "/v1/update_coin": {
+      "post": {
+        "summary": "Update a coin",
+        "description": "Use this API to update a coin",
+        "operationId": "AioPortal_UpdateCoin",
+        "responses": {
+          "200": {
+            "description": "A successful response.",
+            "schema": {
+              "$ref": "#/definitions/pbUpdateCoinResponse"
+            }
+          },
+          "default": {
+            "description": "An unexpected error response.",
+            "schema": {
+              "$ref": "#/definitions/rpcStatus"
+            }
+          }
+        },
+        "parameters": [
+          {
+            "name": "body",
+            "in": "body",
+            "required": true,
+            "schema": {
+              "$ref": "#/definitions/pbUpdateCoinRequest"
             }
           }
         ],
@@ -662,9 +763,173 @@
           "AioPortal"
         ]
       }
+    },
+    "/v1/watchlist/add_coin": {
+      "post": {
+        "summary": "Add a coin to a watchlist",
+        "description": "Use this API to list add a coin to a watchlist",
+        "operationId": "AioPortal_AddWatchlistCoin",
+        "responses": {
+          "200": {
+            "description": "A successful response.",
+            "schema": {
+              "$ref": "#/definitions/pbAddWatchlistCoinResponse"
+            }
+          },
+          "default": {
+            "description": "An unexpected error response.",
+            "schema": {
+              "$ref": "#/definitions/rpcStatus"
+            }
+          }
+        },
+        "parameters": [
+          {
+            "name": "body",
+            "in": "body",
+            "required": true,
+            "schema": {
+              "$ref": "#/definitions/pbAddWatchlistCoinRequest"
+            }
+          }
+        ],
+        "tags": [
+          "AioPortal"
+        ]
+      }
     }
   },
   "definitions": {
+    "pbAddWatchlistCoinRequest": {
+      "type": "object",
+      "properties": {
+        "watchlistId": {
+          "type": "string",
+          "format": "int64"
+        },
+        "coinId": {
+          "type": "string"
+        }
+      }
+    },
+    "pbAddWatchlistCoinResponse": {
+      "type": "object",
+      "properties": {
+        "message": {
+          "type": "string"
+        }
+      }
+    },
+    "pbCoin": {
+      "type": "object",
+      "properties": {
+        "coinId": {
+          "type": "string"
+        },
+        "name": {
+          "type": "string"
+        },
+        "price": {
+          "type": "string"
+        },
+        "marketCap": {
+          "type": "string"
+        },
+        "circulatingSupply": {
+          "type": "string"
+        },
+        "totalSupply": {
+          "type": "string"
+        },
+        "maxSupply": {
+          "type": "string"
+        },
+        "rank": {
+          "type": "string"
+        },
+        "volume": {
+          "type": "string"
+        },
+        "imageUrl": {
+          "type": "string"
+        },
+        "description": {
+          "type": "string"
+        },
+        "website": {
+          "type": "string"
+        },
+        "socialMediaLinks": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          }
+        },
+        "updatedAt": {
+          "type": "string",
+          "format": "date-time"
+        },
+        "createdAt": {
+          "type": "string",
+          "format": "date-time"
+        }
+      }
+    },
+    "pbCreateCoinRequest": {
+      "type": "object",
+      "properties": {
+        "coinId": {
+          "type": "string"
+        },
+        "name": {
+          "type": "string"
+        },
+        "price": {
+          "type": "string"
+        },
+        "marketCap": {
+          "type": "string"
+        },
+        "circulatingSupply": {
+          "type": "string"
+        },
+        "totalSupply": {
+          "type": "string"
+        },
+        "maxSupply": {
+          "type": "string"
+        },
+        "rank": {
+          "type": "string"
+        },
+        "volume": {
+          "type": "string"
+        },
+        "imageUrl": {
+          "type": "string"
+        },
+        "description": {
+          "type": "string"
+        },
+        "website": {
+          "type": "string"
+        },
+        "socialMediaLinks": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          }
+        }
+      }
+    },
+    "pbCreateCoinResponse": {
+      "type": "object",
+      "properties": {
+        "coin": {
+          "$ref": "#/definitions/pbCoin"
+        }
+      }
+    },
     "pbCreatePortfolioRequest": {
       "type": "object",
       "properties": {
@@ -834,6 +1099,22 @@
         }
       }
     },
+    "pbListWatchlistCoinsResponse": {
+      "type": "object",
+      "properties": {
+        "total": {
+          "type": "string",
+          "format": "int64"
+        },
+        "coins": {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "$ref": "#/definitions/pbCoin"
+          }
+        }
+      }
+    },
     "pbLoginUserRequest": {
       "type": "object",
       "properties": {
@@ -958,6 +1239,65 @@
         "quantity": {
           "type": "number",
           "format": "double"
+        }
+      }
+    },
+    "pbUpdateCoinRequest": {
+      "type": "object",
+      "properties": {
+        "coinId": {
+          "type": "string"
+        },
+        "name": {
+          "type": "string"
+        },
+        "price": {
+          "type": "string"
+        },
+        "marketCap": {
+          "type": "string"
+        },
+        "circulatingSupply": {
+          "type": "string"
+        },
+        "totalSupply": {
+          "type": "string"
+        },
+        "maxSupply": {
+          "type": "string"
+        },
+        "rank": {
+          "type": "string"
+        },
+        "volume": {
+          "type": "string"
+        },
+        "imageUrl": {
+          "type": "string"
+        },
+        "description": {
+          "type": "string"
+        },
+        "website": {
+          "type": "string"
+        },
+        "socialMediaLinks": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          }
+        },
+        "updatedAt": {
+          "type": "string",
+          "format": "date-time"
+        }
+      }
+    },
+    "pbUpdateCoinResponse": {
+      "type": "object",
+      "properties": {
+        "coin": {
+          "$ref": "#/definitions/pbCoin"
         }
       }
     },

@@ -14,9 +14,9 @@ import (
 
 const createCoin = `-- name: CreateCoin :one
 INSERT INTO coins (
-    coin_id, name, price, market_cap, circulating_supply, total_supply, max_supply, rank, volume, image_url, description, website, social_media_links, created_at, updated_at
+    coin_id, name, price, market_cap, circulating_supply, total_supply, max_supply, rank, volume, image_url, description, website, social_media_links, updated_at
 ) VALUES (
-             $1, $2, $3, $4, $5, $6, $7, $8 ,$9 ,$10 ,$11 ,$12 ,$13 ,$14 ,$15
+             $1, $2, $3, $4, $5, $6, $7, $8 ,$9 ,$10 ,$11 ,$12 ,$13 ,$14
          )
 RETURNING coin_id, name, price, market_cap, circulating_supply, total_supply, max_supply, rank, volume, image_url, description, website, social_media_links, created_at, updated_at
 `
@@ -24,18 +24,17 @@ RETURNING coin_id, name, price, market_cap, circulating_supply, total_supply, ma
 type CreateCoinParams struct {
 	CoinID            string    `json:"coin_id"`
 	Name              string    `json:"name"`
-	Price             float64   `json:"price"`
-	MarketCap         int64     `json:"market_cap"`
-	CirculatingSupply int64     `json:"circulating_supply"`
-	TotalSupply       int64     `json:"total_supply"`
-	MaxSupply         int64     `json:"max_supply"`
-	Rank              int32     `json:"rank"`
-	Volume            int64     `json:"volume"`
+	Price             string    `json:"price"`
+	MarketCap         string    `json:"market_cap"`
+	CirculatingSupply string    `json:"circulating_supply"`
+	TotalSupply       string    `json:"total_supply"`
+	MaxSupply         string    `json:"max_supply"`
+	Rank              string    `json:"rank"`
+	Volume            string    `json:"volume"`
 	ImageUrl          string    `json:"image_url"`
 	Description       string    `json:"description"`
 	Website           string    `json:"website"`
 	SocialMediaLinks  []string  `json:"social_media_links"`
-	CreatedAt         time.Time `json:"created_at"`
 	UpdatedAt         time.Time `json:"updated_at"`
 }
 
@@ -54,7 +53,6 @@ func (q *Queries) CreateCoin(ctx context.Context, arg CreateCoinParams) (Coin, e
 		arg.Description,
 		arg.Website,
 		arg.SocialMediaLinks,
-		arg.CreatedAt,
 		arg.UpdatedAt,
 	)
 	var i Coin
@@ -170,26 +168,27 @@ SET
     description = COALESCE($10, description),
     website = COALESCE($11, website),
     social_media_links = COALESCE($12, social_media_links),
-    updated_at = now()
+    updated_at = COALESCE($13, updated_at)
 
-WHERE coin_id = $13
+WHERE coin_id = $14
 RETURNING coin_id, name, price, market_cap, circulating_supply, total_supply, max_supply, rank, volume, image_url, description, website, social_media_links, created_at, updated_at
 `
 
 type UpdateCoinParams struct {
-	Name              pgtype.Text   `json:"name"`
-	Price             pgtype.Float8 `json:"price"`
-	MarketCap         pgtype.Int8   `json:"market_cap"`
-	CirculatingSupply pgtype.Int8   `json:"circulating_supply"`
-	TotalSupply       pgtype.Int8   `json:"total_supply"`
-	MaxSupply         pgtype.Int8   `json:"max_supply"`
-	Rank              pgtype.Int4   `json:"rank"`
-	Volume            pgtype.Int8   `json:"volume"`
-	ImageUrl          pgtype.Text   `json:"image_url"`
-	Description       pgtype.Text   `json:"description"`
-	Website           pgtype.Text   `json:"website"`
-	SocialMediaLinks  []string      `json:"social_media_links"`
-	CoinID            string        `json:"coin_id"`
+	Name              pgtype.Text        `json:"name"`
+	Price             pgtype.Text        `json:"price"`
+	MarketCap         pgtype.Text        `json:"market_cap"`
+	CirculatingSupply pgtype.Text        `json:"circulating_supply"`
+	TotalSupply       pgtype.Text        `json:"total_supply"`
+	MaxSupply         pgtype.Text        `json:"max_supply"`
+	Rank              pgtype.Text        `json:"rank"`
+	Volume            pgtype.Text        `json:"volume"`
+	ImageUrl          pgtype.Text        `json:"image_url"`
+	Description       pgtype.Text        `json:"description"`
+	Website           pgtype.Text        `json:"website"`
+	SocialMediaLinks  []string           `json:"social_media_links"`
+	UpdatedAt         pgtype.Timestamptz `json:"updated_at"`
+	CoinID            string             `json:"coin_id"`
 }
 
 func (q *Queries) UpdateCoin(ctx context.Context, arg UpdateCoinParams) (Coin, error) {
@@ -206,6 +205,7 @@ func (q *Queries) UpdateCoin(ctx context.Context, arg UpdateCoinParams) (Coin, e
 		arg.Description,
 		arg.Website,
 		arg.SocialMediaLinks,
+		arg.UpdatedAt,
 		arg.CoinID,
 	)
 	var i Coin
