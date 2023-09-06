@@ -1,7 +1,6 @@
 package api
 
 import (
-	"github.com/jackc/pgx/v5/pgtype"
 	db "github.com/jakub/aioportal/server/db/sqlc"
 	"net/http"
 
@@ -16,7 +15,7 @@ type createCoinRequest struct {
 	CirculatingSupply string   `json:"circulating_supply"`
 	TotalSupply       string   `json:"total_supply"`
 	MaxSupply         string   `json:"max_supply"`
-	Rank              string   `json:"rank"`
+	Rank              int32    `json:"rank"`
 	Volume            string   `json:"volume"`
 	ImageUrl          string   `json:"image_url"`
 	Description       string   `json:"description"`
@@ -72,66 +71,66 @@ type updateCoinRequest struct {
 	SocialMediaLinks  []string `json:"social_media_links"`
 }
 
-func (server *Server) updateCoin(ctx *gin.Context) {
-	var req updateCoinRequest
-	if err := ctx.ShouldBindJSON(&req); err != nil {
-		ctx.JSON(http.StatusBadRequest, errorResponse(err))
-		return
-	}
-
-	arg := db.UpdateCoinParams{
-		Name: pgtype.Text{
-			String: req.Name,
-			Valid:  true,
-		},
-		Price: pgtype.Text{
-			String: req.Price,
-			Valid:  true,
-		},
-		MarketCap: pgtype.Text{
-			String: req.MarketCap,
-			Valid:  true,
-		},
-		CirculatingSupply: pgtype.Text{
-			String: req.CirculatingSupply,
-			Valid:  true,
-		},
-		TotalSupply: pgtype.Text{
-			String: req.TotalSupply,
-			Valid:  true,
-		},
-		MaxSupply: pgtype.Text{
-			String: req.MaxSupply,
-			Valid:  true,
-		},
-		Rank: pgtype.Text{
-			String: req.Rank,
-			Valid:  true,
-		},
-		Volume: pgtype.Text{
-			String: req.Volume,
-			Valid:  true,
-		},
-		ImageUrl: pgtype.Text{
-			String: req.ImageUrl,
-			Valid:  true,
-		},
-		Description: pgtype.Text{
-			String: req.Description,
-			Valid:  true,
-		},
-		Website: pgtype.Text{
-			String: req.Website,
-			Valid:  true,
-		},
-		SocialMediaLinks: nil,
-		CoinID:           req.CoinID,
-	}
-	coin, err := server.store.UpdateCoin(ctx, arg)
-	if err != nil {
-		ctx.JSON(http.StatusInternalServerError, errorResponse(err))
-		return
-	}
-
-	ctx.JSON(http.StatusOK, coin)
-}
+//func (server *Server) updateCoin(ctx *gin.Context) {
+//	var req updateCoinRequest
+//	if err := ctx.ShouldBindJSON(&req); err != nil {
+//		ctx.JSON(http.StatusBadRequest, errorResponse(err))
+//		return
+//	}
+//
+//	arg := db.UpdateCoinParams{
+//		Name: pgtype.Text{
+//			String: req.Name,
+//			Valid:  true,
+//		},
+//		Price: pgtype.Text{
+//			String: req.Price,
+//			Valid:  true,
+//		},
+//		MarketCap: pgtype.Text{
+//			String: req.MarketCap,
+//			Valid:  true,
+//		},
+//		CirculatingSupply: pgtype.Text{
+//			String: req.CirculatingSupply,
+//			Valid:  true,
+//		},
+//		TotalSupply: pgtype.Text{
+//			String: req.TotalSupply,
+//			Valid:  true,
+//		},
+//		MaxSupply: pgtype.Text{
+//			String: req.MaxSupply,
+//			Valid:  true,
+//		},
+//		Rank: pgtype.Text{
+//			String: req.Rank,
+//			Valid:  true,
+//		},
+//		Volume: pgtype.Text{
+//			String: req.Volume,
+//			Valid:  true,
+//		},
+//		ImageUrl: pgtype.Text{
+//			String: req.ImageUrl,
+//			Valid:  true,
+//		},
+//		Description: pgtype.Text{
+//			String: req.Description,
+//			Valid:  true,
+//		},
+//		Website: pgtype.Text{
+//			String: req.Website,
+//			Valid:  true,
+//		},
+//		SocialMediaLinks: nil,
+//		CoinID:           req.CoinID,
+//	}
+//	coin, err := server.store.UpdateCoin(ctx, arg)
+//	if err != nil {
+//		ctx.JSON(http.StatusInternalServerError, errorResponse(err))
+//		return
+//	}
+//
+//	ctx.JSON(http.StatusOK, coin)
+//}

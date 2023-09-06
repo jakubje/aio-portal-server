@@ -8,24 +8,7 @@ package db
 import (
 	"context"
 	"time"
-
-	"github.com/jackc/pgx/v5/pgtype"
 )
-
-const checkCoinExists = `-- name: CheckCoinExists :one
-SELECT EXISTS(
-    SELECT 1
-    FROM coins
-    WHERE coin_id = $1
-) AS coin_exists
-`
-
-func (q *Queries) CheckCoinExists(ctx context.Context, coinID string) (bool, error) {
-	row := q.db.QueryRow(ctx, checkCoinExists, coinID)
-	var coin_exists bool
-	err := row.Scan(&coin_exists)
-	return coin_exists, err
-}
 
 const createCoin = `-- name: CreateCoin :one
 INSERT INTO coins (
@@ -58,7 +41,7 @@ type CreateCoinParams struct {
 	CirculatingSupply string    `json:"circulating_supply"`
 	TotalSupply       string    `json:"total_supply"`
 	MaxSupply         string    `json:"max_supply"`
-	Rank              string    `json:"rank"`
+	Rank              int32     `json:"rank"`
 	Volume            string    `json:"volume"`
 	ImageUrl          string    `json:"image_url"`
 	Description       string    `json:"description"`
@@ -180,80 +163,4 @@ func (q *Queries) ListCoins(ctx context.Context, arg ListCoinsParams) ([]Coin, e
 		return nil, err
 	}
 	return items, nil
-}
-
-const updateCoin = `-- name: UpdateCoin :one
-UPDATE coins
-SET
-    name = COALESCE($1, name),
-    price = COALESCE($2, price),
-    market_cap = COALESCE($3, market_cap),
-    circulating_supply = COALESCE($4, circulating_supply),
-    total_supply = COALESCE($5, total_supply),
-    max_supply = COALESCE($6, max_supply),
-    rank = COALESCE($7, rank),
-    volume = COALESCE($8, volume),
-    image_url = COALESCE($9, image_url),
-    description = COALESCE($10, description),
-    website = COALESCE($11, website),
-    social_media_links = COALESCE($12, social_media_links),
-    updated_at = COALESCE($13, updated_at)
-
-WHERE coin_id = $14
-RETURNING coin_id, name, price, market_cap, circulating_supply, total_supply, max_supply, rank, volume, image_url, description, website, social_media_links, created_at, updated_at
-`
-
-type UpdateCoinParams struct {
-	Name              pgtype.Text        `json:"name"`
-	Price             pgtype.Text        `json:"price"`
-	MarketCap         pgtype.Text        `json:"market_cap"`
-	CirculatingSupply pgtype.Text        `json:"circulating_supply"`
-	TotalSupply       pgtype.Text        `json:"total_supply"`
-	MaxSupply         pgtype.Text        `json:"max_supply"`
-	Rank              pgtype.Text        `json:"rank"`
-	Volume            pgtype.Text        `json:"volume"`
-	ImageUrl          pgtype.Text        `json:"image_url"`
-	Description       pgtype.Text        `json:"description"`
-	Website           pgtype.Text        `json:"website"`
-	SocialMediaLinks  []string           `json:"social_media_links"`
-	UpdatedAt         pgtype.Timestamptz `json:"updated_at"`
-	CoinID            string             `json:"coin_id"`
-}
-
-func (q *Queries) UpdateCoin(ctx context.Context, arg UpdateCoinParams) (Coin, error) {
-	row := q.db.QueryRow(ctx, updateCoin,
-		arg.Name,
-		arg.Price,
-		arg.MarketCap,
-		arg.CirculatingSupply,
-		arg.TotalSupply,
-		arg.MaxSupply,
-		arg.Rank,
-		arg.Volume,
-		arg.ImageUrl,
-		arg.Description,
-		arg.Website,
-		arg.SocialMediaLinks,
-		arg.UpdatedAt,
-		arg.CoinID,
-	)
-	var i Coin
-	err := row.Scan(
-		&i.CoinID,
-		&i.Name,
-		&i.Price,
-		&i.MarketCap,
-		&i.CirculatingSupply,
-		&i.TotalSupply,
-		&i.MaxSupply,
-		&i.Rank,
-		&i.Volume,
-		&i.ImageUrl,
-		&i.Description,
-		&i.Website,
-		&i.SocialMediaLinks,
-		&i.CreatedAt,
-		&i.UpdatedAt,
-	)
-	return i, err
 }

@@ -1,0 +1,16 @@
+syntax = "proto3";
+
+package pb;
+
+import "coin.proto";
+
+option go_package = "github.com/jakub/aioportal/server/pb";
+
+message ListCoinsRequest {
+    int32 limit = 1;
+    int32 offset = 2;
+}
+
+message ListCoinsResponse {
+    repeated Coin coins  = 1;
+}

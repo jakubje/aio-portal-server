@@ -18,7 +18,7 @@ type Coin struct {
 	CirculatingSupply string    `json:"circulating_supply"`
 	TotalSupply       string    `json:"total_supply"`
 	MaxSupply         string    `json:"max_supply"`
-	Rank              string    `json:"rank"`
+	Rank              int32     `json:"rank"`
 	Volume            string    `json:"volume"`
 	ImageUrl          string    `json:"image_url"`
 	Description       string    `json:"description"`

@@ -23,6 +23,7 @@ const (
 	AioPortal_CreateUser_FullMethodName             = "/pb.AioPortal/CreateUser"
 	AioPortal_LoginUser_FullMethodName              = "/pb.AioPortal/LoginUser"
 	AioPortal_UpdateUser_FullMethodName             = "/pb.AioPortal/UpdateUser"
+	AioPortal_ListCoins_FullMethodName              = "/pb.AioPortal/ListCoins"
 	AioPortal_VerifyEmail_FullMethodName            = "/pb.AioPortal/VerifyEmail"
 	AioPortal_CreatePortfolio_FullMethodName        = "/pb.AioPortal/CreatePortfolio"
 	AioPortal_UpdatePortfolio_FullMethodName        = "/pb.AioPortal/UpdatePortfolio"
@@ -52,6 +53,7 @@ type AioPortalClient interface {
 	CreateUser(ctx context.Context, in *CreateUserRequest, opts ...grpc.CallOption) (*CreateUserResponse, error)
 	LoginUser(ctx context.Context, in *LoginUserRequest, opts ...grpc.CallOption) (*LoginUserResponse, error)
 	UpdateUser(ctx context.Context, in *UpdateUserRequest, opts ...grpc.CallOption) (*UpdateUserResponse, error)
+	ListCoins(ctx context.Context, in *ListCoinsRequest, opts ...grpc.CallOption) (*ListCoinsResponse, error)
 	VerifyEmail(ctx context.Context, in *VerifyEmailRequest, opts ...grpc.CallOption) (*VerifyEmailResponse, error)
 	CreatePortfolio(ctx context.Context, in *CreatePortfolioRequest, opts ...grpc.CallOption) (*CreatePortfolioResponse, error)
 	UpdatePortfolio(ctx context.Context, in *UpdatePortfolioRequest, opts ...grpc.CallOption) (*UpdatePortfolioResponse, error)
@@ -103,6 +105,15 @@ func (c *aioPortalClient) LoginUser(ctx context.Context, in *LoginUserRequest, o
 func (c *aioPortalClient) UpdateUser(ctx context.Context, in *UpdateUserRequest, opts ...grpc.CallOption) (*UpdateUserResponse, error) {
 	out := new(UpdateUserResponse)
 	err := c.cc.Invoke(ctx, AioPortal_UpdateUser_FullMethodName, in, out, opts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
+func (c *aioPortalClient) ListCoins(ctx context.Context, in *ListCoinsRequest, opts ...grpc.CallOption) (*ListCoinsResponse, error) {
+	out := new(ListCoinsResponse)
+	err := c.cc.Invoke(ctx, AioPortal_ListCoins_FullMethodName, in, out, opts...)
 	if err != nil {
 		return nil, err
 	}
@@ -296,6 +307,7 @@ type AioPortalServer interface {
 	CreateUser(context.Context, *CreateUserRequest) (*CreateUserResponse, error)
 	LoginUser(context.Context, *LoginUserRequest) (*LoginUserResponse, error)
 	UpdateUser(context.Context, *UpdateUserRequest) (*UpdateUserResponse, error)
+	ListCoins(context.Context, *ListCoinsRequest) (*ListCoinsResponse, error)
 	VerifyEmail(context.Context, *VerifyEmailRequest) (*VerifyEmailResponse, error)
 	CreatePortfolio(context.Context, *CreatePortfolioRequest) (*CreatePortfolioResponse, error)
 	UpdatePortfolio(context.Context, *UpdatePortfolioRequest) (*UpdatePortfolioResponse, error)
@@ -331,6 +343,9 @@ func (UnimplementedAioPortalServer) LoginUser(context.Context, *LoginUserRequest
 }
 func (UnimplementedAioPortalServer) UpdateUser(context.Context, *UpdateUserRequest) (*UpdateUserResponse, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method UpdateUser not implemented")
+}
+func (UnimplementedAioPortalServer) ListCoins(context.Context, *ListCoinsRequest) (*ListCoinsResponse, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method ListCoins not implemented")
 }
 func (UnimplementedAioPortalServer) VerifyEmail(context.Context, *VerifyEmailRequest) (*VerifyEmailResponse, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method VerifyEmail not implemented")
@@ -455,6 +470,24 @@ func _AioPortal_UpdateUser_Handler(srv interface{}, ctx context.Context, dec fun
 	}
 	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
 		return srv.(AioPortalServer).UpdateUser(ctx, req.(*UpdateUserRequest))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
+func _AioPortal_ListCoins_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(ListCoinsRequest)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(AioPortalServer).ListCoins(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: AioPortal_ListCoins_FullMethodName,
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(AioPortalServer).ListCoins(ctx, req.(*ListCoinsRequest))
 	}
 	return interceptor(ctx, in, info, handler)
 }
@@ -837,6 +870,10 @@ var AioPortal_ServiceDesc = grpc.ServiceDesc{
 		{
 			MethodName: "UpdateUser",
 			Handler:    _AioPortal_UpdateUser_Handler,
+		},
+		{
+			MethodName: "ListCoins",
+			Handler:    _AioPortal_ListCoins_Handler,
 		},
 		{
 			MethodName: "VerifyEmail",

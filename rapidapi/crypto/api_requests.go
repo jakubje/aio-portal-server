@@ -10,7 +10,6 @@ import (
 	"io"
 	"net/http"
 	"net/url"
-	"strconv"
 	"time"
 )
 
@@ -109,7 +108,7 @@ func (processor *CryptoScraperProcessor) processIndividualCoin(coinId string) er
 		CirculatingSupply: coin.Supply.Circulating,
 		TotalSupply:       coin.Supply.Total,
 		MaxSupply:         coin.Supply.Max,
-		Rank:              strconv.Itoa(coin.Rank),
+		Rank:              int32(coin.Rank),
 		Volume:            coin.Two4HVolume,
 		ImageUrl:          coin.IconURL,
 		Description:       coin.Description,

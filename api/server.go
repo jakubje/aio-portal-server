@@ -61,7 +61,7 @@ func (server *Server) setupRouter() {
 	// coint routes
 	//// need a generic coins database and one for portfolio
 	router.POST("/coin", server.createCoin)
-	router.POST("/coin/update", server.updateCoin)
+	//router.POST("/coin/update", server.updateCoin)
 	//router.GET("/coin/:id", server.getCoin)
 	//router.GET("/coins", server.listCoins)
 	//router.DELETE("/coin/:id", server.deleteCoin)

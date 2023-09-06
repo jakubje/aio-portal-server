@@ -7,6 +7,7 @@ import "google/api/annotations.proto";
 import "rpc_create_user.proto";
 import "rpc_login_user.proto";
 import "rpc_update_user.proto";
+import "rpc_list_coins.proto";
 import "rpc_verify_email.proto";
 import "rpc_create_portfolio.proto";
 import "rpc_update_portfolio.proto";
@@ -72,6 +73,15 @@ service AioPortal {
     option (grpc.gateway.protoc_gen_openapiv2.options.openapiv2_operation) = {
       description: "Use this API to update user";
       summary: "Update user";
+    };
+  }
+  rpc ListCoins (ListCoinsRequest) returns (ListCoinsResponse) {
+    option (google.api.http) = {
+      get: "/v1/list_coins"
+    };
+    option (grpc.gateway.protoc_gen_openapiv2.options.openapiv2_operation) = {
+      description: "Use this API to list cryptocurrencies";
+      summary: "List cryptocurrencies";
     };
   }
   rpc VerifyEmail (VerifyEmailRequest) returns (VerifyEmailResponse) {

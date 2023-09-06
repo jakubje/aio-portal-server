@@ -23,7 +23,7 @@ CREATE TABLE "coins" (
                          "circulating_supply" varchar NOT NULL,
                          "total_supply" varchar NOT NULL,
                          "max_supply" varchar NOT NULL,
-                         "rank" varchar NOT NULL,
+                         "rank" int NOT NULL,
                          "volume" varchar NOT NULL,
                          "image_url" varchar NOT NULL,
                          "description" varchar NOT NULL,

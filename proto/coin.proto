@@ -14,7 +14,7 @@ message Coin {
   string circulating_supply = 5;
   string total_supply = 6;
   string max_supply = 7;
-  string rank = 8;
+  int32 rank = 8;
   string volume = 9;
   string image_url = 10;
   string description = 11;

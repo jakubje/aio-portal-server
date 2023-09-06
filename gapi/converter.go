@@ -145,6 +145,7 @@ func convertCoins(coins []db.Coin) []*pb.Coin {
 			Description:       coin.Description,
 			Website:           coin.Website,
 			SocialMediaLinks:  coin.SocialMediaLinks,
+			Updated_At:        timestamppb.New(coin.UpdatedAt),
 		})
 	}
 	return coinsProtoArray

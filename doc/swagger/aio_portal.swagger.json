@@ -436,6 +436,46 @@
         ]
       }
     },
+    "/v1/list_coins": {
+      "get": {
+        "summary": "List cryptocurrencies",
+        "description": "Use this API to list cryptocurrencies",
+        "operationId": "AioPortal_ListCoins",
+        "responses": {
+          "200": {
+            "description": "A successful response.",
+            "schema": {
+              "$ref": "#/definitions/pbListCoinsResponse"
+            }
+          },
+          "default": {
+            "description": "An unexpected error response.",
+            "schema": {
+              "$ref": "#/definitions/rpcStatus"
+            }
+          }
+        },
+        "parameters": [
+          {
+            "name": "limit",
+            "in": "query",
+            "required": false,
+            "type": "integer",
+            "format": "int32"
+          },
+          {
+            "name": "offset",
+            "in": "query",
+            "required": false,
+            "type": "integer",
+            "format": "int32"
+          }
+        ],
+        "tags": [
+          "AioPortal"
+        ]
+      }
+    },
     "/v1/list_transactions": {
       "get": {
         "summary": "Get a list of transaction",
@@ -845,7 +885,8 @@
           "type": "string"
         },
         "rank": {
-          "type": "string"
+          "type": "integer",
+          "format": "int32"
         },
         "volume": {
           "type": "string"
@@ -900,7 +941,8 @@
           "type": "string"
         },
         "rank": {
-          "type": "string"
+          "type": "integer",
+          "format": "int32"
         },
         "volume": {
           "type": "string"
@@ -1067,6 +1109,18 @@
           "items": {
             "type": "object",
             "$ref": "#/definitions/pbWatchlist"
+          }
+        }
+      }
+    },
+    "pbListCoinsResponse": {
+      "type": "object",
+      "properties": {
+        "coins": {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "$ref": "#/definitions/pbCoin"
           }
         }
       }

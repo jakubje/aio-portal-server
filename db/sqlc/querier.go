@@ -12,7 +12,6 @@ import (
 
 type Querier interface {
 	AddWatchlistCoin(ctx context.Context, arg AddWatchlistCoinParams) (WatchlistCoin, error)
-	CheckCoinExists(ctx context.Context, coinID string) (bool, error)
 	CreateCoin(ctx context.Context, arg CreateCoinParams) (Coin, error)
 	CreateFootball(ctx context.Context, arg CreateFootballParams) (Football, error)
 	CreatePortfolio(ctx context.Context, arg CreatePortfolioParams) (Portfolio, error)
@@ -42,7 +41,6 @@ type Querier interface {
 	ListWatchlistCoins(ctx context.Context, arg ListWatchlistCoinsParams) ([]Coin, error)
 	ListWatchlists(ctx context.Context, accountID int64) ([]Watchlist, error)
 	RemoveWatchlistCoin(ctx context.Context, arg RemoveWatchlistCoinParams) error
-	UpdateCoin(ctx context.Context, arg UpdateCoinParams) (Coin, error)
 	UpdateFootball(ctx context.Context, arg UpdateFootballParams) (Football, error)
 	UpdatePortfolio(ctx context.Context, arg UpdatePortfolioParams) (Portfolio, error)
 	UpdateUser(ctx context.Context, arg UpdateUserParams) (User, error)
