@@ -12,6 +12,7 @@ import (
 
 type Querier interface {
 	AddWatchlistCoin(ctx context.Context, arg AddWatchlistCoinParams) (WatchlistCoin, error)
+	CheckCoinExists(ctx context.Context, coinID string) (bool, error)
 	CreateCoin(ctx context.Context, arg CreateCoinParams) (Coin, error)
 	CreateFootball(ctx context.Context, arg CreateFootballParams) (Football, error)
 	CreatePortfolio(ctx context.Context, arg CreatePortfolioParams) (Portfolio, error)

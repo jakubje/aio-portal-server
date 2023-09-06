@@ -3,7 +3,21 @@ INSERT INTO coins (
     coin_id, name, price, market_cap, circulating_supply, total_supply, max_supply, rank, volume, image_url, description, website, social_media_links, updated_at
 ) VALUES (
              $1, $2, $3, $4, $5, $6, $7, $8 ,$9 ,$10 ,$11 ,$12 ,$13 ,$14
-         )
+         ) ON CONFLICT (coin_id) DO UPDATE
+SET
+    name = $2,
+    price = $3,
+    market_cap = $4,
+    circulating_supply = $5,
+    total_supply =  $6,
+    max_supply = $7,
+    rank = $8,
+    volume = $9,
+    image_url = $10,
+    description = $11,
+    website = $12,
+    social_media_links = $13,
+    updated_at = $14
 RETURNING *;
 
 -- name: GetCoin :one
@@ -16,23 +30,3 @@ SELECT * FROM coins
 ORDER BY rank
 LIMIT $1
 OFFSET $2;
-
--- name: UpdateCoin :one
-UPDATE coins
-SET
-    name = COALESCE(sqlc.narg(name), name),
-    price = COALESCE(sqlc.narg(price), price),
-    market_cap = COALESCE(sqlc.narg(market_cap), market_cap),
-    circulating_supply = COALESCE(sqlc.narg(circulating_supply), circulating_supply),
-    total_supply = COALESCE(sqlc.narg(total_supply), total_supply),
-    max_supply = COALESCE(sqlc.narg(max_supply), max_supply),
-    rank = COALESCE(sqlc.narg(rank), rank),
-    volume = COALESCE(sqlc.narg(volume), volume),
-    image_url = COALESCE(sqlc.narg(image_url), image_url),
-    description = COALESCE(sqlc.narg(description), description),
-    website = COALESCE(sqlc.narg(website), website),
-    social_media_links = COALESCE(sqlc.narg(social_media_links), social_media_links),
-    updated_at = COALESCE(sqlc.narg(updated_at), updated_at)
-
-WHERE coin_id = sqlc.arg(coin_id)
-RETURNING *;

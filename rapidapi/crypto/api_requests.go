@@ -4,9 +4,7 @@ import (
 	"context"
 	"encoding/json"
 	"fmt"
-	"github.com/jackc/pgx/v5/pgtype"
 	db "github.com/jakub/aioportal/server/db/sqlc"
-	"github.com/rs/zerolog/log"
 	"google.golang.org/grpc/codes"
 	"google.golang.org/grpc/status"
 	"io"
@@ -26,7 +24,7 @@ func (processor *CryptoScraperProcessor) getCoinsListRequest() (data CoinsRespon
 	params.Add("tiers[0]", "1")
 	params.Add("orderBy", "marketCap")
 	params.Add("orderDirection", "desc")
-	params.Add("limit", "1000")
+	params.Add("limit", "100")
 	//tier 2 has 1056 coins
 	//tier 3 has
 	constructedURL := requestUrl + "?" + params.Encode()
@@ -102,56 +100,27 @@ func (processor *CryptoScraperProcessor) processIndividualCoin(coinId string) er
 	for _, link := range coin.Links {
 		links = append(links, link.URL)
 	}
-	//tableEmpty := processor.store.CheckCoins()
-	tableEmpty := false
 
-	if tableEmpty {
-		arg := db.CreateCoinParams{
-			CoinID:            coin.Symbol,
-			Name:              coin.Name,
-			Price:             coin.Price,
-			MarketCap:         coin.MarketCap,
-			CirculatingSupply: coin.Supply.Circulating,
-			TotalSupply:       coin.Supply.Total,
-			MaxSupply:         coin.Supply.Max,
-			Rank:              strconv.Itoa(coin.Rank),
-			Volume:            coin.Two4HVolume,
-			ImageUrl:          coin.IconURL,
-			Description:       coin.Description,
-			Website:           coin.WebsiteURL,
-			SocialMediaLinks:  links,
-			UpdatedAt:         time.Now(),
-		}
+	arg := db.CreateCoinParams{
+		CoinID:            coin.Symbol,
+		Name:              coin.Name,
+		Price:             coin.Price,
+		MarketCap:         coin.MarketCap,
+		CirculatingSupply: coin.Supply.Circulating,
+		TotalSupply:       coin.Supply.Total,
+		MaxSupply:         coin.Supply.Max,
+		Rank:              strconv.Itoa(coin.Rank),
+		Volume:            coin.Two4HVolume,
+		ImageUrl:          coin.IconURL,
+		Description:       coin.Description,
+		Website:           coin.WebsiteURL,
+		SocialMediaLinks:  links,
+		UpdatedAt:         time.Now(),
+	}
 
-		_, err = processor.store.CreateCoin(context.Background(), arg)
-		if err != nil {
-			return status.Errorf(codes.Internal, "failed to create coin: %s", err)
-		}
-	} else {
-		log.Info().Msg(fmt.Sprintf("Updating coin %s", coin.Symbol))
-		arg := db.UpdateCoinParams{
-			Name:              pgtype.Text{String: coin.Name, Valid: true},
-			Price:             pgtype.Text{String: coin.Price, Valid: true},
-			MarketCap:         pgtype.Text{String: coin.MarketCap, Valid: true},
-			CirculatingSupply: pgtype.Text{String: coin.Supply.Circulating, Valid: true},
-			TotalSupply:       pgtype.Text{String: coin.Supply.Total, Valid: true},
-			MaxSupply:         pgtype.Text{String: coin.Supply.Max, Valid: true},
-			Rank:              pgtype.Text{String: strconv.Itoa(coin.Rank), Valid: true},
-			Volume:            pgtype.Text{String: coin.Two4HVolume, Valid: true},
-			ImageUrl:          pgtype.Text{String: coin.IconURL, Valid: true},
-			Description:       pgtype.Text{String: coin.Description, Valid: true},
-			Website:           pgtype.Text{String: coin.WebsiteURL, Valid: true},
-			SocialMediaLinks:  links,
-			UpdatedAt: pgtype.Timestamptz{
-				Time:  time.Now(),
-				Valid: true,
-			},
-			CoinID: coin.Symbol,
-		}
-		_, err := processor.store.UpdateCoin(context.Background(), arg)
-		if err != nil {
-			return status.Errorf(codes.Internal, "failed to update coin: %s", err)
-		}
+	_, err = processor.store.CreateCoin(context.Background(), arg)
+	if err != nil {
+		return status.Errorf(codes.Internal, "failed to create/update coin: %s", err)
 	}
 
 	return nil
