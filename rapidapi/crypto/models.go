@@ -55,8 +55,8 @@ type CoinResponse struct {
 				Total       string `json:"total"`
 				Circulating string `json:"circulating"`
 			} `json:"supply"`
-			NumberOfMarkets       int      `json:"numberOfMarkets"`
-			NumberOfExchanges     int      `json:"numberOfExchanges"`
+			NumberOfMarkets       int32    `json:"numberOfMarkets"`
+			NumberOfExchanges     int32    `json:"numberOfExchanges"`
 			Two4HVolume           string   `json:"24hVolume"`
 			MarketCap             string   `json:"marketCap"`
 			FullyDilutedMarketCap string   `json:"fullyDilutedMarketCap"`
@@ -64,7 +64,7 @@ type CoinResponse struct {
 			BtcPrice              string   `json:"btcPrice"`
 			PriceAt               int      `json:"priceAt"`
 			Change                string   `json:"change"`
-			Rank                  int      `json:"rank"`
+			Rank                  int32    `json:"rank"`
 			Sparkline             []string `json:"sparkline"`
 			AllTimeHigh           struct {
 				Price     string `json:"price"`

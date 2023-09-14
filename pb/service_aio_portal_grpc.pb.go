@@ -41,6 +41,7 @@ const (
 	AioPortal_ListWatchlists_FullMethodName         = "/pb.AioPortal/ListWatchlists"
 	AioPortal_DeleteWatchlist_FullMethodName        = "/pb.AioPortal/DeleteWatchlist"
 	AioPortal_CreateCoin_FullMethodName             = "/pb.AioPortal/CreateCoin"
+	AioPortal_GetCoin_FullMethodName                = "/pb.AioPortal/GetCoin"
 	AioPortal_AddWatchlistCoin_FullMethodName       = "/pb.AioPortal/AddWatchlistCoin"
 	AioPortal_UpdateCoin_FullMethodName             = "/pb.AioPortal/UpdateCoin"
 	AioPortal_ListWatchlistCoins_FullMethodName     = "/pb.AioPortal/ListWatchlistCoins"
@@ -71,6 +72,7 @@ type AioPortalClient interface {
 	ListWatchlists(ctx context.Context, in *emptypb.Empty, opts ...grpc.CallOption) (*GetWatchlistsResponse, error)
 	DeleteWatchlist(ctx context.Context, in *DeleteWatchlistRequest, opts ...grpc.CallOption) (*DeleteWatchlistResponse, error)
 	CreateCoin(ctx context.Context, in *CreateCoinRequest, opts ...grpc.CallOption) (*CreateCoinResponse, error)
+	GetCoin(ctx context.Context, in *GetCoinRequest, opts ...grpc.CallOption) (*GetCoinResponse, error)
 	AddWatchlistCoin(ctx context.Context, in *AddWatchlistCoinRequest, opts ...grpc.CallOption) (*AddWatchlistCoinResponse, error)
 	UpdateCoin(ctx context.Context, in *UpdateCoinRequest, opts ...grpc.CallOption) (*UpdateCoinResponse, error)
 	ListWatchlistCoins(ctx context.Context, in *ListWatchlistCoinsRequest, opts ...grpc.CallOption) (*ListWatchlistCoinsResponse, error)
@@ -273,6 +275,15 @@ func (c *aioPortalClient) CreateCoin(ctx context.Context, in *CreateCoinRequest,
 	return out, nil
 }
 
+func (c *aioPortalClient) GetCoin(ctx context.Context, in *GetCoinRequest, opts ...grpc.CallOption) (*GetCoinResponse, error) {
+	out := new(GetCoinResponse)
+	err := c.cc.Invoke(ctx, AioPortal_GetCoin_FullMethodName, in, out, opts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
 func (c *aioPortalClient) AddWatchlistCoin(ctx context.Context, in *AddWatchlistCoinRequest, opts ...grpc.CallOption) (*AddWatchlistCoinResponse, error) {
 	out := new(AddWatchlistCoinResponse)
 	err := c.cc.Invoke(ctx, AioPortal_AddWatchlistCoin_FullMethodName, in, out, opts...)
@@ -325,6 +336,7 @@ type AioPortalServer interface {
 	ListWatchlists(context.Context, *emptypb.Empty) (*GetWatchlistsResponse, error)
 	DeleteWatchlist(context.Context, *DeleteWatchlistRequest) (*DeleteWatchlistResponse, error)
 	CreateCoin(context.Context, *CreateCoinRequest) (*CreateCoinResponse, error)
+	GetCoin(context.Context, *GetCoinRequest) (*GetCoinResponse, error)
 	AddWatchlistCoin(context.Context, *AddWatchlistCoinRequest) (*AddWatchlistCoinResponse, error)
 	UpdateCoin(context.Context, *UpdateCoinRequest) (*UpdateCoinResponse, error)
 	ListWatchlistCoins(context.Context, *ListWatchlistCoinsRequest) (*ListWatchlistCoinsResponse, error)
@@ -397,6 +409,9 @@ func (UnimplementedAioPortalServer) DeleteWatchlist(context.Context, *DeleteWatc
 }
 func (UnimplementedAioPortalServer) CreateCoin(context.Context, *CreateCoinRequest) (*CreateCoinResponse, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method CreateCoin not implemented")
+}
+func (UnimplementedAioPortalServer) GetCoin(context.Context, *GetCoinRequest) (*GetCoinResponse, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method GetCoin not implemented")
 }
 func (UnimplementedAioPortalServer) AddWatchlistCoin(context.Context, *AddWatchlistCoinRequest) (*AddWatchlistCoinResponse, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method AddWatchlistCoin not implemented")
@@ -798,6 +813,24 @@ func _AioPortal_CreateCoin_Handler(srv interface{}, ctx context.Context, dec fun
 	return interceptor(ctx, in, info, handler)
 }
 
+func _AioPortal_GetCoin_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(GetCoinRequest)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(AioPortalServer).GetCoin(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: AioPortal_GetCoin_FullMethodName,
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(AioPortalServer).GetCoin(ctx, req.(*GetCoinRequest))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
 func _AioPortal_AddWatchlistCoin_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
 	in := new(AddWatchlistCoinRequest)
 	if err := dec(in); err != nil {
@@ -942,6 +975,10 @@ var AioPortal_ServiceDesc = grpc.ServiceDesc{
 		{
 			MethodName: "CreateCoin",
 			Handler:    _AioPortal_CreateCoin_Handler,
+		},
+		{
+			MethodName: "GetCoin",
+			Handler:    _AioPortal_GetCoin_Handler,
 		},
 		{
 			MethodName: "AddWatchlistCoin",

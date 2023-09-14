@@ -31,7 +31,7 @@ func (q *Queries) AddWatchlistCoin(ctx context.Context, arg AddWatchlistCoinPara
 }
 
 const listWatchlistCoins = `-- name: ListWatchlistCoins :many
-SELECT c.coin_id, c.name, c.price, c.market_cap, c.circulating_supply, c.total_supply, c.max_supply, c.rank, c.volume, c.image_url, c.description, c.website, c.social_media_links, c.created_at, c.updated_at
+SELECT c.coin_id, c.coin_uuid, c.name, c.price, c.market_cap, c.number_of_markets, c.number_of_exchanges, c.approved_supply, c.circulating_supply, c.total_supply, c.max_supply, c.rank, c.volume, c.daily_change, c.image_url, c.description, c.all_time_high, c.tags, c.website, c.social_media_links, c.created_at, c.updated_at
 FROM coins c
 INNER JOIN watchlist_coins wc ON c.coin_id = wc.coin_id
 INNER JOIN watchlists watchlist ON wc.watchlist_id = watchlist.id
@@ -54,16 +54,23 @@ func (q *Queries) ListWatchlistCoins(ctx context.Context, arg ListWatchlistCoins
 		var i Coin
 		if err := rows.Scan(
 			&i.CoinID,
+			&i.CoinUuid,
 			&i.Name,
 			&i.Price,
 			&i.MarketCap,
+			&i.NumberOfMarkets,
+			&i.NumberOfExchanges,
+			&i.ApprovedSupply,
 			&i.CirculatingSupply,
 			&i.TotalSupply,
 			&i.MaxSupply,
 			&i.Rank,
 			&i.Volume,
+			&i.DailyChange,
 			&i.ImageUrl,
 			&i.Description,
+			&i.AllTimeHigh,
+			&i.Tags,
 			&i.Website,
 			&i.SocialMediaLinks,
 			&i.CreatedAt,

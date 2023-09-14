@@ -1,0 +1,15 @@
+syntax = "proto3";
+
+package pb;
+
+import "coin.proto";
+
+option go_package = "github.com/jakub/aioportal/server/pb";
+
+message GetCoinRequest {
+  string coin_id = 1;
+}
+
+message GetCoinResponse {
+  Coin coin = 1;
+}

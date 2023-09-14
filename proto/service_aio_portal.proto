@@ -5,29 +5,31 @@ package pb;
 import "google/protobuf/empty.proto";
 import "google/api/annotations.proto";
 import "rpc_create_user.proto";
-import "rpc_login_user.proto";
-import "rpc_update_user.proto";
-import "rpc_list_coins.proto";
-import "rpc_verify_email.proto";
 import "rpc_create_portfolio.proto";
-import "rpc_update_portfolio.proto";
-import "rpc_get_portfolio.proto";
-import "rpc_list_portfolios.proto";
-import "rpc_portfolio_roll_up.proto";
-import "rpc_delete_portfolio.proto";
 import "rpc_create_transaction.proto";
+import "rpc_create_watchlist.proto";
+import "rpc_create_coin.proto";
+import "rpc_login_user.proto";
+import "rpc_get_coin.proto";
+import "rpc_get_portfolio.proto";
 import "rpc_get_transaction.proto";
+import "rpc_get_watchlist.proto";
+import "rpc_verify_email.proto";
+import "rpc_list_coins.proto";
 import "rpc_list_transactions.proto";
 import "rpc_list_transactions_by_coin.proto";
-import "rpc_create_watchlist.proto";
-import "rpc_update_watchlist.proto";
-import "rpc_get_watchlist.proto";
 import "rpc_list_watchlists.proto";
-import "rpc_delete_watchlist.proto";
-import "rpc_create_coin.proto";
-import "rpc_update_coin.proto";
 import "rpc_list_watchlist_coins.proto";
+import "rpc_list_portfolios.proto";
+import "rpc_portfolio_roll_up.proto";
 import "rpc_add_watchlist_coin.proto";
+import "rpc_update_user.proto";
+import "rpc_update_portfolio.proto";
+import "rpc_update_watchlist.proto";
+import "rpc_update_coin.proto";
+import "rpc_delete_watchlist.proto";
+import "rpc_delete_portfolio.proto";
+
 import "protoc-gen-openapiv2/options/annotations.proto";
 
 option go_package = "github.com/jakub/aioportal/server/pb";
@@ -241,6 +243,15 @@ service AioPortal {
     option (grpc.gateway.protoc_gen_openapiv2.options.openapiv2_operation) = {
       description: "Use this API to create a new coin";
       summary: "Create new coin";
+    };
+  }
+  rpc GetCoin (GetCoinRequest) returns (GetCoinResponse) {
+    option (google.api.http) = {
+      get: "/v1/coin"
+    };
+    option (grpc.gateway.protoc_gen_openapiv2.options.openapiv2_operation) = {
+      description: "Use this API to get coin details";
+      summary: "Get coin details";
     };
   }
   rpc AddWatchlistCoin (AddWatchlistCoinRequest) returns (AddWatchlistCoinResponse) {

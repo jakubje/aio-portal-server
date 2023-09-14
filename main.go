@@ -146,7 +146,7 @@ func runGatewayServer(config util.Config, store db.Store, taskDistributor worker
 	}
 
 	mux := http.NewServeMux()
-	mux.Handle("/", grpcMux)
+	mux.Handle("/", corsMiddleware(grpcMux))
 
 	statikFS, err := fs2.New()
 	if err != nil {
@@ -168,6 +168,24 @@ func runGatewayServer(config util.Config, store db.Store, taskDistributor worker
 		log.Fatal().Err(err).Msg("cannot start HTTP gateway server")
 	}
 
+}
+
+func corsMiddleware(next http.Handler) http.Handler {
+	return http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
+		// Set CORS headers here
+		w.Header().Set("Access-Control-Allow-Origin", "http://localhost:3000") // Replace with your frontend URL
+		w.Header().Set("Access-Control-Allow-Methods", "GET, POST, PUT, DELETE, OPTIONS")
+		w.Header().Set("Access-Control-Allow-Headers", "Content-Type, Authorization")
+
+		// Handle preflight requests (OPTIONS)
+		if r.Method == "OPTIONS" {
+			w.WriteHeader(http.StatusOK)
+			return
+		}
+
+		// Call the next handler in the chain
+		next.ServeHTTP(w, r)
+	})
 }
 
 func runGinServer(config util.Config, store db.Store) {

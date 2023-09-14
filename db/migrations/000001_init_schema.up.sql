@@ -15,18 +15,28 @@ CREATE TABLE "watchlists" (
                               "account_id" bigint NOT NULL
 );
 
+
+
+
 CREATE TABLE "coins" (
                          "coin_id" varchar(10) PRIMARY KEY NOT NULL,
+                         "coin_uuid" varchar NOT NULL,
                          "name" varchar NOT NULL,
                          "price" varchar NOT NULL,
                          "market_cap" varchar NOT NULL,
+                         "number_of_markets" integer NOT NULL,
+                         "number_of_exchanges" integer NOT NULL,
+                         "approved_supply" bool NOT NULL,
                          "circulating_supply" varchar NOT NULL,
                          "total_supply" varchar NOT NULL,
                          "max_supply" varchar NOT NULL,
                          "rank" int NOT NULL,
                          "volume" varchar NOT NULL,
+                         "daily_change" varchar NOT NULL,
                          "image_url" varchar NOT NULL,
                          "description" varchar NOT NULL,
+                         "all_time_high" varchar NOT NULL,
+                         "tags" varchar [],
                          "website" varchar NOT NULL,
                          "social_media_links" varchar [],
                          "created_at" timestamptz NOT NULL DEFAULT (now()),

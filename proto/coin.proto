@@ -6,20 +6,29 @@ import "google/protobuf/timestamp.proto";
 
 option go_package = "github.com/jakub/aioportal/server/pb";
 
+
+
 message Coin {
   string coin_id = 1;
-  string name = 2;
-  string price = 3;
-  string market_cap = 4;
-  string circulating_supply = 5;
-  string total_supply = 6;
-  string max_supply = 7;
-  int32 rank = 8;
-  string volume = 9;
-  string image_url = 10;
-  string description = 11;
-  string website = 12;
-  repeated string social_media_links = 13;
-  google.protobuf.Timestamp updated_At = 14;
-  google.protobuf.Timestamp created_at = 15;
+  string coin_uuid = 2;
+  string name = 3;
+  string price = 4;
+  string market_cap = 5;
+  int32 number_of_markets = 6;
+  int32 number_of_exchanges = 7;
+  bool approved_supply = 8;
+  string circulating_supply = 9;
+  string total_supply = 10;
+  string max_supply = 11;
+  int32 rank = 12;
+  string volume = 13;
+  string daily_change = 14;
+  string image_url = 15;
+  string description = 16;
+  string all_time_high = 17;
+  repeated string tags = 18;
+  string website = 19;
+  repeated string social_media_links = 20;
+  google.protobuf.Timestamp updated_At = 21;
+  google.protobuf.Timestamp created_at = 22;
 }

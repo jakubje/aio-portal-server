@@ -23,16 +23,23 @@ func (server *Server) CreateCoin(ctx context.Context, req *pb.CreateCoinRequest)
 
 	arg := db.CreateCoinParams{
 		CoinID:            req.GetCoinId(),
+		CoinUuid:          req.GetCoinUuid(),
 		Name:              req.GetName(),
 		Price:             req.GetPrice(),
 		MarketCap:         req.GetMarketCap(),
+		NumberOfMarkets:   req.GetNumberOfMarkets(),
+		NumberOfExchanges: req.GetNumberOfExchanges(),
+		ApprovedSupply:    req.GetApprovedSupply(),
 		CirculatingSupply: req.GetCirculatingSupply(),
 		TotalSupply:       req.GetTotalSupply(),
 		MaxSupply:         req.GetMaxSupply(),
 		Rank:              req.GetRank(),
 		Volume:            req.GetVolume(),
+		DailyChange:       req.GetDailyChange(),
 		ImageUrl:          req.GetImageUrl(),
 		Description:       req.GetDescription(),
+		AllTimeHigh:       req.GetAllTimeHigh(),
+		Tags:              req.GetTags(),
 		Website:           req.GetWebsite(),
 		SocialMediaLinks:  req.GetSocialMediaLinks(),
 	}

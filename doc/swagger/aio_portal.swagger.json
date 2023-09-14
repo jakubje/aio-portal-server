@@ -21,6 +21,38 @@
     "application/json"
   ],
   "paths": {
+    "/v1/coin": {
+      "get": {
+        "summary": "Get coin details",
+        "description": "Use this API to get coin details",
+        "operationId": "AioPortal_GetCoin",
+        "responses": {
+          "200": {
+            "description": "A successful response.",
+            "schema": {
+              "$ref": "#/definitions/pbGetCoinResponse"
+            }
+          },
+          "default": {
+            "description": "An unexpected error response.",
+            "schema": {
+              "$ref": "#/definitions/rpcStatus"
+            }
+          }
+        },
+        "parameters": [
+          {
+            "name": "coinId",
+            "in": "query",
+            "required": false,
+            "type": "string"
+          }
+        ],
+        "tags": [
+          "AioPortal"
+        ]
+      }
+    },
     "/v1/create_coin": {
       "post": {
         "summary": "Create new coin",
@@ -866,6 +898,9 @@
         "coinId": {
           "type": "string"
         },
+        "coinUuid": {
+          "type": "string"
+        },
         "name": {
           "type": "string"
         },
@@ -874,6 +909,17 @@
         },
         "marketCap": {
           "type": "string"
+        },
+        "numberOfMarkets": {
+          "type": "integer",
+          "format": "int32"
+        },
+        "numberOfExchanges": {
+          "type": "integer",
+          "format": "int32"
+        },
+        "approvedSupply": {
+          "type": "boolean"
         },
         "circulatingSupply": {
           "type": "string"
@@ -891,11 +937,23 @@
         "volume": {
           "type": "string"
         },
+        "dailyChange": {
+          "type": "string"
+        },
         "imageUrl": {
           "type": "string"
         },
         "description": {
           "type": "string"
+        },
+        "allTimeHigh": {
+          "type": "string"
+        },
+        "tags": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          }
         },
         "website": {
           "type": "string"
@@ -922,6 +980,9 @@
         "coinId": {
           "type": "string"
         },
+        "coinUuid": {
+          "type": "string"
+        },
         "name": {
           "type": "string"
         },
@@ -930,6 +991,17 @@
         },
         "marketCap": {
           "type": "string"
+        },
+        "numberOfMarkets": {
+          "type": "integer",
+          "format": "int32"
+        },
+        "numberOfExchanges": {
+          "type": "integer",
+          "format": "int32"
+        },
+        "approvedSupply": {
+          "type": "boolean"
         },
         "circulatingSupply": {
           "type": "string"
@@ -947,11 +1019,23 @@
         "volume": {
           "type": "string"
         },
+        "dailyChange": {
+          "type": "string"
+        },
         "imageUrl": {
           "type": "string"
         },
         "description": {
           "type": "string"
+        },
+        "allTimeHigh": {
+          "type": "string"
+        },
+        "tags": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          }
         },
         "website": {
           "type": "string"
@@ -1074,6 +1158,14 @@
       "properties": {
         "message": {
           "type": "string"
+        }
+      }
+    },
+    "pbGetCoinResponse": {
+      "type": "object",
+      "properties": {
+        "coin": {
+          "$ref": "#/definitions/pbCoin"
         }
       }
     },
@@ -1331,6 +1423,15 @@
         },
         "description": {
           "type": "string"
+        },
+        "allTimeHigh": {
+          "type": "string"
+        },
+        "tags": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          }
         },
         "website": {
           "type": "string"

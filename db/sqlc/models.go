@@ -12,16 +12,23 @@ import (
 
 type Coin struct {
 	CoinID            string    `json:"coin_id"`
+	CoinUuid          string    `json:"coin_uuid"`
 	Name              string    `json:"name"`
 	Price             string    `json:"price"`
 	MarketCap         string    `json:"market_cap"`
+	NumberOfMarkets   int32     `json:"number_of_markets"`
+	NumberOfExchanges int32     `json:"number_of_exchanges"`
+	ApprovedSupply    bool      `json:"approved_supply"`
 	CirculatingSupply string    `json:"circulating_supply"`
 	TotalSupply       string    `json:"total_supply"`
 	MaxSupply         string    `json:"max_supply"`
 	Rank              int32     `json:"rank"`
 	Volume            string    `json:"volume"`
+	DailyChange       string    `json:"daily_change"`
 	ImageUrl          string    `json:"image_url"`
 	Description       string    `json:"description"`
+	AllTimeHigh       string    `json:"all_time_high"`
+	Tags              []string  `json:"tags"`
 	Website           string    `json:"website"`
 	SocialMediaLinks  []string  `json:"social_media_links"`
 	CreatedAt         time.Time `json:"created_at"`

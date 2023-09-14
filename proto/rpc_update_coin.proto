@@ -19,9 +19,11 @@ message UpdateCoinRequest {
   optional string volume = 9;
   optional string image_url = 10;
   optional string description = 11;
-  optional string website = 12;
-  repeated string social_media_links = 13;
-  google.protobuf.Timestamp updated_At = 14;
+  string all_time_high = 12;
+  repeated string tags = 13;
+  optional string website = 14;
+  repeated string social_media_links = 15;
+  google.protobuf.Timestamp updated_At = 16;
 }
 
 message UpdateCoinResponse {

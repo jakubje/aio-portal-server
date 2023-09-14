@@ -107,19 +107,53 @@ func convertWatchlists(watchlists []db.Watchlist) []*pb.Watchlist {
 	return watchlistsProtoArray
 }
 
+//type Tags struct {
+//	Layer string
+//	Pow   string
+//}
+//
+//func converTags(tag Tags) *pb.Tags {
+//	return &pb.Tags{
+//		Layer: tag.Layer,
+//		Pow:   tag.Pow,
+//	}
+//}
+//
+//func nullStringToTags(ns sql.NullString) (Tags, error) {
+//	if !ns.Valid {
+//		return Tags{}, nil
+//	}
+//
+//	var tags Tags
+//	err := json.Unmarshal([]byte(ns.String), &tags)
+//	if err != nil {
+//		return Tags{}, err
+//	}
+//
+//	return tags, nil
+//}
+
 func convertCoin(coin db.Coin) *pb.Coin {
+
 	return &pb.Coin{
 		CoinId:            coin.CoinID,
+		CoinUuid:          coin.CoinUuid,
 		Name:              coin.Name,
 		Price:             coin.Price,
 		MarketCap:         coin.MarketCap,
+		NumberOfMarkets:   coin.NumberOfMarkets,
+		NumberOfExchanges: coin.NumberOfExchanges,
+		ApprovedSupply:    coin.ApprovedSupply,
 		CirculatingSupply: coin.CirculatingSupply,
 		TotalSupply:       coin.TotalSupply,
 		MaxSupply:         coin.MaxSupply,
 		Rank:              coin.Rank,
 		Volume:            coin.Volume,
+		DailyChange:       coin.DailyChange,
 		ImageUrl:          coin.ImageUrl,
 		Description:       coin.Description,
+		AllTimeHigh:       coin.AllTimeHigh,
+		Tags:              coin.Tags,
 		Website:           coin.Website,
 		SocialMediaLinks:  coin.SocialMediaLinks,
 		Updated_At:        timestamppb.New(coin.UpdatedAt),
@@ -128,24 +162,31 @@ func convertCoin(coin db.Coin) *pb.Coin {
 }
 
 func convertCoins(coins []db.Coin) []*pb.Coin {
-
 	var coinsProtoArray []*pb.Coin
 	for _, coin := range coins {
+
 		coinsProtoArray = append(coinsProtoArray, &pb.Coin{
 			CoinId:            coin.CoinID,
+			CoinUuid:          coin.CoinUuid,
 			Name:              coin.Name,
 			Price:             coin.Price,
 			MarketCap:         coin.MarketCap,
+			NumberOfMarkets:   coin.NumberOfMarkets,
+			NumberOfExchanges: coin.NumberOfExchanges,
 			CirculatingSupply: coin.CirculatingSupply,
 			TotalSupply:       coin.TotalSupply,
 			MaxSupply:         coin.MaxSupply,
 			Rank:              coin.Rank,
 			Volume:            coin.Volume,
+			DailyChange:       coin.DailyChange,
 			ImageUrl:          coin.ImageUrl,
 			Description:       coin.Description,
+			AllTimeHigh:       coin.AllTimeHigh,
+			Tags:              coin.Tags,
 			Website:           coin.Website,
 			SocialMediaLinks:  coin.SocialMediaLinks,
 			Updated_At:        timestamppb.New(coin.UpdatedAt),
+			CreatedAt:         timestamppb.New(coin.CreatedAt),
 		})
 	}
 	return coinsProtoArray
