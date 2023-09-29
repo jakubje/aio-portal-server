@@ -9,7 +9,7 @@ import (
 
 // PasetoMaker is a PASETO token maker
 type PasetoMaker struct {
-	paseto       *paseto.V2
+	paseto       *paseto.V1
 	symmetricKey []byte
 }
 
@@ -19,7 +19,7 @@ func NewPasetoMaker(symmetricKey string) (Maker, error) {
 	}
 
 	maker := &PasetoMaker{
-		paseto:       paseto.NewV2(),
+		paseto:       paseto.NewV1(),
 		symmetricKey: []byte(symmetricKey),
 	}
 

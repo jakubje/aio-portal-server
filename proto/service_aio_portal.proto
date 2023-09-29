@@ -10,6 +10,7 @@ import "rpc_create_transaction.proto";
 import "rpc_create_watchlist.proto";
 import "rpc_create_coin.proto";
 import "rpc_login_user.proto";
+import "rpc_refresh_token.proto";
 import "rpc_get_coin.proto";
 import "rpc_get_portfolio.proto";
 import "rpc_get_transaction.proto";
@@ -65,6 +66,16 @@ service AioPortal {
     option (grpc.gateway.protoc_gen_openapiv2.options.openapiv2_operation) = {
       description: "Use this API to login user and get an access token & refresh token";
       summary: "Login user";
+    };
+  }
+  rpc RefreshToken (RefreshTokenRequest) returns (RefreshTokenResponse) {
+    option (google.api.http) = {
+      post: "/v1/refresh_token"
+      body: "*"
+    };
+    option (grpc.gateway.protoc_gen_openapiv2.options.openapiv2_operation) = {
+      description: "Use this API to refresh a token";
+      summary: "Refresh expired token";
     };
   }
   rpc UpdateUser (UpdateUserRequest) returns (UpdateUserResponse) {

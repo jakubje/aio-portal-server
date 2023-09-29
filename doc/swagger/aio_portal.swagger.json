@@ -661,6 +661,40 @@
         ]
       }
     },
+    "/v1/refresh_token": {
+      "post": {
+        "summary": "Refresh expired token",
+        "description": "Use this API to refresh a token",
+        "operationId": "AioPortal_RefreshToken",
+        "responses": {
+          "200": {
+            "description": "A successful response.",
+            "schema": {
+              "$ref": "#/definitions/pbRefreshTokenResponse"
+            }
+          },
+          "default": {
+            "description": "An unexpected error response.",
+            "schema": {
+              "$ref": "#/definitions/rpcStatus"
+            }
+          }
+        },
+        "parameters": [
+          {
+            "name": "body",
+            "in": "body",
+            "required": true,
+            "schema": {
+              "$ref": "#/definitions/pbRefreshTokenRequest"
+            }
+          }
+        ],
+        "tags": [
+          "AioPortal"
+        ]
+      }
+    },
     "/v1/update_coin": {
       "post": {
         "summary": "Update a coin",
@@ -1322,6 +1356,26 @@
         "profitLoss": {
           "type": "integer",
           "format": "int32"
+        }
+      }
+    },
+    "pbRefreshTokenRequest": {
+      "type": "object",
+      "properties": {
+        "refreshToken": {
+          "type": "string"
+        }
+      }
+    },
+    "pbRefreshTokenResponse": {
+      "type": "object",
+      "properties": {
+        "accessToken": {
+          "type": "string"
+        },
+        "accessTokenExpiresAt": {
+          "type": "string",
+          "format": "date-time"
         }
       }
     },

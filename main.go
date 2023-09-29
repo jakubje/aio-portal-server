@@ -15,6 +15,7 @@ import (
 	"github.com/jakub/aioportal/server/gapi"
 	"github.com/jakub/aioportal/server/mail"
 	"github.com/jakub/aioportal/server/pb"
+	"github.com/jakub/aioportal/server/rapidapi/crypto"
 	"github.com/jakub/aioportal/server/util"
 	"github.com/jakub/aioportal/server/worker"
 	fs2 "github.com/rakyll/statik/fs"
@@ -78,12 +79,12 @@ func runTaskProcessor(config util.Config, redisOpt asynq.RedisClientOpt, store d
 }
 
 func runRapidAPIProcessor(client *http.Client, config util.Config, store db.Store) {
-	//cryptoProcessor := crypto.NewCryptoProcessor(client, config, store)
+	cryptoProcessor := crypto.NewCryptoProcessor(client, config, store)
 	log.Info().Msg("start crypto processor")
-	//err := cryptoProcessor.Start()
-	//if err != nil {
-	//	log.Fatal().Err(err).Msg("failed to start crypto processor")
-	//}
+	err := cryptoProcessor.Start()
+	if err != nil {
+		log.Fatal().Err(err).Msg("failed to start crypto processor")
+	}
 }
 
 func runDBMigration(migrationURL string, dbSource string) {
