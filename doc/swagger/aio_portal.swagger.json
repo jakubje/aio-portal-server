@@ -1120,11 +1120,7 @@
           "type": "integer",
           "format": "int32"
         },
-        "pricePerCoin": {
-          "type": "number",
-          "format": "double"
-        },
-        "quantity": {
+        "amount": {
           "type": "number",
           "format": "double"
         }
@@ -1401,6 +1397,10 @@
           "type": "integer",
           "format": "int32"
         },
+        "amount": {
+          "type": "number",
+          "format": "double"
+        },
         "totalCost": {
           "type": "number",
           "format": "double"
@@ -1410,6 +1410,14 @@
           "format": "double"
         },
         "pricePerCoin": {
+          "type": "number",
+          "format": "double"
+        },
+        "profitLossPercentage": {
+          "type": "number",
+          "format": "double"
+        },
+        "currentValue": {
           "type": "number",
           "format": "double"
         }
@@ -1431,6 +1439,10 @@
         "type": {
           "type": "integer",
           "format": "int32"
+        },
+        "amount": {
+          "type": "number",
+          "format": "double"
         },
         "pricePerCoin": {
           "type": "number",

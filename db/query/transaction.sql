@@ -1,8 +1,8 @@
 -- name: CreateTransaction :one
 INSERT INTO transactions (
-    account_id, portfolio_id, symbol, type, price_per_coin, quantity, time_transacted, time_created
+    account_id, portfolio_id, symbol, type, price_per_coin, amount, quantity, time_transacted, time_created
 ) VALUES (
-             $1, $2, $3, $4, $5, $6, $7, $8
+             $1, $2, $3, $4, $5, $6, $7, $8, $9
          )
 RETURNING *;
 
@@ -33,14 +33,18 @@ LIMIT $3
 OFFSET $4;
 
 -- name: GetRollUpByCoinByPortfolio :many
-SELECT 
-symbol, type, 
-CAST (SUM(price_per_coin) AS FLOAT) AS total_cost, 
-CAST (SUM(quantity) AS FLOAT) AS total_coins,
-CAST (CAST(SUM(price_per_coin) AS FLOAT) *1.0 / CAST (SUM(quantity) AS FLOAT) AS FLOAT) AS price_per_coin
-FROM transactions
-WHERE portfolio_id = $1 and account_id = $2
-GROUP BY symbol, type;
+SELECT
+    t.symbol,
+    t.type,
+    CAST(SUM(t.amount) AS FLOAT) AS amount,
+    CAST(SUM(t.quantity) AS FLOAT) AS total_coins,
+    CAST(CAST(SUM(t.price_per_coin) AS FLOAT) * 1.0 / CAST(SUM(t.quantity) AS FLOAT) AS FLOAT) AS price_per_coin,
+    CAST(((CAST(c.price AS FLOAT) - CAST(t.price_per_coin AS FLOAT)) / CAST(t.price_per_coin AS FLOAT)) * 100 AS FLOAT) AS profit_loss_percentage
+FROM transactions t
+         JOIN coins c ON t.symbol = c.coin_id
+WHERE t.portfolio_id = $1 AND t.account_id = $2
+GROUP BY t.symbol, t.type, c.price, t.price_per_coin;
+
 
 -- name: DeleteTransaction :exec
 DELETE FROM transactions

@@ -63,6 +63,7 @@ CREATE TABLE "transactions" (
                                 "portfolio_id" bigint NOT NULL,
                                 "type" int NOT NULL,
                                 "symbol" varchar NOT NULL,
+                                "amount" float NOT NULL,
                                 "price_per_coin" float NOT NULL,
                                 "quantity" float NOT NULL,
                                 "time_transacted" timestamptz NOT NULL,

@@ -14,11 +14,11 @@ import (
 
 const createTransaction = `-- name: CreateTransaction :one
 INSERT INTO transactions (
-    account_id, portfolio_id, symbol, type, price_per_coin, quantity, time_transacted, time_created
+    account_id, portfolio_id, symbol, type, price_per_coin, amount, quantity, time_transacted, time_created
 ) VALUES (
-             $1, $2, $3, $4, $5, $6, $7, $8
+             $1, $2, $3, $4, $5, $6, $7, $8, $9
          )
-RETURNING id, account_id, portfolio_id, type, symbol, price_per_coin, quantity, time_transacted, time_created
+RETURNING id, account_id, portfolio_id, type, symbol, amount, price_per_coin, quantity, time_transacted, time_created
 `
 
 type CreateTransactionParams struct {
@@ -27,6 +27,7 @@ type CreateTransactionParams struct {
 	Symbol         string    `json:"symbol"`
 	Type           int32     `json:"type"`
 	PricePerCoin   float64   `json:"price_per_coin"`
+	Amount         float64   `json:"amount"`
 	Quantity       float64   `json:"quantity"`
 	TimeTransacted time.Time `json:"time_transacted"`
 	TimeCreated    time.Time `json:"time_created"`
@@ -39,6 +40,7 @@ func (q *Queries) CreateTransaction(ctx context.Context, arg CreateTransactionPa
 		arg.Symbol,
 		arg.Type,
 		arg.PricePerCoin,
+		arg.Amount,
 		arg.Quantity,
 		arg.TimeTransacted,
 		arg.TimeCreated,
@@ -50,6 +52,7 @@ func (q *Queries) CreateTransaction(ctx context.Context, arg CreateTransactionPa
 		&i.PortfolioID,
 		&i.Type,
 		&i.Symbol,
+		&i.Amount,
 		&i.PricePerCoin,
 		&i.Quantity,
 		&i.TimeTransacted,
@@ -74,14 +77,17 @@ func (q *Queries) DeleteTransaction(ctx context.Context, arg DeleteTransactionPa
 }
 
 const getRollUpByCoinByPortfolio = `-- name: GetRollUpByCoinByPortfolio :many
-SELECT 
-symbol, type, 
-CAST (SUM(price_per_coin) AS FLOAT) AS total_cost, 
-CAST (SUM(quantity) AS FLOAT) AS total_coins,
-CAST (CAST(SUM(price_per_coin) AS FLOAT) *1.0 / CAST (SUM(quantity) AS FLOAT) AS FLOAT) AS price_per_coin
-FROM transactions
-WHERE portfolio_id = $1 and account_id = $2
-GROUP BY symbol, type
+SELECT
+    t.symbol,
+    t.type,
+    CAST(SUM(t.amount) AS FLOAT) AS amount,
+    CAST(SUM(t.quantity) AS FLOAT) AS total_coins,
+    CAST(CAST(SUM(t.price_per_coin) AS FLOAT) * 1.0 / CAST(SUM(t.quantity) AS FLOAT) AS FLOAT) AS price_per_coin,
+    CAST(((CAST(c.price AS FLOAT) - CAST(t.price_per_coin AS FLOAT)) / CAST(t.price_per_coin AS FLOAT)) * 100 AS FLOAT) AS profit_loss_percentage
+FROM transactions t
+         JOIN coins c ON t.symbol = c.coin_id
+WHERE t.portfolio_id = $1 AND t.account_id = $2
+GROUP BY t.symbol, t.type, c.price, t.price_per_coin
 `
 
 type GetRollUpByCoinByPortfolioParams struct {
@@ -90,11 +96,12 @@ type GetRollUpByCoinByPortfolioParams struct {
 }
 
 type GetRollUpByCoinByPortfolioRow struct {
-	Symbol       string  `json:"symbol"`
-	Type         int32   `json:"type"`
-	TotalCost    float64 `json:"total_cost"`
-	TotalCoins   float64 `json:"total_coins"`
-	PricePerCoin float64 `json:"price_per_coin"`
+	Symbol               string  `json:"symbol"`
+	Type                 int32   `json:"type"`
+	Amount               float64 `json:"amount"`
+	TotalCoins           float64 `json:"total_coins"`
+	PricePerCoin         float64 `json:"price_per_coin"`
+	ProfitLossPercentage float64 `json:"profit_loss_percentage"`
 }
 
 func (q *Queries) GetRollUpByCoinByPortfolio(ctx context.Context, arg GetRollUpByCoinByPortfolioParams) ([]GetRollUpByCoinByPortfolioRow, error) {
@@ -109,9 +116,10 @@ func (q *Queries) GetRollUpByCoinByPortfolio(ctx context.Context, arg GetRollUpB
 		if err := rows.Scan(
 			&i.Symbol,
 			&i.Type,
-			&i.TotalCost,
+			&i.Amount,
 			&i.TotalCoins,
 			&i.PricePerCoin,
+			&i.ProfitLossPercentage,
 		); err != nil {
 			return nil, err
 		}
@@ -124,7 +132,7 @@ func (q *Queries) GetRollUpByCoinByPortfolio(ctx context.Context, arg GetRollUpB
 }
 
 const getTransaction = `-- name: GetTransaction :one
-SELECT id, account_id, portfolio_id, type, symbol, price_per_coin, quantity, time_transacted, time_created FROM transactions
+SELECT id, account_id, portfolio_id, type, symbol, amount, price_per_coin, quantity, time_transacted, time_created FROM transactions
 WHERE id = $1 and account_id = $2
 LIMIT 1
 `
@@ -143,6 +151,7 @@ func (q *Queries) GetTransaction(ctx context.Context, arg GetTransactionParams) 
 		&i.PortfolioID,
 		&i.Type,
 		&i.Symbol,
+		&i.Amount,
 		&i.PricePerCoin,
 		&i.Quantity,
 		&i.TimeTransacted,
@@ -152,7 +161,7 @@ func (q *Queries) GetTransaction(ctx context.Context, arg GetTransactionParams) 
 }
 
 const listTransactionsByAccount = `-- name: ListTransactionsByAccount :many
-SELECT id, account_id, portfolio_id, type, symbol, price_per_coin, quantity, time_transacted, time_created FROM transactions
+SELECT id, account_id, portfolio_id, type, symbol, amount, price_per_coin, quantity, time_transacted, time_created FROM transactions
 WHERE account_id = $1
 ORDER BY id
 LIMIT $2
@@ -180,6 +189,7 @@ func (q *Queries) ListTransactionsByAccount(ctx context.Context, arg ListTransac
 			&i.PortfolioID,
 			&i.Type,
 			&i.Symbol,
+			&i.Amount,
 			&i.PricePerCoin,
 			&i.Quantity,
 			&i.TimeTransacted,
@@ -196,7 +206,7 @@ func (q *Queries) ListTransactionsByAccount(ctx context.Context, arg ListTransac
 }
 
 const listTransactionsByAccountByCoin = `-- name: ListTransactionsByAccountByCoin :many
-SELECT id, account_id, portfolio_id, type, symbol, price_per_coin, quantity, time_transacted, time_created FROM transactions
+SELECT id, account_id, portfolio_id, type, symbol, amount, price_per_coin, quantity, time_transacted, time_created FROM transactions
 WHERE symbol = $1 and account_id = $2
 ORDER BY id
 LIMIT $3
@@ -230,6 +240,7 @@ func (q *Queries) ListTransactionsByAccountByCoin(ctx context.Context, arg ListT
 			&i.PortfolioID,
 			&i.Type,
 			&i.Symbol,
+			&i.Amount,
 			&i.PricePerCoin,
 			&i.Quantity,
 			&i.TimeTransacted,
@@ -246,7 +257,7 @@ func (q *Queries) ListTransactionsByAccountByCoin(ctx context.Context, arg ListT
 }
 
 const listTransactionsByPortfolio = `-- name: ListTransactionsByPortfolio :many
-SELECT id, account_id, portfolio_id, type, symbol, price_per_coin, quantity, time_transacted, time_created FROM transactions
+SELECT id, account_id, portfolio_id, type, symbol, amount, price_per_coin, quantity, time_transacted, time_created FROM transactions
 WHERE portfolio_id = $1
 ORDER BY id
 LIMIT $2
@@ -274,6 +285,7 @@ func (q *Queries) ListTransactionsByPortfolio(ctx context.Context, arg ListTrans
 			&i.PortfolioID,
 			&i.Type,
 			&i.Symbol,
+			&i.Amount,
 			&i.PricePerCoin,
 			&i.Quantity,
 			&i.TimeTransacted,

@@ -6,6 +6,11 @@ import (
 	"google.golang.org/protobuf/types/known/timestamppb"
 )
 
+var (
+	BOUGHT = int32(0)
+	SOLD   = int32(1)
+)
+
 func convertUser(user db.User) *pb.User {
 	return &pb.User{
 		Email:             user.Email,
@@ -43,18 +48,66 @@ func convertPortfolios(portfolios []db.Portfolio) []*pb.Portfolio {
 	return portfoliosProtoArray
 }
 
+type portfolioRollUp struct {
+	totalCost            float64
+	totalCoins           float64
+	pricePerCoin         float64
+	profitLossPercentage float64
+	currentValue         float64
+}
+
 func convertRollUp(rollUps []db.GetRollUpByCoinByPortfolioRow) []*pb.Roll_Up {
+	var portfolio = make(map[string]portfolioRollUp)
 
 	var rollUpProtoArray []*pb.Roll_Up
+	//for _, rollUp := range rollUps {
+	//	portfolio[rollUp.Symbol] = portfolioRollUp{
+	//		totalCost:    0,
+	//		totalCoins:   0,
+	//		pricePerCoin: 0,
+	//	}
+	//}
+
 	for _, rollUp := range rollUps {
+		currentRollUp := portfolio[rollUp.Symbol]
+
+		if rollUp.Type == BOUGHT {
+			currentRollUp.totalCost += rollUp.Amount
+			currentRollUp.totalCoins += rollUp.TotalCoins
+		} else if rollUp.Type == SOLD {
+			currentRollUp.totalCost -= rollUp.Amount
+			currentRollUp.totalCoins -= rollUp.TotalCoins
+		}
+		currentRollUp.profitLossPercentage += rollUp.ProfitLossPercentage
+		currentRollUp.currentValue = currentRollUp.totalCost * (1 + (currentRollUp.profitLossPercentage / 100))
+
+		currentRollUp.pricePerCoin = currentRollUp.totalCost / currentRollUp.totalCoins
+		portfolio[rollUp.Symbol] = currentRollUp
+	}
+
+	for key, coin := range portfolio {
+
 		rollUpProtoArray = append(rollUpProtoArray, &pb.Roll_Up{
-			Symbol:       rollUp.Symbol,
-			Type:         rollUp.Type,
-			TotalCost:    rollUp.TotalCost,
-			TotalCoins:   rollUp.TotalCoins,
-			PricePerCoin: rollUp.PricePerCoin,
+			Symbol:               key,
+			TotalCost:            coin.totalCost,
+			TotalCoins:           coin.totalCoins,
+			PricePerCoin:         coin.pricePerCoin,
+			ProfitLossPercentage: coin.profitLossPercentage,
+			CurrentValue:         coin.currentValue,
 		})
 	}
+
+	//for _, rollUp := range rollUps {
+	//
+	//	rollUpProtoArray = append(rollUpProtoArray, &pb.Roll_Up{
+	//		Symbol:       rollUp.Symbol,
+	//		TotalCost:    rollUp.TotalCost,
+	//		Type:         rollUp.Type,
+	//		TotalCoins:   rollUp.TotalCoins,
+	//		PricePerCoin: rollUp.PricePerCoin,
+	//	})
+	//}
+
 	return rollUpProtoArray
 }
 
@@ -65,6 +118,7 @@ func convertTransaction(transaction db.Transaction) *pb.Transaction {
 		PortfolioId:  transaction.PortfolioID,
 		Symbol:       transaction.Symbol,
 		Type:         transaction.Type,
+		Amount:       transaction.Amount,
 		PricePerCoin: transaction.PricePerCoin,
 		Quantity:     transaction.Quantity,
 	}
@@ -80,6 +134,7 @@ func convertTransactions(transactions []db.Transaction) []*pb.Transaction {
 			PortfolioId:  transaction.PortfolioID,
 			Symbol:       transaction.Symbol,
 			Type:         transaction.Type,
+			Amount:       transaction.Amount,
 			PricePerCoin: transaction.PricePerCoin,
 			Quantity:     transaction.Quantity,
 		})

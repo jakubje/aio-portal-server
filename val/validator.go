@@ -111,7 +111,7 @@ func ValidateSecretCode(value string) error {
 
 func ValidateType(value int32) error {
 	if value != 0 && value != 1 {
-		return fmt.Errorf("type can only be a 0 (buy) or 1(sell)")
+		return fmt.Errorf("type can only be a 0 (buy) or 1 (sell)")
 	}
 	return nil
 }

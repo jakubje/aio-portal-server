@@ -8,6 +8,7 @@ import (
 	"google.golang.org/genproto/googleapis/rpc/errdetails"
 	"google.golang.org/grpc/codes"
 	"google.golang.org/grpc/status"
+	"strconv"
 	"time"
 )
 
@@ -22,13 +23,21 @@ func (server *Server) CreateTransaction(ctx context.Context, req *pb.CreateTrans
 		return nil, invalidArgumentError(violations)
 	}
 
+	coinToAddDetails, err := server.store.GetCoin(ctx, req.GetSymbol())
+	if err != nil {
+		return nil, status.Errorf(codes.Internal, "cannot add this coin: %s", err)
+	}
+	pricePerCoin, err := strconv.ParseFloat(coinToAddDetails.Price, 8)
+	quantity := req.GetAmount() / pricePerCoin
+
 	arg := db.CreateTransactionParams{
 		AccountID:      authPayload.AccountId,
 		PortfolioID:    req.GetPortfolioId(),
 		Symbol:         req.GetSymbol(),
 		Type:           req.GetType(),
-		PricePerCoin:   req.GetPricePerCoin(),
-		Quantity:       req.GetQuantity(),
+		Amount:         req.GetAmount(),
+		PricePerCoin:   pricePerCoin,
+		Quantity:       quantity,
 		TimeTransacted: time.Now(),
 		TimeCreated:    time.Now(),
 	}
@@ -54,11 +63,11 @@ func validateCreateTransactionRequest(req *pb.CreateTransactionRequest) (violati
 	if err := val.ValidateType(req.GetType()); err != nil {
 		violations = append(violations, fieldViolation("type", err))
 	}
-	if err := val.ValidateFloat(req.GetPricePerCoin()); err != nil {
-		violations = append(violations, fieldViolation("price_per_coin", err))
-	}
-	if err := val.ValidateFloat(req.GetQuantity()); err != nil {
-		violations = append(violations, fieldViolation("quantity", err))
-	}
+	//if err := val.ValidateFloat(req.GetPricePerCoin()); err != nil {
+	//	violations = append(violations, fieldViolation("price_per_coin", err))
+	//}
+	//if err := val.ValidateFloat(req.GetQuantity()); err != nil {
+	//	violations = append(violations, fieldViolation("quantity", err))
+	//}
 	return violations
 }

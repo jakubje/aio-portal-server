@@ -69,6 +69,7 @@ type Transaction struct {
 	PortfolioID    int64       `json:"portfolio_id"`
 	Type           int32       `json:"type"`
 	Symbol         string      `json:"symbol"`
+	Amount         float64     `json:"amount"`
 	PricePerCoin   float64     `json:"price_per_coin"`
 	Quantity       float64     `json:"quantity"`
 	TimeTransacted time.Time   `json:"time_transacted"`
